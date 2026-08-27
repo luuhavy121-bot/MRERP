@@ -99,6 +99,8 @@ ADR này không chọn Identity Provider, secret manager production, branch prot
 - `git diff --check` thành công.
 - GitHub Actions chạy thành công sau push.
 
+Validation record: workflow `Repository quality`, run [33060797246](https://github.com/luuhavy121-bot/MRERP/actions/runs/33060797246), kết quả `success` ngày 2026-08-27.
+
 ## Documentation updates
 
 - Cập nhật README, AGENTS, docs index, roadmap, test strategy và open decisions.
