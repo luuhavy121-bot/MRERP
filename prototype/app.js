@@ -14,6 +14,19 @@ const globalSearch = document.querySelector("#global-search");
 
 let toastTimer;
 let currentView = "dashboard";
+const projectStatus = window.MRERP_PROJECT_STATUS || {
+  overallPercent: 0,
+  currentPhase: "Chưa xác định",
+  phases: [],
+  modules: [],
+  ecosystem: [],
+  phase0Gates: [],
+  quality: [],
+  nextGates: [],
+  sources: [],
+  decisionSummary: { open: 0, resolved: 0, priority: 0, priorityNote: "" },
+  calculation: { summary: "Chưa có dữ liệu.", formula: "", confidence: "Thấp", note: "" },
+};
 
 const preferenceStorage = {
   get(key) {
@@ -219,6 +232,133 @@ function dashboardView() {
           </section>
         </aside>
       </div>
+    </div>
+  `;
+}
+
+function progressView() {
+  const completedGates = projectStatus.phase0Gates.filter((gate) => gate.done).length;
+  const modulesWithPrototype = projectStatus.modules.filter((module) => module.ui.includes("prototype")).length;
+  const blockedModules = projectStatus.modules.filter((module) => module.group === "blocked").length;
+
+  return `
+    <div class="page-wrap progress-page">
+      ${pageHeading(
+        "Project control room",
+        "Tiến độ MRERP",
+        "Một góc nhìn trung thực về phần đã có, phần mới chỉ là prototype và những cổng còn chặn production.",
+        `Đối chiếu ${projectStatus.updatedAt}`,
+      )}
+
+      <section class="project-progress-hero" aria-labelledby="project-progress-title">
+        <div class="project-progress-hero__copy">
+          <span class="eyebrow">Tiến độ toàn kế hoạch</span>
+          <h2 id="project-progress-title">${projectStatus.overallPercent}% <small>hoàn thiện</small></h2>
+          <p>Project đang ở <strong>${projectStatus.currentPhase} — ${projectStatus.currentPhaseName}</strong>. Production application chưa được scaffold; phần nhìn thấy hiện tại là visual prototype.</p>
+          <div class="progress-hero-pills">
+            <span><strong>${completedGates}/${projectStatus.phase0Gates.length}</strong> cổng Phase 0 đạt</span>
+            <span><strong>${projectStatus.modules.length}</strong> module lõi trong kế hoạch</span>
+            <span><strong>${projectStatus.decisionSummary.open}</strong> quyết định đang mở</span>
+          </div>
+        </div>
+        <div class="project-progress-visual">
+          <div class="project-orbit" style="--project-progress:${projectStatus.overallPercent}">
+            <div><strong>${projectStatus.overallPercent}%</strong><small>Toàn project</small></div>
+          </div>
+          <span class="project-progress-visual__caption">Không tính UI prototype là backend hoàn thành</span>
+        </div>
+      </section>
+
+      <section class="method-strip">
+        <span class="method-strip__icon">ƒ</span>
+        <div><strong>Cách tính đang dùng</strong><p>${projectStatus.calculation.summary} <code>${projectStatus.calculation.formula}</code></p></div>
+        <span class="confidence-badge">Độ tin cậy: ${projectStatus.calculation.confidence}</span>
+      </section>
+
+      <section class="progress-section" aria-labelledby="roadmap-title">
+        <div class="progress-section__head"><div><span class="eyebrow">Roadmap 0–5</span><h2 id="roadmap-title">Sáu chặng của kế hoạch</h2></div><span class="progress-note">Chưa có ETA vì lịch và ngân sách chưa được chốt</span></div>
+        <div class="phase-track">
+          ${projectStatus.phases.map((phase, index) => `
+            <article class="phase-step phase-step--${phase.tone}">
+              <div class="phase-step__line"><span>${phase.id}</span></div>
+              <div class="phase-step__content">
+                <strong>${phase.name}</strong>
+                <span>${phase.state}</span>
+                <div class="slim-progress"><i style="width:${phase.percent}%"></i></div>
+                <small>${phase.percent}%</small>
+              </div>
+              ${index < projectStatus.phases.length - 1 ? '<span class="phase-step__connector"></span>' : ""}
+            </article>
+          `).join("")}
+        </div>
+      </section>
+
+      <div class="project-insight-grid">
+        <section class="panel progress-panel">
+          <div class="panel__head"><div><h2>Chất lượng nền hiện tại</h2><p>Không cộng trực tiếp các số này thành tiến độ nghiệp vụ</p></div><span class="pulse-status"><i></i> Có bằng chứng</span></div>
+          <div class="panel__body quality-list">
+            ${projectStatus.quality.map((item) => `
+              <div class="quality-item"><div><strong>${item.label}</strong><span>${item.state}</span></div><div class="quality-meter"><i style="width:${item.value}%"></i></div><b>${item.value}%</b></div>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="panel progress-panel">
+          <div class="panel__head"><div><h2>Cổng cần mở tiếp theo</h2><p>Hoàn thành trước khi scaffold Phase 1</p></div><span class="tag tag--gold">${projectStatus.nextGates.length} việc</span></div>
+          <div class="panel__body next-gate-list">
+            ${projectStatus.nextGates.map((gate, index) => `<div class="next-gate"><span>${String(index + 1).padStart(2, "0")}</span><strong>${gate}</strong></div>`).join("")}
+          </div>
+        </section>
+
+        <section class="decision-card">
+          <span class="eyebrow">Decision debt</span>
+          <div class="decision-card__number">${projectStatus.decisionSummary.open}</div>
+          <h2>quyết định đang mở</h2>
+          <p>${projectStatus.decisionSummary.priorityNote}</p>
+          <div class="decision-card__stats"><span><strong>${projectStatus.decisionSummary.resolved}</strong> đã giải quyết</span><span><strong>${projectStatus.decisionSummary.priority}</strong> ưu tiên gần</span></div>
+          <button class="button button--ghost-light" type="button" data-action="Danh sách chuẩn nằm tại docs/decisions/open-decisions.md.">Xem nguồn quyết định</button>
+        </section>
+      </div>
+
+      <section class="progress-section" aria-labelledby="module-progress-title">
+        <div class="progress-section__head progress-section__head--modules">
+          <div><span class="eyebrow">${projectStatus.modules.length} module MRERP Core</span><h2 id="module-progress-title">Bản đồ hoàn thiện module</h2><p>Mỗi module chỉ có tối đa 20% khi mới dừng ở yêu cầu và prototype; phần còn lại phải đến từ production slice, quyền, test và vận hành.</p></div>
+          <div class="module-filters" aria-label="Lọc trạng thái module">
+            <button class="is-active" type="button" data-module-filter="all">Tất cả <span>${projectStatus.modules.length}</span></button>
+            <button type="button" data-module-filter="prototype">Có UI <span>${modulesWithPrototype}</span></button>
+            <button type="button" data-module-filter="planned">Đã lên kế hoạch</button>
+            <button type="button" data-module-filter="blocked">Đang chờ <span>${blockedModules}</span></button>
+          </div>
+        </div>
+        <div class="module-progress-grid" id="module-progress-grid">
+          ${projectStatus.modules.map((module, index) => `
+            <article class="module-progress-card" data-module-group="${module.group}">
+              <div class="module-progress-card__top">
+                <span class="module-index">${String(index + 1).padStart(2, "0")}</span>
+                <span class="tag ${module.group === "blocked" ? "tag--coral" : module.group === "prototype" ? "tag--green" : "tag--blue"}">${module.phase}</span>
+              </div>
+              <h3>${module.name}</h3>
+              <p>${module.description}</p>
+              <div class="module-status-row"><span>${module.ui}</span><span>${module.delivery}</span></div>
+              <div class="module-completion"><div class="slim-progress"><i style="width:${module.percent}%"></i></div><strong>${module.percent}%</strong></div>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+
+      <section class="progress-section" aria-labelledby="ecosystem-progress-title">
+        <div class="progress-section__head"><div><span class="eyebrow">Nền tảng & hệ sinh thái</span><h2 id="ecosystem-progress-title">Các luồng nằm ngoài 12 module lõi</h2></div></div>
+        <div class="ecosystem-progress-list">
+          ${projectStatus.ecosystem.map((item) => `
+            <article><span class="ecosystem-progress-list__dot"></span><div><strong>${item.name}</strong><small>${item.blocker}</small></div><span class="tag">${item.phase}</span><b>${item.state}</b></article>
+          `).join("")}
+        </div>
+      </section>
+
+      <section class="evidence-footer">
+        <div><span class="eyebrow">Evidence, không phải cảm tính</span><h2>Con số chỉ thay đổi khi bằng chứng thay đổi.</h2><p>${projectStatus.calculation.note}</p><div class="source-chips">${projectStatus.sources.map((source) => `<code>${source}</code>`).join("")}</div></div>
+        <button class="button button--primary" id="copy-progress-snapshot" type="button">Sao chép snapshot tiến độ</button>
+      </section>
     </div>
   `;
 }
@@ -463,6 +603,7 @@ function searchView(query) {
 
 const viewFactories = {
   dashboard: dashboardView,
+  progress: progressView,
   tasks: tasksView,
   calendar: calendarView,
   people: peopleView,
@@ -507,6 +648,34 @@ function updateTaskProgress() {
 }
 
 document.addEventListener("click", (event) => {
+  const moduleFilter = event.target.closest("[data-module-filter]");
+  if (moduleFilter) {
+    const filter = moduleFilter.dataset.moduleFilter;
+    document.querySelectorAll("[data-module-filter]").forEach((button) => button.classList.toggle("is-active", button === moduleFilter));
+    document.querySelectorAll("[data-module-group]").forEach((card) => {
+      card.hidden = filter !== "all" && card.dataset.moduleGroup !== filter;
+    });
+    return;
+  }
+
+  const copyProgressButton = event.target.closest("#copy-progress-snapshot");
+  if (copyProgressButton) {
+    const snapshot = [
+      `MRERP — ${projectStatus.overallPercent}% toàn kế hoạch`,
+      `${projectStatus.currentPhase}: ${projectStatus.phase0Gates.filter((gate) => gate.done).length}/${projectStatus.phase0Gates.length} cổng đạt`,
+      `${projectStatus.modules.length} module lõi · ${projectStatus.decisionSummary.open} quyết định đang mở`,
+      `Đối chiếu: ${projectStatus.updatedAt}`,
+    ].join("\n");
+    if (!navigator.clipboard) {
+      showToast("Không thể sao chép tự động; trình duyệt đang chặn clipboard.");
+      return;
+    }
+    navigator.clipboard.writeText(snapshot)
+      .then(() => showToast("Đã sao chép snapshot tiến độ."))
+      .catch(() => showToast("Không thể sao chép tự động; trình duyệt đang chặn clipboard."));
+    return;
+  }
+
   const viewButton = event.target.closest("[data-view]");
   if (viewButton) {
     event.preventDefault();
@@ -600,5 +769,8 @@ document.addEventListener("keydown", (event) => {
 
 const savedTheme = preferenceStorage.get("mrerp-prototype-theme");
 if (savedTheme === "dark" || savedTheme === "light") document.documentElement.dataset.theme = savedTheme;
+
+const progressNavBadge = document.querySelector("#progress-nav-badge");
+if (progressNavBadge) progressNavBadge.textContent = `${projectStatus.overallPercent}%`;
 
 renderView(currentView);

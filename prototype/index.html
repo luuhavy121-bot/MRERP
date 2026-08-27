@@ -43,6 +43,10 @@
           <button class="nav-item is-active" data-view="dashboard" type="button">
             <span class="nav-item__icon">⌂</span><span>Tổng quan</span>
           </button>
+          <button class="nav-item" data-view="progress" type="button">
+            <span class="nav-item__icon">↗</span><span>Tiến độ</span>
+            <span class="nav-item__progress" id="progress-nav-badge">15%</span>
+          </button>
           <button class="nav-item" data-view="tasks" type="button">
             <span class="nav-item__icon">✓</span><span>Công việc</span>
             <span class="nav-item__count">6</span>
@@ -148,6 +152,7 @@
       <span class="toast__icon">✓</span><span id="toast-message"></span>
     </div>
 
+    <script src="./project-status.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

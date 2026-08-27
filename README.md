@@ -39,6 +39,7 @@ MRERP/
 ├─ prototype/
 │  ├─ README.md
 │  ├─ index.html
+│  ├─ project-status.js
 │  ├─ styles.css
 │  └─ app.js
 ├─ scripts/

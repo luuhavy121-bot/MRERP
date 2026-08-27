@@ -15,6 +15,7 @@ Prototype này là bản dựng giao diện mới hoàn toàn cho MRERP. Mục �
 - App shell và điều hướng chung.
 - Dashboard cá nhân với Task, lịch, phê duyệt và snapshot hệ sinh thái.
 - Màn hình minh họa cho Công việc, Nhân sự, Phê duyệt, Tuyển dụng, Rewards, Tài liệu và Admin Panel.
+- Màn hình Tiến độ tổng hợp Phase 0–5, đủ 12 module MRERP Core, các luồng hệ sinh thái, cổng chuyển phase và decision debt.
 - Trạng thái loading, empty, stale và restricted ở mức giao diện.
 - Theme sáng/tối và bố cục responsive.
 
@@ -27,6 +28,12 @@ python -m http.server 4173 --directory prototype
 ```
 
 Sau đó mở `http://localhost:4173/`.
+
+## Dữ liệu tiến độ
+
+`project-status.js` là read model thủ công dành riêng cho prototype, không phải source of truth mới. Dữ liệu phải được đối chiếu với `docs/04-tieu-chi-nghiem-thu.md`, `docs/06-ke-hoach-trien-khai.md`, roadmap, yêu cầu nghiệp vụ và open-decision register mỗi khi cập nhật.
+
+Phần trăm toàn project hiện dùng cách tính tạm: sáu phase có trọng số bằng nhau; phần trăm của Phase 0 dựa trên số cổng nghiệm thu đã đạt. UI phải luôn hiển thị công thức và không được coi visual prototype là production application đã hoàn thành.
 
 ## Khi chuyển thành production
 
