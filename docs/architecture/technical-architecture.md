@@ -154,7 +154,9 @@ backend/
 
 ## 8. Prototype
 
-**Đã chốt về phạm vi sử dụng.** Prototype Codex chỉ là UI end-state với dữ liệu minh họa; chưa có backend, PostgreSQL, OIDC hoặc authorization production. Prototype Claude chỉ là tham khảo về fail-closed, configuration, contract, snapshot và ghi khoảng trống.
+**Đã chốt về phạm vi sử dụng.** Prototype bàn giao chỉ là UI end-state với dữ liệu minh họa; chưa có backend, PostgreSQL, OIDC hoặc authorization production. Prototype Claude chỉ là tham khảo về fail-closed, configuration, contract, snapshot và ghi khoảng trống.
+
+**Đã chốt theo yêu cầu hiện tại.** [Visual prototype mới](../../prototype/README.md) được tạo độc lập trong repository để thay toàn bộ hướng màu sắc, style và theme cũ. Prototype dùng HTML/CSS/JavaScript thuần, không dependency, nhằm duyệt trải nghiệm trước khi frontend production được scaffold. Lựa chọn này không chốt frontend stack production.
 
 Mỗi phần prototype phải được phân loại: dùng trực tiếp, dùng ý tưởng/UX, viết lại production hoặc loại bỏ.
 

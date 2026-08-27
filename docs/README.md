@@ -51,7 +51,7 @@ Mỗi chủ đề chỉ có một tài liệu chịu trách nhiệm chính trong
 
 ## Quan hệ với tài liệu bàn giao
 
-Bộ tài liệu này là bản phân rã có cấu trúc từ `CONTEXT.md` trong gói bàn giao ngày 27/08/2026. Prototype Codex chỉ là nguồn tham khảo UI; prototype Claude chỉ là nguồn tham khảo về ý tưởng fail-closed, configuration, contract và fallback. Không prototype nào là source of truth production.
+Bộ tài liệu này là bản phân rã có cấu trúc từ `CONTEXT.md` trong gói bàn giao ngày 27/08/2026. Prototype bàn giao chỉ là nguồn tham khảo UI; prototype Claude chỉ là nguồn tham khảo về ý tưởng fail-closed, configuration, contract và fallback. [Visual prototype mới trong repository](../prototype/README.md) là bề mặt để duyệt trải nghiệm và phát triển frontend-first theo từng vertical slice. Không prototype nào là source of truth production.
 
 ## Cập nhật tài liệu
 

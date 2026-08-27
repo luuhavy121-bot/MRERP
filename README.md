@@ -8,7 +8,7 @@ Repository GitHub: [luuhavy121-bot/MRERP](https://github.com/luuhavy121-bot/MRER
 
 Repository đang ở **Phase 0 — khóa context và nền tài liệu**.
 
-Hiện chưa có frontend, backend, database migration hoặc dependency ứng dụng. Phần tài liệu của Phase 0 đã được thiết lập nhưng Phase 0 chỉ được đóng khi đạt cổng trong [04 — Tiêu chí nghiệm thu](docs/04-tieu-chi-nghiem-thu.md). Các tài liệu kiến trúc có nhãn **Đề xuất mục tiêu** chưa phải là quyết định production cuối cùng nếu chưa có ADR được chấp nhận.
+Hiện chưa có frontend/backend production, database migration hoặc dependency ứng dụng. Repository có một [visual prototype không dependency](prototype/README.md) để duyệt hướng giao diện; prototype này không phải application scaffold hay bằng chứng backend/authorization đã tồn tại. Phần tài liệu của Phase 0 đã được thiết lập nhưng Phase 0 chỉ được đóng khi đạt cổng trong [04 — Tiêu chí nghiệm thu](docs/04-tieu-chi-nghiem-thu.md). Các tài liệu kiến trúc có nhãn **Đề xuất mục tiêu** chưa phải là quyết định production cuối cùng nếu chưa có ADR được chấp nhận.
 
 ## Thứ tự đọc bắt buộc
 
@@ -36,6 +36,11 @@ MRERP/
 ├─ AGENTS.md
 ├─ CONTRIBUTING.md
 ├─ README.md
+├─ prototype/
+│  ├─ README.md
+│  ├─ index.html
+│  ├─ styles.css
+│  └─ app.js
 ├─ scripts/
 │  └─ check_docs.py
 └─ docs/
@@ -78,4 +83,6 @@ MRERP/
 
 ## Prototype
 
-Prototype chỉ minh họa giao diện và UX. Không được coi prototype là production backend, database, Identity, authorization hoặc bằng chứng cho một quyết định kiến trúc.
+[Prototype giao diện mới](prototype/README.md) minh họa app shell, Dashboard và các bề mặt nghiệp vụ bằng dữ liệu mock. Có thể chạy trực tiếp mà không cài dependency.
+
+Prototype chỉ minh họa giao diện và UX. Không được coi prototype là production backend, database, Identity, authorization hoặc bằng chứng cho một quyết định kiến trúc. Mọi màn hình sẽ được thay dữ liệu mock bằng vertical slice có API contract và kiểm tra quyền ở server sau khi các cổng tương ứng được duyệt.

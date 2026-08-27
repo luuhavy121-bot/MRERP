@@ -25,6 +25,8 @@ Chưa có:
 - Identity Provider được chọn.
 - Tính năng nghiệp vụ.
 
+Đã có thêm một [visual prototype không dependency](../prototype/README.md) để duyệt hướng thiết kế và minh họa trạng thái màn hình. Đây không phải scaffold production và không thay đổi trạng thái các quyết định kiến trúc.
+
 ## Các phase mục tiêu
 
 1. Phase 0: context, tài liệu, conventions và ADR.

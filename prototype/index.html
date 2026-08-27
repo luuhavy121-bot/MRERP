@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="MRERP visual prototype — không gian làm việc chung cho nhân sự MRE."
+    />
+    <meta name="theme-color" content="#153c31" />
+    <title>MRERP — Không gian làm việc MRE</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="prototype-ribbon" role="status">
+      <span class="prototype-ribbon__dot"></span>
+      Prototype giao diện · Dữ liệu minh họa · Không phải hệ thống production
+    </div>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <strong>MRERP</strong>
+            <small>One MRE workspace</small>
+          </div>
+        </div>
+
+        <div class="workspace-switcher">
+          <span class="workspace-switcher__avatar">M</span>
+          <span>
+            <small>Không gian làm việc</small>
+            <strong>MRE Company</strong>
+          </span>
+          <span class="workspace-switcher__chevron" aria-hidden="true">⌄</span>
+        </div>
+
+        <nav class="nav-list" aria-label="Module MRERP">
+          <p class="nav-list__label">Công việc hằng ngày</p>
+          <button class="nav-item is-active" data-view="dashboard" type="button">
+            <span class="nav-item__icon">⌂</span><span>Tổng quan</span>
+          </button>
+          <button class="nav-item" data-view="tasks" type="button">
+            <span class="nav-item__icon">✓</span><span>Công việc</span>
+            <span class="nav-item__count">6</span>
+          </button>
+          <button class="nav-item" data-view="calendar" type="button">
+            <span class="nav-item__icon">□</span><span>Lịch & Phê duyệt</span>
+            <span class="nav-item__badge"></span>
+          </button>
+
+          <p class="nav-list__label">Tổ chức</p>
+          <button class="nav-item" data-view="people" type="button">
+            <span class="nav-item__icon">◎</span><span>Nhân sự</span>
+          </button>
+          <button class="nav-item" data-view="recruitment" type="button">
+            <span class="nav-item__icon">＋</span><span>Tuyển dụng</span>
+          </button>
+          <button class="nav-item" data-view="rewards" type="button">
+            <span class="nav-item__icon">◇</span><span>Ghi nhận & Thưởng</span>
+          </button>
+          <button class="nav-item" data-view="documents" type="button">
+            <span class="nav-item__icon">▤</span><span>Tài liệu</span>
+          </button>
+
+          <p class="nav-list__label">Sản phẩm kết nối</p>
+          <button class="nav-item" data-view="crm" type="button">
+            <span class="product-dot product-dot--coral"></span><span>MRECRM</span>
+            <span class="nav-item__external">↗</span>
+          </button>
+          <button class="nav-item" data-view="asset" type="button">
+            <span class="product-dot product-dot--gold"></span><span>ASSETCONTROL</span>
+            <span class="nav-item__external">↗</span>
+          </button>
+        </nav>
+
+        <div class="sidebar__footer">
+          <button class="nav-item" data-view="admin" type="button">
+            <span class="nav-item__icon">⚙</span><span>Admin Panel</span>
+          </button>
+          <div class="sidebar-tip">
+            <span class="sidebar-tip__icon">?</span>
+            <span><strong>Cần hỗ trợ?</strong><small>Mở trung tâm trợ giúp</small></span>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app-stage">
+        <header class="topbar">
+          <button class="icon-button mobile-menu" id="mobile-menu" type="button" aria-label="Mở điều hướng">☰</button>
+          <div class="command-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="global-search" type="search" placeholder="Tìm người, công việc hoặc tài liệu…" aria-label="Tìm kiếm" />
+            <kbd>Ctrl K</kbd>
+          </div>
+          <div class="topbar__actions">
+            <button class="icon-button" id="theme-toggle" type="button" aria-label="Đổi giao diện sáng tối">◐</button>
+            <button class="icon-button notification-button" id="notification-button" type="button" aria-label="Thông báo">
+              ♢<span></span>
+            </button>
+            <button class="create-button" id="create-button" type="button"><span>＋</span>Tạo mới</button>
+            <button class="profile-button" id="profile-button" type="button" aria-label="Mở menu tài khoản">
+              <span class="avatar avatar--ha">LH</span>
+              <span class="profile-button__copy"><strong>Lưu Hà</strong><small>Product Owner</small></span>
+              <span aria-hidden="true">⌄</span>
+            </button>
+          </div>
+        </header>
+
+        <main id="page-content" tabindex="-1"></main>
+      </div>
+    </div>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <dialog class="create-dialog" id="create-dialog">
+      <form method="dialog">
+        <div class="dialog-head">
+          <div>
+            <span class="eyebrow">Thao tác nhanh</span>
+            <h2>Bạn muốn tạo gì?</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Đóng">×</button>
+        </div>
+        <div class="create-grid">
+          <button value="task" data-create="Công việc mới"><span class="quick-icon quick-icon--green">✓</span><strong>Công việc</strong><small>Giao việc và đặt thời hạn</small></button>
+          <button value="leave" data-create="Đơn nghỉ phép"><span class="quick-icon quick-icon--coral">☼</span><strong>Đơn nghỉ phép</strong><small>Gửi yêu cầu phê duyệt</small></button>
+          <button value="recognition" data-create="Lời ghi nhận"><span class="quick-icon quick-icon--gold">◇</span><strong>Ghi nhận</strong><small>Cảm ơn một đồng đội</small></button>
+          <button value="document" data-create="Tài liệu"><span class="quick-icon quick-icon--blue">▤</span><strong>Tài liệu</strong><small>Thêm tài liệu nội bộ</small></button>
+        </div>
+        <p class="dialog-note">Prototype chỉ mô phỏng luồng giao diện; dữ liệu chưa được gửi đến backend.</p>
+      </form>
+    </dialog>
+
+    <div class="profile-popover" id="profile-popover" hidden>
+      <strong>Lưu Hà</strong>
+      <span>luuha@mre.vn</span>
+      <button type="button" data-view="profile">Hồ sơ cá nhân</button>
+      <button type="button" data-view="settings">Cài đặt giao diện</button>
+      <hr />
+      <button type="button" id="signout-demo">Đăng xuất (minh họa)</button>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast__icon">✓</span><span id="toast-message"></span>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
