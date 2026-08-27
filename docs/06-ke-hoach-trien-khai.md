@@ -14,6 +14,7 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 - Danh sách open decisions.
 - ADR template và quy trình ADR.
 - Glossary và test strategy ban đầu.
+- Governance baseline: `.gitignore`, `.gitattributes`, CONTRIBUTING, PR template và CI repository checker.
 
 Chưa có:
 
@@ -22,7 +23,6 @@ Chưa có:
 - Dependency ứng dụng.
 - Identity Provider được chọn.
 - Tính năng nghiệp vụ.
-- Conventions/CI/secret-handling hoàn chỉnh cho Phase 1.
 
 ## Các phase mục tiêu
 
@@ -49,11 +49,10 @@ Chỉ chuyển phase khi:
 ## Bước tiếp theo đề xuất
 
 1. Người sở hữu sản phẩm duyệt sáu tài liệu đường đọc chính.
-2. Hoàn tất baseline Git và kiểm tra chất lượng tài liệu.
-3. Chốt conventions, CI tối thiểu và secret-handling rule cho Phase 1.
-4. Ưu tiên các open decision chặn Phase 1: role boundary, Admin access, cơ cấu/capability chính thức và Identity contract giả lập.
-5. Tạo ADR cho những lựa chọn cần hiện thực.
-6. Chỉ sau khi có yêu cầu chuyển Phase 1 mới scaffold stack được duyệt.
+2. Chạy và xác nhận governance CI trên GitHub.
+3. Ưu tiên các open decision chặn Phase 1: role boundary, Admin access, cơ cấu/capability chính thức và Identity contract giả lập.
+4. Tạo ADR cho những lựa chọn cần hiện thực.
+5. Chỉ sau khi có yêu cầu chuyển Phase 1 mới scaffold stack được duyệt.
 
 ## Đọc sâu hơn
 

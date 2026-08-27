@@ -22,6 +22,8 @@ Phase 0 hiện chỉ xây dựng source of truth và cơ chế ghi quyết đị
 6. Đọc các ADR đã được chấp nhận có liên quan.
 7. Chỉ sau đó mới kiểm tra code hoặc prototype liên quan.
 
+Quy ước branch, commit, pull request và kiểm tra local nằm tại [CONTRIBUTING.md](CONTRIBUTING.md).
+
 Prototype chỉ là tài liệu tham khảo giao diện. Không được dùng prototype để suy ra backend, database, Identity, authorization, security hoặc kiến trúc production.
 
 ## 3. Nhãn trạng thái quyết định
@@ -76,6 +78,7 @@ Chỉ viện dẫn “xác nhận trực tiếp mới nhất” khi xác nhận 
 - Với endpoint nhạy cảm, tối thiểu phải test allowed, thiếu capability, ngoài scope, field redaction và account/employment không hợp lệ.
 - Không đưa secret hoặc dữ liệu production vào Git, fixture hay tài liệu công khai.
 - Giữ MRERP hoạt động khi integration khác tạm lỗi.
+- Trước commit, chạy `python scripts/check_docs.py` và `git diff --check`.
 
 ## 8. Definition of Done chung
 

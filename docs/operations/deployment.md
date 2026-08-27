@@ -113,6 +113,8 @@ CDN chỉ dành cho static asset phù hợp; không sửa database query hoặc 
 
 Chi tiết secret manager, certificate automation và service authentication là **Chưa quyết định**.
 
+Baseline repository được mô tả tại [Quản lý cấu hình và secret](configuration-and-secrets.md). Secret manager/config delivery production vẫn mở theo OD-21.
+
 ## 9. Readiness trước production
 
 Trước khi mở production phải có tối thiểu:

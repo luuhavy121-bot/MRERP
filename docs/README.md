@@ -34,6 +34,7 @@ Các file `01–06` là bản dẫn đường ngắn gọn. Chúng không sao ch
 | Identity, SSO và authorization | [architecture/identity-and-authorization.md](architecture/identity-and-authorization.md) |
 | API, event, snapshot và tích hợp product | [architecture/ecosystem-integration.md](architecture/ecosystem-integration.md) |
 | VPS, database, worker, backup và quan sát | [operations/deployment.md](operations/deployment.md) |
+| Cấu hình và secret ở mức repository | [operations/configuration-and-secrets.md](operations/configuration-and-secrets.md) |
 | Điều kiện đạt/không đạt cấp sản phẩm và phase | [04-tieu-chi-nghiem-thu.md](04-tieu-chi-nghiem-thu.md) |
 | Chiến lược kiểm thử kỹ thuật | [testing/test-strategy.md](testing/test-strategy.md) |
 | Phase và thứ tự triển khai | [product/roadmap.md](product/roadmap.md) |
@@ -72,3 +73,4 @@ Trước khi commit thay đổi tài liệu:
 - Kiểm tra open decision mới đã vào đúng danh mục.
 - Kiểm tra không có hai tài liệu cùng tự nhận sở hữu một policy/contract.
 - Kiểm tra prototype không bị dùng làm bằng chứng production.
+- Chạy `python scripts/check_docs.py` và `git diff --check`.

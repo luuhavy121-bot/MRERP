@@ -12,7 +12,7 @@ Roadmap này là **Đề xuất mục tiêu**. Mỗi phase cần được xác n
 - Chốt conventions, CI, secret handling và Definition of Done.
 - Chỉ scaffold React/Vite và Django/DRF sau khi Phase 0 tài liệu được duyệt và có yêu cầu chuyển phase.
 
-**Trạng thái hiện tại:** nền tài liệu, ADR, glossary và test strategy đã có; Phase 0 chưa đóng vì còn cần duyệt source of truth và hoàn tất conventions/CI/secret handling cho Phase 1.
+**Trạng thái hiện tại:** nền tài liệu, ADR, glossary, test strategy và repository governance baseline đã có; Phase 0 chưa đóng vì còn cần duyệt source of truth và các quyết định chặn vertical slice Phase 1.
 
 ## Phase 1 — Vertical slice nền tảng
 

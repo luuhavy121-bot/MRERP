@@ -1,6 +1,8 @@
 # Open decisions
 
-Tất cả mục trong tài liệu này có trạng thái **Chưa quyết định**. AI và developer không được tự lựa chọn. Mỗi quyết định ảnh hưởng production phải đi qua ADR và cập nhật source of truth liên quan.
+Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết định**. AI và developer không được tự lựa chọn. Mỗi quyết định ảnh hưởng production phải đi qua ADR và cập nhật source of truth liên quan.
+
+## Đang mở
 
 | ID | Quyết định cần chốt | Tài liệu bị ảnh hưởng |
 |---|---|---|
@@ -23,7 +25,7 @@ Tất cả mục trong tài liệu này có trạng thái **Chưa quyết địn
 | OD-17 | Quan hệ codebase ASSETCONTROL Nhà ZUZU với ASSETCONTROL MRE | Product boundary, migration, security |
 | OD-18 | Có mở quyền ASSETCONTROL cho đối tượng ngoài CEO và Leader hay không, và theo policy nào | Product boundary, authorization |
 | OD-19 | Ranh giới thao tác giữa Admin Panel MRERP và IdP: provisioning, deprovisioning, approval và audit | Identity, Admin Panel, operations |
-| OD-20 | Conventions repository, CI tối thiểu và secret-handling baseline cho Phase 1 | Repository governance, testing, operations |
+| OD-21 | Secret manager, config delivery, certificate automation và rotation cho production | Security, deployment, operations |
 
 ## Chi tiết các nhóm cần duyệt sớm
 
@@ -37,7 +39,7 @@ OD-04 đến OD-07, OD-16, OD-18 và OD-19 cần được chốt đủ cho verti
 
 ### Topology và vận hành
 
-OD-09 đến OD-12, OD-14 và OD-15 cần ADR trước khi lựa chọn production topology/tool. Có thể thiết kế interface/contract mà chưa chọn product cụ thể.
+OD-09 đến OD-12, OD-14, OD-15 và OD-21 cần ADR trước khi lựa chọn production topology/tool. Có thể thiết kế interface/contract mà chưa chọn product cụ thể.
 
 ### Migration product hiện hữu
 
@@ -45,7 +47,13 @@ OD-08 và OD-17 yêu cầu audit code, workflow, dữ liệu và deployment th�
 
 ### Repository baseline
 
-OD-20 cần được giải quyết trước khi scaffold Phase 1. Quyết định này không được dùng để lựa chọn Identity Provider hoặc policy nghiệp vụ.
+OD-20 đã được giải quyết bằng ADR-0001. Baseline này không lựa chọn Identity Provider, secret manager production hoặc policy nghiệp vụ.
+
+## Đã giải quyết
+
+| ID | Kết quả | ADR |
+|---|---|---|
+| OD-20 | Repository conventions, CI tối thiểu và secret-handling baseline được chấp nhận | [ADR-0001](0001-repository-governance-baseline.md) |
 
 ## Những nội dung không còn mở
 

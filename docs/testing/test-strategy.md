@@ -4,7 +4,7 @@ Tài liệu này chịu trách nhiệm chính về chiến lược kiểm thử 
 
 ## 1. Trạng thái
 
-**Đề xuất mục tiêu.** Chiến lược dưới đây cần được cụ thể hóa theo từng vertical slice. Phase 0 chưa có application code nên chưa có test suite để chạy.
+**Đề xuất mục tiêu.** Chiến lược application dưới đây cần được cụ thể hóa theo từng vertical slice. Phase 0 chưa có application code; kiểm tra repository hiện được thực thi bằng `scripts/check_docs.py` và GitHub Actions.
 
 ## 2. Các lớp kiểm thử
 
@@ -70,6 +70,15 @@ Phase 0 chưa có application test suite, nhưng thay đổi tài liệu vẫn p
 - Không có scaffold/dependency ngoài phạm vi được yêu cầu.
 - Không có secret, credential thật hoặc dữ liệu production.
 - Không có mô tả biến prototype thành production source.
+
+Lệnh chuẩn:
+
+```text
+python scripts/check_docs.py
+git diff --check
+```
+
+Workflow `.github/workflows/repository-quality.yml` chạy checker khi push vào `main`, khi có pull request và khi được kích hoạt thủ công.
 
 ## 8. Tài liệu liên quan
 

@@ -51,6 +51,7 @@ Không được tạo runbook break-glass có thể thực thi trước khi OD-0
 ## Đọc sâu hơn
 
 - [Deployment và vận hành](operations/deployment.md)
+- [Quản lý cấu hình và secret](operations/configuration-and-secrets.md)
 - [Identity và phân quyền](architecture/identity-and-authorization.md)
 - [Tích hợp hệ sinh thái](architecture/ecosystem-integration.md)
 - [Open decisions](decisions/open-decisions.md)

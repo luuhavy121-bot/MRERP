@@ -22,12 +22,22 @@ Hiện chưa có frontend, backend, database migration hoặc dependency ứng d
 8. [docs/README.md](docs/README.md) — chọn tài liệu chuyên sâu theo miền.
 9. [Thuật ngữ](docs/glossary.md), [Open decisions](docs/decisions/open-decisions.md) và các [ADR](docs/decisions/README.md) liên quan.
 
+Hướng dẫn đóng góp: [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Cấu trúc Phase 0
 
 ```text
 MRERP/
+├─ .gitattributes
+├─ .gitignore
+├─ .github/
+│  ├─ pull_request_template.md
+│  └─ workflows/repository-quality.yml
 ├─ AGENTS.md
+├─ CONTRIBUTING.md
 ├─ README.md
+├─ scripts/
+│  └─ check_docs.py
 └─ docs/
    ├─ README.md
    ├─ glossary.md
@@ -47,7 +57,8 @@ MRERP/
    │  ├─ identity-and-authorization.md
    │  └─ ecosystem-integration.md
    ├─ operations/
-   │  └─ deployment.md
+   │  ├─ deployment.md
+   │  └─ configuration-and-secrets.md
    ├─ testing/
    │  └─ test-strategy.md
    └─ decisions/

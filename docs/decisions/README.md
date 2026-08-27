@@ -46,4 +46,4 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 
 ## Danh sách ADR
 
-Chưa có ADR được chấp nhận trong Phase 0 ban đầu.
+- [ADR-0001: Repository governance baseline](0001-repository-governance-baseline.md) — `Accepted`.

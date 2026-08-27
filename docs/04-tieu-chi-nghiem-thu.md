@@ -41,9 +41,10 @@ Phase 0 **Đạt** khi:
 - Có bản đồ tài liệu chịu trách nhiệm chính và glossary thống nhất thuật ngữ.
 - Có danh sách open decisions.
 - Có ADR template và quy trình chấp nhận ADR.
+- Có governance baseline, CI kiểm tra repository và quy tắc config/secret đã được chấp nhận.
 - Chưa scaffold/cài dependency ngoài phạm vi được yêu cầu.
 - Người sở hữu sản phẩm duyệt source of truth hoặc chỉ rõ phần cần sửa.
-- Conventions, CI tối thiểu và secret-handling rule cần cho phase kế tiếp đã được xác nhận hoặc được ghi rõ là công việc Phase 0 còn lại.
+- Checker Phase 0 và `git diff --check` chạy thành công.
 
 Phase 0 **Không đạt** nếu tài liệu âm thầm biến đề xuất/open decision thành quyết định hoặc có hai nguồn sự thật mâu thuẫn.
 
