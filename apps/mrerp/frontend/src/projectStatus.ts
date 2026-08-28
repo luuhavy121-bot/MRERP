@@ -18,7 +18,7 @@ export const projectStatus = {
   ],
   modules: [
     { name: 'Dashboard', phase: 'Phase 1–2', percent: 20, tone: 'prototype' as ProgressTone, state: 'Có prototype UI', next: 'Vertical slice Dashboard' },
-    { name: 'People / HR', phase: 'Phase 1', percent: 70, tone: 'active' as ProgressTone, state: 'UI nối API thật', next: 'Nghiệm thu local' },
+    { name: 'People / HR', phase: 'Phase 1', percent: 75, tone: 'active' as ProgressTone, state: 'UI nối API thật', next: 'Nghiệm thu local' },
     { name: 'Attendance / Leave', phase: 'Phase 2', percent: 10, tone: 'planned' as ProgressTone, state: 'Đã có yêu cầu', next: 'Chờ refinement' },
     { name: 'Approvals', phase: 'Phase 2', percent: 20, tone: 'prototype' as ProgressTone, state: 'Có prototype UI', next: 'Chưa có backend' },
     { name: 'Tasks', phase: 'Phase 1–2', percent: 20, tone: 'prototype' as ProgressTone, state: 'Có prototype UI', next: 'Ứng viên slice kế tiếp' },
@@ -33,7 +33,7 @@ export const projectStatus = {
   quality: [
     { label: 'Source of truth', value: 100, state: 'Đã thiết lập' },
     { label: 'Repository governance', value: 100, state: 'CI đã cấu hình' },
-    { label: 'People vertical slice', value: 70, state: '18 automated tests' },
+    { label: 'People vertical slice', value: 75, state: '18 automated tests' },
     { label: 'Identity production', value: 0, state: 'Chưa chọn provider' },
   ],
   nextGates: [

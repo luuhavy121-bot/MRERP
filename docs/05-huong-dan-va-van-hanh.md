@@ -13,7 +13,7 @@ Repository đã có bản chạy local của People/HR Foundation trong Phase 1.
 
 **Đề xuất mục tiêu:** thực hiện đăng nhập chung bằng OIDC/OAuth 2.0. Identity Provider và chi tiết session vẫn chưa quyết định.
 
-**Đã có ở local:** đăng nhập mock bằng session cookie, danh sách/hồ sơ nhân sự theo scope, HR quick-create và chỉnh hồ sơ, Leader quản lý cơ cấu/team và xác nhận nhân sự chính thức.
+**Đã có ở local:** đăng nhập mock bằng session cookie; ba view People gồm Danh bạ, Sơ đồ tổ chức và Team; danh sách/hồ sơ nhân sự theo scope; HR quick-create và chỉnh hồ sơ; Leader quản lý cơ cấu/team và xác nhận nhân sự chính thức. Sơ đồ và Team view chỉ trình bày payload đã được backend lọc, không mở rộng scope ở frontend.
 
 Mục **Tiến độ** trong thanh điều hướng là bề mặt quản trị tạm thời: hiển thị phase, module, bằng chứng chất lượng, open decisions và cổng tiếp theo. Chỉ số lấy từ roadmap/source of truth và phải cập nhật cùng bằng chứng thực tế; mục này tự ẩn khi tổng tiến độ đạt 100%.
 

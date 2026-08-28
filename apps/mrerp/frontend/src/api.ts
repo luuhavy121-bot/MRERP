@@ -27,6 +27,18 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return payload as T
 }
 
+async function requestAll<T>(path: string): Promise<T[]> {
+  const results: T[] = []
+  let next: string | null = path
+  while (next) {
+    const normalized = new URL(next, window.location.origin)
+    const page: Page<T> = await request(`${normalized.pathname}${normalized.search}`)
+    results.push(...page.results)
+    next = page.next
+  }
+  return results
+}
+
 export const api = {
   session: () => request<Session>('/api/v1/auth/session/'),
   login: (username: string, password: string) => request<Session>('/api/v1/auth/login/', {
@@ -34,6 +46,7 @@ export const api = {
   }),
   logout: () => request<void>('/api/v1/auth/logout/', { method: 'POST' }),
   employees: (search = '') => request<Page<Employee>>(`/api/v1/people/employees/?search=${encodeURIComponent(search)}`),
+  allEmployees: (search = '') => requestAll<Employee>(`/api/v1/people/employees/?search=${encodeURIComponent(search)}`),
   employee: (uuid: string) => request<Employee>(`/api/v1/people/employees/${uuid}/`),
   createEmployee: (payload: { employee_code: string; username: string; password: string }) =>
     request<Employee>('/api/v1/people/employees/', { method: 'POST', body: JSON.stringify(payload) }),
@@ -44,9 +57,11 @@ export const api = {
   assignTeam: (uuid: string, team_uuid: string | null) =>
     request<Employee>(`/api/v1/people/employees/${uuid}/membership/`, { method: 'PUT', body: JSON.stringify({ team_uuid }) }),
   departments: () => request<Page<Department>>('/api/v1/people/departments/'),
+  allDepartments: () => requestAll<Department>('/api/v1/people/departments/'),
   createDepartment: (payload: { code: string; name: string }) =>
     request<Department>('/api/v1/people/departments/', { method: 'POST', body: JSON.stringify(payload) }),
   teams: () => request<Page<Team>>('/api/v1/people/teams/'),
+  allTeams: () => requestAll<Team>('/api/v1/people/teams/'),
   createTeam: (payload: { code: string; name: string; department: string }) =>
     request<Team>('/api/v1/people/teams/', { method: 'POST', body: JSON.stringify(payload) }),
   addLeader: (teamUuid: string, employeeUuid: string) =>
