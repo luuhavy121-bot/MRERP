@@ -83,6 +83,13 @@ function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, can
         <div><span>Phòng ban</span><strong>{employee.department_name || 'Chưa gán'}</strong></div>
         <div><span>Cấp bậc</span><strong>{labels[employee.rank ?? 'staff'] ?? employee.rank ?? 'Staff'}</strong></div>
       </div>
+      {canPromote && employee.employment_status === 'probation' && <section className={`promotion-box promotion-box--prominent ${employee.can_promote ? '' : 'promotion-box--blocked'}`}>
+        <div className="section-title"><span>Chuyển trạng thái công việc</span><small>Thử việc → Chính thức</small></div>
+        {employee.can_promote ? <>
+          <textarea aria-label="Ghi chú xác nhận chính thức" placeholder="Ghi chú xác nhận bắt buộc…" value={note} onChange={(e) => setNote(e.target.value)} />
+          <button className="primary-button compact" disabled={busy || !note.trim()} onClick={() => run(() => api.promoteEmployee(employee.uuid, note))}>✓ Chuyển lên Chính thức</button>
+        </> : <div className="promotion-blocked-message"><span>🔒</span><p><strong>Chưa thể chuyển lên Chính thức</strong><small>Leader chỉ duyệt nhân sự thuộc Team mình lãnh đạo. Hãy cập nhật Team phù hợp trước.</small></p><button className="secondary-button compact" disabled>Chuyển lên Chính thức</button></div>}
+      </section>}
       {canEdit && <section className="drawer-section">
         <div className="section-title"><span>Hồ sơ HR</span><small>Chỉ HR nhận payload này</small></div>
         <div className="form-grid">
@@ -98,11 +105,6 @@ function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, can
       {canManageMembership && <section className="drawer-section">
         <div className="section-title"><span>Team hiện tại</span><small>Mỗi nhân sự thuộc tối đa một Team</small></div>
         <div className="inline-action"><select value={team} onChange={(e) => setTeam(e.target.value)}><option value="">Chưa vào Team</option>{teams.map((item) => <option key={item.uuid} value={item.uuid}>{item.name}</option>)}</select><button className="secondary-button" disabled={busy} onClick={() => run(() => api.assignTeam(employee.uuid, team || null))}>Cập nhật Team</button></div>
-      </section>}
-      {canPromote && employee.can_promote && employee.employment_status === 'probation' && <section className="drawer-section promotion-box">
-        <div className="section-title"><span>Xác nhận chính thức</span><small>Chỉ nhân sự trong Team bạn lãnh đạo</small></div>
-        <textarea placeholder="Ghi chú bắt buộc…" value={note} onChange={(e) => setNote(e.target.value)} />
-        <button className="primary-button compact" disabled={busy || !note.trim()} onClick={() => run(() => api.promoteEmployee(employee.uuid, note))}>Chuyển sang Chính thức</button>
       </section>}
       {error && <div className="alert alert--error">{error}</div>}
     </aside>
