@@ -97,6 +97,7 @@ class Employee(TimeStampedModel):
             ("view_company_directory", "Can view the company directory"),
             ("view_hr_detail", "Can view HR-only employee details"),
             ("promote_employee", "Can promote probation employees"),
+            ("promote_any_employee", "Can promote probation employees across the company"),
             ("manage_organization", "Can manage departments and teams"),
             ("manage_membership", "Can manage team membership and leadership"),
             ("view_people_audit", "Can view People audit events"),

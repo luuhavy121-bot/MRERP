@@ -40,8 +40,13 @@ class EmployeeLeaderSerializer(EmployeeBasicSerializer):
         actor_employee = getattr(request.user, "employee_profile", None)
         return bool(
             actor_employee
-            and employee.team_id
-            and TeamLeadership.objects.filter(team_id=employee.team_id, leader=actor_employee).exists()
+            and (
+                request.user.has_perm("people_domain.promote_any_employee")
+                or (
+                    employee.team_id
+                    and TeamLeadership.objects.filter(team_id=employee.team_id, leader=actor_employee).exists()
+                )
+            )
             and employee.employment_status == Employee.EmploymentStatus.PROBATION
         )
 

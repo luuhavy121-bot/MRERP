@@ -24,7 +24,7 @@ class MockIdentityTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["employee_code"], "HRA01")
         self.assertTrue(response.data["mock_identity"])
-        self.assertEqual(len(response.data["debug_personas"]), 4)
+        self.assertEqual(len(response.data["debug_personas"]), 5)
         session_response = self.client.get("/api/v1/auth/session/")
         self.assertTrue(session_response.data["authenticated"])
         self.assertEqual(session_response.data["username"], "hr.demo")

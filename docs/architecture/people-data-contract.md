@@ -1,6 +1,6 @@
 # People/HR — field, data model và API contract dự thảo
 
-Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ownership](data-ownership.md) vẫn là source of truth về quyền sở hữu dữ liệu. Các phần được ADR-0003 đến ADR-0007 chấp nhận có nhãn **Đã chốt**; phần production Identity và policy ngoài slice vẫn giữ nguyên trạng thái mở.
+Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ownership](data-ownership.md) vẫn là source of truth về quyền sở hữu dữ liệu. Các phần được ADR-0003 đến ADR-0008 chấp nhận có nhãn **Đã chốt**; phần production Identity và policy ngoài slice vẫn giữ nguyên trạng thái mở.
 
 ## 1. Ranh giới dữ liệu
 
@@ -27,7 +27,7 @@ Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ow
 - `department_uuid` và tên hiển thị;
 - `team_uuid` và tên hiển thị.
 
-Staff nhận `basic` trong cùng Team; Leader nhận `basic` toàn công ty. Projection `hr_detail` chỉ dành cho HR và bổ sung username/account mapping, CCCD, ngày sinh, địa chỉ và employment status. Leader nhận employment status của target trong command promotion nhưng field nhạy cảm không xuất hiện trong directory payload.
+Staff nhận `basic` trong cùng Team; Leader nhận `basic` toàn công ty. Projection `hr_detail` dành cho HR và CEO, bổ sung username/account mapping, CCCD, ngày sinh, địa chỉ và employment status. Leader nhận employment status của target trong command promotion nhưng field nhạy cảm không xuất hiện trong directory payload.
 
 ### 2.3 Input của form thêm nhân sự
 
@@ -49,7 +49,7 @@ Form UI không làm thay đổi ownership: password không trở thành field c�
 
 ### 2.4 Field bị loại khỏi slice
 
-**Không làm trong slice đầu:** giới tính, số điện thoại cá nhân, thuế, ngân hàng, lương/phụ cấp, dữ liệu chấm công/nghỉ phép, hồ sơ tuyển dụng và file pháp lý. Ngày sinh, địa chỉ và CCCD đã được người sở hữu sản phẩm đưa vào projection `hr_detail`, chỉ HR được nhận/sửa trong slice.
+**Không làm trong slice đầu:** giới tính, số điện thoại cá nhân, thuế, ngân hàng, lương/phụ cấp, dữ liệu chấm công/nghỉ phép, hồ sơ tuyển dụng và file pháp lý. Ngày sinh, địa chỉ và CCCD đã được người sở hữu sản phẩm đưa vào projection `hr_detail`; HR và CEO được nhận/sửa trong slice.
 
 Loại khỏi slice không có nghĩa các field này được chấp nhận cho phase sau; privacy, retention và quyền xem vẫn **Chưa quyết định**.
 

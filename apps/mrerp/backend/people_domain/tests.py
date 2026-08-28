@@ -16,6 +16,7 @@ class PeopleApiTests(APITestCase):
         call_command("seed_demo", **{"password": "Test-" + "Only-1234!"}, verbosity=0)
         user_model = get_user_model()
         cls.hr = user_model.objects.get(username="hr.demo")
+        cls.ceo = user_model.objects.get(username="ceo.demo")
         cls.leader = user_model.objects.get(username="leader.demo")
         cls.staff = user_model.objects.get(username="staff.demo")
         cls.other = user_model.objects.get(username="other.demo")
@@ -35,7 +36,7 @@ class PeopleApiTests(APITestCase):
     def test_leader_sees_all_teams_without_sensitive_fields(self):
         response = self.list_employees(self.leader)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 5)
+        self.assertEqual(response.data["count"], 6)
         self.assertIn("employment_status", response.data["results"][0])
         self.assertNotIn("national_id", response.data["results"][0])
         probation = next(item for item in response.data["results"] if item["employee_code"] == "TRY-ALPHA-01")
@@ -167,6 +168,23 @@ class PeopleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_ceo_has_hr_projection_and_can_promote_across_company(self):
+        target = self.other.employee_profile
+        target.employment_status = Employee.EmploymentStatus.PROBATION
+        target.save(update_fields=["employment_status"])
+        self.client.force_login(self.ceo)
+        listing = self.client.get("/api/v1/people/employees/")
+        self.assertEqual(listing.status_code, status.HTTP_200_OK)
+        target_payload = next(item for item in listing.data["results"] if item["uuid"] == str(target.pk))
+        self.assertIn("national_id", target_payload)
+        self.assertTrue(target_payload["can_promote"])
+        response = self.client.post(
+            f"/api/v1/people/employees/{target.pk}/promote/",
+            {"note": "CEO duyệt toàn công ty"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_promotion_requires_note(self):
         target = self.staff.employee_profile

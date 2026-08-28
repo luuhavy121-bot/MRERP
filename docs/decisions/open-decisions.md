@@ -47,9 +47,9 @@ OD-09 đến OD-12, OD-14, OD-15 và OD-21 cần ADR trước khi lựa chọn p
 
 ### Phase 1 People/HR readiness
 
-OD-22 đến OD-26 đã được giải quyết cho phạm vi People/HR Foundation bằng ADR-0003 đến ADR-0007. Quyết định mock Identity không chọn IdP production và không đóng OD-01/OD-19 ngoài phạm vi slice.
+OD-22 đến OD-26 đã được giải quyết cho phạm vi People/HR Foundation bằng ADR-0003 đến ADR-0008. CEO đã được chốt toàn quyền trong People nhưng quyết định này không tự áp dụng sang module/product khác. Mock Identity không chọn IdP production và không đóng OD-01/OD-19 ngoài phạm vi slice.
 
-**Đã chốt cục bộ ngày 28/08/2026:** HR tạo Employee với initial status `Thử việc`; Leader quyết định `Thử việc → Chính thức` trong Team mình lãnh đạo. HR nhập tự do mã nhân sự duy nhất và chọn có tạo account hay không. Khi chọn tạo account, account và Employee phải cùng thành công; khi không chọn, Employee được phép chưa có account. Credential và workflow cấp account production về sau vẫn thuộc IdP/OD-19.
+**Đã chốt cục bộ ngày 28/08/2026:** HR tạo Employee với initial status `Thử việc`; Leader quyết định `Thử việc → Chính thức` trong Team mình lãnh đạo; CEO có toàn bộ capability People và company scope. HR nhập tự do mã nhân sự duy nhất và chọn có tạo account hay không. Khi chọn tạo account, account và Employee phải cùng thành công; khi không chọn, Employee được phép chưa có account. Credential và workflow cấp account production về sau vẫn thuộc IdP/OD-19.
 
 ### Migration product hiện hữu
 

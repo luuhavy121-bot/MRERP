@@ -12,7 +12,7 @@ Roadmap này là **Đề xuất mục tiêu**. Mỗi phase cần được xác n
 - Chốt conventions, CI, secret handling và Definition of Done.
 - Chỉ scaffold React/Vite và Django/DRF sau khi Phase 0 tài liệu được duyệt và có yêu cầu chuyển phase.
 
-**Trạng thái:** hoàn tất. Source of truth, ADR, glossary, test strategy và repository governance baseline đã được duyệt; CI baseline đã chạy thành công trên GitHub. ADR-0003 đến ADR-0007 đã đóng các quyết định chặn People slice mà không chọn Identity Provider production.
+**Trạng thái:** hoàn tất. Source of truth, ADR, glossary, test strategy và repository governance baseline đã được duyệt; CI baseline đã chạy thành công trên GitHub. ADR-0003 đến ADR-0008 đã đóng các quyết định chặn People slice mà không chọn Identity Provider production.
 
 ## Phase 1 — Vertical slice nền tảng
 

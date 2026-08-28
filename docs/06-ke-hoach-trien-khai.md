@@ -20,7 +20,7 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 - ADR-0002 và ma trận quyền đã chốt phần permission semantics của Task được người dùng xác nhận.
 - Definition of Ready và acceptance scenarios cho Task đã có bản đề xuất để duyệt.
 - Gói refinement People/HR Foundation đã có stories, field/data/API draft, permission matrix, migration approach, acceptance scenarios và readiness register.
-- ADR-0003 đến ADR-0007 đã được người sở hữu sản phẩm chấp nhận cho People/HR Foundation; ADR-0007 thay yêu cầu luôn tạo account bằng lựa chọn của HR.
+- ADR-0003 đến ADR-0008 đã được người sở hữu sản phẩm chấp nhận cho People/HR Foundation; ADR-0007 điều chỉnh account tùy chọn và ADR-0008 chốt CEO toàn quyền People.
 - React/Vite frontend, Django/DRF API, migration, mock Identity development/test, authorization, audit và automated tests của slice đã được tạo.
 - People UI có Danh bạ, sơ đồ Department → Team → Leader/thành viên và Team management; mọi view dùng cùng server authorization/projection đã chốt.
 - Repository CI chạy docs/secret hygiene, backend tests trên PostgreSQL 16, OpenAPI validation và frontend lint/build.

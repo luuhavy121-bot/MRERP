@@ -8,7 +8,7 @@ from django.db import IntegrityError, transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from .capabilities import STAFF_GROUP
+from .capabilities import PROMOTE_ANY_EMPLOYEE, STAFF_GROUP
 from .models import AuditEvent, Employee, EmploymentTransition, Team, TeamLeadership
 
 logger = logging.getLogger(__name__)
@@ -91,7 +91,11 @@ def update_employee_details(*, actor, employee: Employee, validated_data: dict) 
 
 def promote_employee(*, actor, target: Employee, note: str) -> Employee:
     actor_employee = actor.employee_profile
-    if not target.team_id or not TeamLeadership.objects.filter(team_id=target.team_id, leader=actor_employee).exists():
+    has_company_promotion_scope = actor.has_perm(PROMOTE_ANY_EMPLOYEE)
+    manages_target_team = bool(
+        target.team_id and TeamLeadership.objects.filter(team_id=target.team_id, leader=actor_employee).exists()
+    )
+    if not has_company_promotion_scope and not manages_target_team:
         raise ValidationError({"scope": "Leader chỉ được xác nhận nhân sự trong Team mình lãnh đạo."})
     if target.employment_status != Employee.EmploymentStatus.PROBATION:
         raise ValidationError({"employment_status": "Chỉ có thể chuyển từ Thử việc sang Chính thức."})

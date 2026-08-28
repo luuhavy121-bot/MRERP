@@ -216,7 +216,7 @@ function ProjectProgress() {
     <section className="progress-summary-grid">
       <article><span>Modules theo kế hoạch</span><strong>{projectStatus.modules.length}</strong><small>{completedModules} module hoàn tất 100%</small></article>
       <article><span>Quyết định đã giải quyết</span><strong>{projectStatus.decisions.resolved}</strong><small>{projectStatus.decisions.open} open decisions còn lại</small></article>
-      <article><span>Automated tests People</span><strong>24</strong><small>SQLite và PostgreSQL đã xanh</small></article>
+      <article><span>Automated tests People</span><strong>25</strong><small>SQLite và PostgreSQL đã xanh</small></article>
       <article><span>Ưu tiên quyết định</span><strong>OD-19</strong><small>Identity production vẫn chưa chốt</small></article>
     </section>
 

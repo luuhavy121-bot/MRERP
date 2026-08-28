@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
-from people_domain.capabilities import HR_GROUP, LEADER_GROUP, STAFF_GROUP
+from people_domain.capabilities import CEO_GROUP, HR_GROUP, LEADER_GROUP, STAFF_GROUP
 from people_domain.models import Department, Employee, Team, TeamLeadership
 
 
@@ -22,6 +22,24 @@ GROUP_PERMISSIONS = {
         "view_team",
     ],
     STAFF_GROUP: ["view_employee"],
+    CEO_GROUP: [
+        "view_employee",
+        "view_company_directory",
+        "view_hr_detail",
+        "add_employee",
+        "change_employee",
+        "promote_employee",
+        "promote_any_employee",
+        "manage_organization",
+        "manage_membership",
+        "view_people_audit",
+        "add_department",
+        "change_department",
+        "view_department",
+        "add_team",
+        "change_team",
+        "view_team",
+    ],
 }
 
 
@@ -46,6 +64,7 @@ class Command(BaseCommand):
 
         user_model = get_user_model()
         demos = [
+            ("ceo.demo", "CEO01", Employee.Rank.CEO, groups[CEO_GROUP], None, "CEO Demo"),
             ("hr.demo", "HRA01", Employee.Rank.STAFF, groups[HR_GROUP], None, "HR Demo"),
             ("leader.demo", "LDR01", Employee.Rank.LEADER, groups[LEADER_GROUP], team_alpha, "Leader Alpha"),
             ("staff.demo", "STF01", Employee.Rank.STAFF, groups[STAFF_GROUP], team_alpha, "Staff Alpha"),
@@ -84,4 +103,4 @@ class Command(BaseCommand):
         )
 
         TeamLeadership.objects.get_or_create(team=team_alpha, leader=employees["leader.demo"])
-        self.stdout.write(self.style.SUCCESS("Created fake local accounts: hr.demo, leader.demo, staff.demo, other.demo"))
+        self.stdout.write(self.style.SUCCESS("Created fake local accounts: ceo.demo, hr.demo, leader.demo, staff.demo, other.demo"))

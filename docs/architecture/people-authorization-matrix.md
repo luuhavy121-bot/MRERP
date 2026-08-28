@@ -1,6 +1,6 @@
 # Ma trận phân quyền People/HR — Phase 1
 
-Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-authorization.md) cho People/HR Foundation. Actor/scope/field policy trong slice đã được chấp nhận qua ADR-0005; quyền CEO/Admin và policy ngoài slice vẫn chưa được suy ra.
+Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-authorization.md) cho People/HR Foundation. Actor/scope/field policy trong slice đã được chấp nhận qua ADR-0005; quyền CEO được bổ sung qua ADR-0008. Quyền Admin Panel và policy ngoài slice không được suy ra từ đây.
 
 ## 1. Nguyên tắc bắt buộc
 
@@ -8,7 +8,7 @@ Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-a
 
 **Đã chốt.** MRERP sở hữu organization mapping và capability cấp hệ sinh thái. Tên cấp bậc/phòng ban/team là company configuration, không được hard-code vào permission core.
 
-**Đã chốt cho slice.** HR tạo Employee ở trạng thái `Thử việc` và xem/sửa hồ sơ chi tiết. Staff đọc nhân sự cùng Team. Leader đọc mọi Team, quản lý organization và chỉ chuyển `Thử việc → Chính thức` trong Team mình lãnh đạo.
+**Đã chốt cho slice.** HR tạo Employee ở trạng thái `Thử việc` và xem/sửa hồ sơ chi tiết. Staff đọc nhân sự cùng Team. Leader đọc mọi Team, quản lý organization và chỉ chuyển `Thử việc → Chính thức` trong Team mình lãnh đạo. CEO có toàn bộ capability People hiện có, projection HR và company scope.
 
 **Chưa quyết định ngoài slice.** Người được vào Admin Panel, quyền Captain/Manager tương lai và các employment transition khác.
 
@@ -18,10 +18,11 @@ Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-a
 |---|---|---|
 | `people_domain.view_employee` | Đọc Employee trong scope | **Đã chốt cho slice** |
 | `people_domain.view_company_directory` | Mở rộng read scope ra toàn công ty | **Đã chốt cho Leader** |
-| `people_domain.view_hr_detail` | Nhận projection HR | **Đã chốt cho HR** |
+| `people_domain.view_hr_detail` | Nhận projection HR | **Đã chốt cho HR và CEO** |
 | `people_domain.add_employee` | Tạo Employee `Thử việc` | **Đã chốt cho HR** |
 | `people_domain.change_employee` | Sửa allow-list hồ sơ HR | **Đã chốt cho HR** |
 | `people_domain.promote_employee` | Chuyển `Thử việc → Chính thức` | **Đã chốt cho Leader cùng Team** |
+| `people_domain.promote_any_employee` | Mở rộng promotion ra toàn công ty | **Đã chốt riêng cho CEO** |
 | `people_domain.manage_organization` | Tạo/sửa Department/Team | **Đã chốt cho Leader** |
 | `people_domain.manage_membership` | Quản lý Employee–Team và Leader–Team | **Đã chốt cho Leader** |
 | `people_domain.view_people_audit` | Đọc audit People | Capability có sẵn; actor/UI **Chưa quyết định** |
@@ -38,7 +39,7 @@ Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader k
 | `assigned` | Scope được cấp rõ bằng configuration |
 | `company` | Toàn công ty, vẫn cần action capability |
 
-**Đã chốt trong slice:** Staff dùng `managed_team` theo membership hiện tại để đọc; Leader có `company` scope cho đọc directory và `managed_team` cho promotion; HR có `company` scope cho create/read/update Employee. Captain/Manager chưa có user và chưa có bundle.
+**Đã chốt trong slice:** Staff dùng `managed_team` theo membership hiện tại để đọc; Leader có `company` scope cho đọc directory và `managed_team` cho promotion; HR có `company` scope cho create/read/update Employee; CEO có `company` scope cho mọi capability People hiện có. Captain/Manager chưa có user và chưa có bundle.
 
 ## 4. Action matrix
 
@@ -53,7 +54,8 @@ Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader k
 | Leader chuyển `Thử việc → Chính thức` | `people_domain.promote_employee` | Team mình lãnh đạo, hiệu lực ngay, note bắt buộc | **Đã chốt** |
 | Leader quản lý Department/Team | `people_domain.manage_organization` | Company scope, object rule/audit | **Đã chốt** |
 | Leader gán membership/Leader–Team | `people_domain.manage_membership` | Một Employee tối đa một Team; Team nhiều Leader | **Đã chốt** |
-| Đọc audit | `people_domain.view_people_audit` | Scope và redaction riêng | **Chưa quyết định actor** |
+| CEO thực hiện nghiệp vụ People | Tất cả capability People hiện có | Company scope; vẫn tuân object rule, audit và các transition được hỗ trợ | **Đã chốt** |
+| Đọc audit | `people_domain.view_people_audit` | CEO được cấp capability; UI audit chưa hiện thực | **Đã chốt actor CEO** |
 
 ## 5. Field policy dự thảo
 
@@ -61,11 +63,11 @@ Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader k
 |---|---|---|
 | Field hệ thống | `system` | Chỉ server ghi; response tối thiểu theo use case |
 | Hồ sơ công việc cơ bản | `basic` | UUID, mã nhân sự, tên hiển thị, vị trí, phòng ban, Team; Staff cùng Team và Leader company scope |
-| Hồ sơ HR | `hr_detail` | `basic` cộng account, CCCD, ngày sinh, địa chỉ và employment status; chỉ HR |
+| Hồ sơ HR | `hr_detail` | `basic` cộng account, CCCD, ngày sinh, địa chỉ và employment status; HR và CEO |
 | Organization relation | `organization` | Đọc/ghi theo capability và scope |
 | Employment lifecycle | `employment` | Hạn chế hơn `basic`; transition riêng |
 | Audit | `audit` | Không nằm trong Employee payload thông thường |
-| Field HR nhạy cảm | `hr_detail` | CCCD, ngày sinh, địa chỉ; chỉ HR, không trả Staff/Leader |
+| Field HR nhạy cảm | `hr_detail` | CCCD, ngày sinh, địa chỉ; HR và CEO, không trả Staff/Leader |
 
 Server phải tạo projection rõ; không serialize toàn bộ model rồi dựa vào frontend để ẩn field.
 

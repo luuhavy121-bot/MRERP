@@ -16,6 +16,7 @@ from .serializers import DebugSwitchRequestSerializer, LoginRequestSerializer, S
 
 logger = logging.getLogger(__name__)
 DEBUG_PERSONAS = (
+    {"username": "ceo.demo", "label": "CEO · Toàn quyền People"},
     {"username": "hr.demo", "label": "HR · People"},
     {"username": "leader.demo", "label": "Leader · Team Alpha"},
     {"username": "staff.demo", "label": "Staff · Team Alpha"},
