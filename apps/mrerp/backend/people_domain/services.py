@@ -25,16 +25,20 @@ def audit(*, actor, action: str, target, changes: dict | None = None):
     )
 
 
-def create_probation_employee(*, actor, employee_code: str, username: str, password: str) -> Employee:
-    try:
-        validate_password(password, user=User(username=username))
-    except DjangoValidationError as exc:
-        raise ValidationError({"password": list(exc.messages)}) from exc
+def create_probation_employee(
+    *, actor, employee_code: str, create_account: bool = True, username: str = "", password: str = ""
+) -> Employee:
+    identity_user = None
+    if create_account:
+        try:
+            validate_password(password, user=User(username=username))
+        except DjangoValidationError as exc:
+            raise ValidationError({"password": list(exc.messages)}) from exc
 
-    try:
-        identity_user = User.objects.create_user(username=username, password=password, is_active=True)
-    except IntegrityError as exc:
-        raise ValidationError({"username": "Tài khoản đã tồn tại."}) from exc
+        try:
+            identity_user = User.objects.create_user(username=username, password=password, is_active=True)
+        except IntegrityError as exc:
+            raise ValidationError({"username": "Tài khoản đã tồn tại."}) from exc
 
     try:
         with transaction.atomic():
@@ -43,20 +47,25 @@ def create_probation_employee(*, actor, employee_code: str, username: str, passw
                 identity_user=identity_user,
                 employment_status=Employee.EmploymentStatus.PROBATION,
             )
-            staff_group, _ = Group.objects.get_or_create(name=STAFF_GROUP)
-            identity_user.groups.add(staff_group)
+            if identity_user:
+                staff_group, _ = Group.objects.get_or_create(name=STAFF_GROUP)
+                identity_user.groups.add(staff_group)
             audit(
                 actor=actor,
                 action="people.employee.created",
                 target=employee,
-                changes={"employment_status": Employee.EmploymentStatus.PROBATION},
+                changes={
+                    "employment_status": Employee.EmploymentStatus.PROBATION,
+                    "account_created": bool(identity_user),
+                },
             )
             return employee
     except Exception:
-        try:
-            identity_user.delete()
-        except Exception:
-            logger.critical("Failed to clean up orphan mock identity account", exc_info=True)
+        if identity_user:
+            try:
+                identity_user.delete()
+            except Exception:
+                logger.critical("Failed to clean up orphan mock identity account", exc_info=True)
         raise
 
 

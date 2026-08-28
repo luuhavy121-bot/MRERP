@@ -1,14 +1,8 @@
 import uuid as uuid_lib
 
 from django.conf import settings
-from django.core.validators import RegexValidator
 from django.db import models
-
-
-employee_code_validator = RegexValidator(
-    regex=r"^[A-Z]{3}\d+$",
-    message="Mã nhân sự phải gồm 3 chữ cái viết hoa và số thứ tự, ví dụ NDK13.",
-)
+from django.db.models.functions import Lower
 
 
 class TimeStampedModel(models.Model):
@@ -59,11 +53,13 @@ class Employee(TimeStampedModel):
         CEO = "ceo", "CEO"
 
     uuid = models.UUIDField(primary_key=True, default=uuid_lib.uuid4, editable=False)
-    employee_code = models.CharField(max_length=16, unique=True, validators=[employee_code_validator])
+    employee_code = models.CharField(max_length=64)
     identity_user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="employee_profile",
+        null=True,
+        blank=True,
     )
     display_name = models.CharField(max_length=160, blank=True)
     national_id = models.CharField(max_length=32, unique=True, null=True, blank=True)
@@ -94,6 +90,9 @@ class Employee(TimeStampedModel):
 
     class Meta:
         ordering = ["employee_code"]
+        constraints = [
+            models.UniqueConstraint(Lower("employee_code"), name="unique_employee_code_case_insensitive"),
+        ]
         permissions = [
             ("view_company_directory", "Can view the company directory"),
             ("view_hr_detail", "Can view HR-only employee details"),

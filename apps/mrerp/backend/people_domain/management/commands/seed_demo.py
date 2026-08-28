@@ -71,5 +71,17 @@ class Command(BaseCommand):
             )
             employees[username] = employee
 
+        Employee.objects.update_or_create(
+            employee_code="TRY-ALPHA-01",
+            defaults={
+                "identity_user": None,
+                "display_name": "Nhân sự thử việc Alpha",
+                "rank": Employee.Rank.STAFF,
+                "department": department,
+                "team": team_alpha,
+                "employment_status": Employee.EmploymentStatus.PROBATION,
+            },
+        )
+
         TeamLeadership.objects.get_or_create(team=team_alpha, leader=employees["leader.demo"])
         self.stdout.write(self.style.SUCCESS("Created fake local accounts: hr.demo, leader.demo, staff.demo, other.demo"))

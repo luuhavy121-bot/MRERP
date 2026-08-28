@@ -51,4 +51,5 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 - [ADR-0003: Application stack baseline cho Phase 1](0003-phase-1-application-stack.md) — `Accepted`.
 - [ADR-0004: Mock Identity context cho Phase 1](0004-mock-identity-context.md) — `Accepted`; dev/test only.
 - [ADR-0005: People authorization và field policy Phase 1](0005-people-authorization-and-field-policy.md) — `Accepted`.
-- [ADR-0006: Employee và Identity account provisioning](0006-employee-account-provisioning.md) — `Accepted` cho mock Identity Phase 1.
+- [ADR-0006: Employee và Identity account provisioning](0006-employee-account-provisioning.md) — `Superseded` một phần bởi ADR-0007.
+- [ADR-0007: Tài khoản Employee tùy chọn và mã nhân sự linh hoạt](0007-optional-employee-account-and-flexible-code.md) — `Accepted`.

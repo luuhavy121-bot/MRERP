@@ -8,9 +8,9 @@ Tài liệu này đánh giá từng story People/HR theo [Definition of Ready](d
 
 **Đề xuất mục tiêu:** phạm vi, contract, data model, capability catalog, migration và test scenarios đã đủ để người sở hữu sản phẩm review.
 
-**Đã chốt thêm:** HR tạo Employee với initial status `Thử việc`; Leader quyết định transition `Thử việc → Chính thức`; form nhận mã nhân sự, account, password khởi tạo và employment status; thao tác chỉ thành công khi account và Employee đã được tạo/liên kết; nếu một bước lỗi thì không tạo Employee.
+**Đã chốt thêm:** HR tạo Employee với initial status `Thử việc`; Leader quyết định transition `Thử việc → Chính thức`; HR chọn có tạo account hay không. Khi chọn tạo account, account và Employee phải cùng thành công; khi không chọn, Employee được phép chưa có Identity mapping.
 
-**Đã chốt bổ sung:** stack, mock Identity, account cleanup, field/scope, organization cardinality, code format và promotion rule đã được duyệt qua ADR-0003 đến ADR-0006.
+**Đã chốt bổ sung:** stack, mock Identity, account cleanup, field/scope, organization cardinality, mã nhân sự linh hoạt và promotion rule đã được duyệt qua ADR-0003 đến ADR-0007.
 
 Kết quả sau duyệt: P1-PLAT-01 và P1-PPL-01 đến P1-PPL-08 đạt `Ready` cho phạm vi slice đã khóa. Nội dung ngoài slice vẫn không được tự mở rộng.
 
@@ -22,7 +22,7 @@ Kết quả sau duyệt: P1-PLAT-01 và P1-PPL-01 đến P1-PPL-08 đạt `Ready
 | P1-PPL-01 | `Ready` | Self-profile, basic projection, failure states | Không |
 | P1-PPL-02 | `Ready` | Staff team scope, Leader company scope, pagination/search | Không |
 | P1-PPL-03 | `Ready` | Basic/HR projection, UUID, no-leak rule | Không |
-| P1-PPL-04 | `Ready` | HR create, account + Employee, cleanup, initial `Thử việc` | Không |
+| P1-PPL-04 | `Ready` | HR create, account tùy chọn, cleanup khi có account, initial `Thử việc` | Không |
 | P1-PPL-05 | `Ready` | HR detail edit, Leader team promotion, note/audit | Không |
 | P1-PPL-06 | `Ready` | Leader organization management, UUID/audit | Không |
 | P1-PPL-07 | `Ready` | Một Team/Employee, nhiều Leader/Team, audit | Không |
@@ -43,7 +43,7 @@ Không nhất thiết phải giải quyết mọi open decision của toàn MRER
 
 ## 4. Thứ tự mở khóa đề xuất
 
-1. Chốt account provisioning khi HR submit form.
+1. Chốt provisioning production cho Employee chưa có account khi triển khai Admin Panel/IdP thật.
 2. Chốt Leader scope và người quản trị organization.
 3. Chốt field `basic`, người được đọc và scope.
 4. Chốt các employment rule còn lại nếu nằm trong slice.

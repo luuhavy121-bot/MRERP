@@ -1,6 +1,6 @@
 # People/HR — field, data model và API contract dự thảo
 
-Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ownership](data-ownership.md) vẫn là source of truth về quyền sở hữu dữ liệu. Các phần được ADR-0003 đến ADR-0006 chấp nhận có nhãn **Đã chốt**; phần production Identity và policy ngoài slice vẫn giữ nguyên trạng thái mở.
+Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ownership](data-ownership.md) vẫn là source of truth về quyền sở hữu dữ liệu. Các phần được ADR-0003 đến ADR-0007 chấp nhận có nhãn **Đã chốt**; phần production Identity và policy ngoài slice vẫn giữ nguyên trạng thái mở.
 
 ## 1. Ranh giới dữ liệu
 
@@ -31,15 +31,16 @@ Staff nhận `basic` trong cùng Team; Leader nhận `basic` toàn công ty. Pro
 
 ### 2.3 Input của form thêm nhân sự
 
-**Đã chốt về yêu cầu nghiệp vụ:** form nhận mã nhân sự, tài khoản, mật khẩu khởi tạo và trạng thái công việc. HR chỉ được tạo với trạng thái `Thử việc`.
+**Đã chốt về yêu cầu nghiệp vụ:** form luôn nhận mã nhân sự và có checkbox chọn tạo tài khoản. Username/password chỉ bắt buộc khi checkbox bật. HR chỉ được tạo với trạng thái `Thử việc`.
 
-**Đã chốt về outcome:** một lần bấm Lưu phải tạo và liên kết được cả account Identity lẫn Employee trước khi trả kết quả thành công. Đây là tính nguyên tử ở mức trải nghiệm nghiệp vụ, không phải database transaction xuyên hai hệ thống.
+**Đã chốt về outcome:** nếu checkbox bật, một lần bấm Lưu phải tạo/liên kết được cả account Identity lẫn Employee trước khi trả thành công. Nếu checkbox tắt, chỉ tạo Employee và để account mapping rỗng.
 
 **Đã chốt về failure outcome cho mock:** nếu một bước thất bại thì không tạo Employee và API không trả kết quả thành công; account mock vừa tạo phải bị xóa. Compensation với IdP production vẫn cần ADR khi chọn provider.
 
 | Input | Owner/nơi lưu | Trạng thái |
 |---|---|---|
-| Mã nhân sự | MRERP `Employee` | Bắt buộc, duy nhất, pattern ba chữ hoa + số như `NDK13` |
+| Mã nhân sự | MRERP `Employee` | Bắt buộc, nhập tự do tối đa 64 ký tự, duy nhất không phân biệt hoa/thường |
+| Tạo tài khoản | Command input | Boolean; mặc định bật trong quick-create |
 | Tài khoản | Identity Provider; MRERP chỉ giữ mapping subject sau provisioning | Ownership **Đã chốt**; mock username là duy nhất; production format/recovery **Chưa quyết định** |
 | Mật khẩu khởi tạo | Identity Provider/auth subsystem | Ownership **Đã chốt**; không lưu trong Employee/log/audit/response; không bắt buộc đổi lần đầu trong mock slice |
 | Trạng thái công việc | MRERP `Employee`/history | Initial value `Thử việc` **Đã chốt** cho HR create flow |
@@ -90,7 +91,7 @@ Prefix đã dùng: `/api/v1`. OpenAPI version-control tại `apps/mrerp/backend/
 | `GET /people/employees/me/` | Hồ sơ actor theo projection | **Đã chốt/đã hiện thực** |
 | `GET /people/employees/` | Danh sách theo capability/scope/projection | **Đã chốt/đã hiện thực** |
 | `GET /people/employees/{uuid}/` | Hồ sơ theo scope | **Đã chốt/đã hiện thực** |
-| `POST /people/employees/` | HR tạo account mock + Employee `Thử việc` | **Đã chốt/đã hiện thực** |
+| `POST /people/employees/` | HR tạo Employee `Thử việc`, tùy chọn tạo account mock cùng thao tác | **Đã chốt/đã hiện thực** |
 | `PATCH /people/employees/{uuid}/` | HR sửa allow-list, bắt buộc `expected_version` | **Đã chốt/đã hiện thực** |
 | `POST /people/employees/{uuid}/promote/` | Leader chuyển `Thử việc → Chính thức` trong Team lãnh đạo | **Đã chốt/đã hiện thực** |
 | `PUT /people/employees/{uuid}/membership/` | Leader gán tối đa một Team | **Đã chốt/đã hiện thực** |
@@ -121,7 +122,7 @@ Contract chung được đề xuất:
 
 **Đã chốt cho slice:** Django migration; migration đầu đã được kiểm tra forward → reverse → forward trên database tạm. **Chưa quyết định:** policy import dữ liệu hiện hữu, retention và data cleanup.
 
-Account provisioning không phải database transaction xuyên MRERP–IdP. Mock compensation/orphan-account handling được ADR-0006 chấp nhận; behavior với IdP production vẫn phải được thiết kế lại khi OD-19 được giải quyết.
+Account provisioning không phải database transaction xuyên MRERP–IdP. ADR-0007 giữ lại mock compensation/orphan-account handling của ADR-0006 khi checkbox tạo account bật; behavior với IdP production vẫn phải được thiết kế lại khi OD-19 được giải quyết.
 
 ## 7. Tài liệu liên quan
 

@@ -36,15 +36,15 @@ People/HR Foundation Phase 1 được refinement tại [People stories](stories/
 
 **Đã chốt cho People slice đầu tiên:**
 
-- Form thêm nhân sự yêu cầu nhập mã nhân sự, tài khoản, mật khẩu khởi tạo và trạng thái công việc.
+- Form thêm nhân sự yêu cầu mã nhân sự và cho HR chọn có tạo tài khoản đăng nhập hay không. Tài khoản/mật khẩu chỉ bắt buộc khi checkbox tạo tài khoản được bật.
 - HR được thêm Employee với trạng thái ban đầu là `Thử việc`; server không cho HR dùng luồng này để tạo thẳng trạng thái `Chính thức`.
-- Khi HR bấm Lưu, account đăng nhập và Employee phải được tạo/liên kết trong cùng một thao tác nghiệp vụ; UI chỉ báo thành công khi cả hai đã sẵn sàng.
-- Nếu bất kỳ bước tạo account hoặc Employee nào thất bại, thao tác được coi là thất bại và không tạo Employee đó.
+- Khi có chọn tạo tài khoản, account và Employee phải được tạo/liên kết trong cùng một thao tác nghiệp vụ; nếu một bước lỗi thì không tạo Employee. Khi không chọn, chỉ Employee được tạo và account có thể cấp sau.
+- Mã nhân sự được nhập tự do, không rỗng và không trùng không phân biệt hoa/thường.
 - Leader quyết định chuyển một Employee từ `Thử việc` sang `Chính thức`.
 
 **Đã chốt về ranh giới:** mật khẩu là credential do Identity Provider sở hữu; MRERP không được lưu mật khẩu trong Employee, database, audit hoặc log.
 
-**Chưa quyết định:** thứ tự provisioning, xử lý account đã tạo dở nếu Employee thất bại, Leader được xác nhận trong scope nào và ai quản lý Department/Team/Leader–Team.
+**Chưa quyết định:** workflow cấp account production về sau cho Employee chưa có account.
 
 **Đề xuất mục tiêu.** Recruitment có thể nằm dưới navigation Nhân sự nhưng nên là code module riêng.
 

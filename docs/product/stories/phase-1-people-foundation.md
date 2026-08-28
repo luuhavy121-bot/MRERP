@@ -79,20 +79,20 @@ Trạng thái: `Ready`.
 
 ### P1-PPL-04 — Tạo Employee
 
-**Là một** HR có capability phù hợp, **tôi muốn** thêm nhân sự ở trạng thái `Thử việc` bằng mã nhân sự, tài khoản và mật khẩu khởi tạo **để** MRERP có hồ sơ nguồn và người mới có thể được chuẩn bị tài khoản đăng nhập.
+**Là một** HR có capability phù hợp, **tôi muốn** thêm nhân sự ở trạng thái `Thử việc` và chọn có tạo tài khoản hay không **để** MRERP có thể tạo hồ sơ trước hoặc đồng thời chuẩn bị quyền đăng nhập.
 
 Acceptance criteria dự thảo:
 
 - Chỉ HR có capability được duyệt mới tạo được qua luồng này.
 - Server chỉ chấp nhận trạng thái ban đầu `Thử việc`; HR không thể sửa payload để tạo thẳng `Chính thức`.
-- Mã nhân sự là dữ liệu Employee; tài khoản/mật khẩu thuộc luồng Identity provisioning.
+- Mã nhân sự nhập tự do, không rỗng và không trùng không phân biệt hoa/thường; tài khoản/mật khẩu thuộc luồng Identity provisioning.
 - Employee nhận UUID do server tạo; `identity_subject` có thể để trống trước khi mapping.
 - Dữ liệu đầu vào được validate; password không được lưu trong Employee, audit hoặc log.
-- UI chỉ báo thành công khi account và Employee đã được tạo/liên kết; không báo thành công một phần.
+- Khi checkbox bật, UI chỉ báo thành công khi account và Employee đã được tạo/liên kết. Khi tắt, username/password không bắt buộc và Employee có account mapping rỗng.
 - Nếu một bước thất bại, request thất bại và không tạo Employee.
 - Tạo account tại IdP và Employee phải có failure/compensation behavior được ADR chấp nhận.
 
-Trạng thái: `Ready` — ADR-0004 và ADR-0006 đã được chấp nhận.
+Trạng thái: `Ready` — ADR-0004 và ADR-0007 đã được chấp nhận.
 
 ### P1-PPL-05 — Cập nhật hồ sơ và employment status
 

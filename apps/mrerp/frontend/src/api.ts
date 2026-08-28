@@ -51,7 +51,7 @@ export const api = {
   employees: (search = '') => request<Page<Employee>>(`/api/v1/people/employees/?search=${encodeURIComponent(search)}`),
   allEmployees: (search = '') => requestAll<Employee>(`/api/v1/people/employees/?search=${encodeURIComponent(search)}`),
   employee: (uuid: string) => request<Employee>(`/api/v1/people/employees/${uuid}/`),
-  createEmployee: (payload: { employee_code: string; username: string; password: string }) =>
+  createEmployee: (payload: { employee_code: string; create_account: boolean; username: string; password: string }) =>
     request<Employee>('/api/v1/people/employees/', { method: 'POST', body: JSON.stringify(payload) }),
   updateEmployee: (uuid: string, payload: Record<string, unknown>) =>
     request<Employee>(`/api/v1/people/employees/${uuid}/`, { method: 'PATCH', body: JSON.stringify(payload) }),

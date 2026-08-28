@@ -61,10 +61,10 @@ Trạng thái: `Blocked` — chờ read matrix và field projection.
 ### PEOPLE-WRITE-001 — Tạo Employee được phép
 
 - Given actor là HR có capability được duyệt.
-- When gửi mã nhân sự, account, password khởi tạo và initial status `Thử việc` hợp lệ.
-- Then Identity/Employee orchestration tuân ADR-0006, server chỉ trả thành công khi account và Employee đã được tạo/liên kết, đồng thời audit không chứa password.
+- When gửi mã nhân sự hợp lệ và chọn có hoặc không tạo account.
+- Then server tạo Employee `Thử việc`; nếu checkbox bật thì account cũng phải được tạo/liên kết, nếu tắt thì mapping được phép rỗng; audit không chứa password.
 
-Trạng thái: `Blocked` — actor/initial status đã chốt; chờ provisioning và contract.
+Trạng thái: `Ready` — contract được ADR-0007 chấp nhận.
 
 ### PEOPLE-WRITE-001B — Không báo thành công một phần
 
@@ -72,7 +72,7 @@ Trạng thái: `Blocked` — actor/initial status đã chốt; chờ provisionin
 - When orchestration kết thúc request.
 - Then UI/API không báo tạo nhân sự thành công, không có Employee mới và hệ thống ghi failure visibility an toàn.
 
-Trạng thái: `Blocked` — xử lý account đã tạo dở chưa quyết định.
+Trạng thái: `Ready` cho mock Identity — account tạo dở được cleanup; production IdP vẫn thuộc OD-19.
 
 ### PEOPLE-WRITE-001A — HR cố tạo thẳng Chính thức
 

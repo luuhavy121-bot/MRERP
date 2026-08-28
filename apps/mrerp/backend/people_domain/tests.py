@@ -28,16 +28,18 @@ class PeopleApiTests(APITestCase):
         response = self.list_employees(self.staff)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         codes = {item["employee_code"] for item in response.data["results"]}
-        self.assertEqual(codes, {"LDR01", "STF01"})
+        self.assertEqual(codes, {"LDR01", "STF01", "TRY-ALPHA-01"})
         self.assertNotIn("national_id", response.data["results"][0])
         self.assertNotIn("employment_status", response.data["results"][0])
 
     def test_leader_sees_all_teams_without_sensitive_fields(self):
         response = self.list_employees(self.leader)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 4)
+        self.assertEqual(response.data["count"], 5)
         self.assertIn("employment_status", response.data["results"][0])
         self.assertNotIn("national_id", response.data["results"][0])
+        probation = next(item for item in response.data["results"] if item["employee_code"] == "TRY-ALPHA-01")
+        self.assertTrue(probation["can_promote"])
 
     def test_staff_cannot_retrieve_employee_outside_team(self):
         self.client.force_login(self.staff)
@@ -74,6 +76,30 @@ class PeopleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_hr_can_create_employee_without_identity_account(self):
+        self.client.force_login(self.hr)
+        response = self.client.post(
+            "/api/v1/people/employees/",
+            {"employee_code": "MRE People / 2026-01", "create_account": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        employee = Employee.objects.get(employee_code="MRE People / 2026-01")
+        self.assertIsNone(employee.identity_user)
+        self.assertIsNone(response.data["username"])
+        event = AuditEvent.objects.get(action="people.employee.created", target_uuid=str(employee.pk))
+        self.assertFalse(event.changes["account_created"])
+
+    def test_duplicate_employee_code_is_rejected(self):
+        self.client.force_login(self.hr)
+        response = self.client.post(
+            "/api/v1/people/employees/",
+            {"employee_code": "stf01", "create_account": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("employee_code", response.data)
 
     def test_account_is_cleaned_up_when_employee_creation_fails(self):
         with patch("people_domain.services.Employee.objects.create", side_effect=IntegrityError("forced")):

@@ -45,7 +45,7 @@
 
 Chọn Option A trong People slice:
 
-- HR tạo nhanh Employee bằng mã nhân sự, account và password; initial status luôn `Thử việc`.
+- HR tạo nhanh Employee với initial status luôn `Thử việc`. [ADR-0007](0007-optional-employee-account-and-flexible-code.md) thay yêu cầu account/password bắt buộc bằng checkbox tạo tài khoản tùy chọn.
 - HR được xem/sửa hồ sơ chi tiết gồm tên hiển thị, CCCD, ngày sinh, phòng ban và địa chỉ. Field nhạy cảm không xuất hiện trong payload Staff/Leader.
 - Staff xem projection cơ bản của Employee thuộc cùng Team.
 - Leader xem projection cơ bản của Employee ở mọi Team, nhưng chỉ chuyển `Thử việc → Chính thức` cho Employee cùng Team mình lãnh đạo.
@@ -53,7 +53,7 @@ Chọn Option A trong People slice:
 - Một Employee chỉ thuộc một Team tại một thời điểm; một Team có thể có nhiều Leader.
 - Promotion có hiệu lực ngay và bắt buộc ghi chú.
 - Captain/Manager tồn tại như rank configuration tương lai; giai đoạn đầu không có user và không tự nhận capability.
-- Mã nhân sự duy nhất toàn hệ thống, theo dạng ba chữ cái viết hoa và số thứ tự, ví dụ `NDK13`.
+- Mã nhân sự duy nhất toàn hệ thống. Quy tắc pattern cũ đã được [ADR-0007](0007-optional-employee-account-and-flexible-code.md) thay thế: HR được nhập tự do, server chỉ yêu cầu không rỗng và không trùng không phân biệt hoa/thường.
 
 ## Remaining open questions
 

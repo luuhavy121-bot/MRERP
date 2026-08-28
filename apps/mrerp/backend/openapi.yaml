@@ -844,8 +844,7 @@ components:
           readOnly: true
         employee_code:
           type: string
-          pattern: ^[A-Z]{3}\d+$
-          maxLength: 16
+          maxLength: 64
         display_name:
           type: string
           maxLength: 160
@@ -983,8 +982,7 @@ components:
           readOnly: true
         employee_code:
           type: string
-          pattern: ^[A-Z]{3}\d+$
-          maxLength: 16
+          maxLength: 64
         display_name:
           type: string
           maxLength: 160

@@ -1,13 +1,13 @@
 # ADR-0006: Employee và Identity account provisioning
 
-- Status: `Accepted`
+- Status: `Superseded`
 - Date: `2026-08-28`
 - Deciders: `Người sở hữu project MRERP`
 - Related source of truth: `docs/architecture/identity-and-authorization.md`, `docs/architecture/people-data-contract.md`
 - Related open decision: `OD-19`
 - Supersedes: `Không có`
-- Superseded by: `Không có`
-- Status rationale: `Người dùng chốt account và Employee tạo cùng thao tác; nếu lỗi thì không tạo Employee và xóa account đã tạo dở.`
+- Superseded by: `ADR-0007`
+- Status rationale: `ADR-0007 cho phép HR tạo Employee mà chưa tạo account; phần compensation khi có chọn tạo account vẫn được giữ lại.`
 
 ## Context
 

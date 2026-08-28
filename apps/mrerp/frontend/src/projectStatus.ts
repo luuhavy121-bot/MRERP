@@ -33,7 +33,7 @@ export const projectStatus = {
   quality: [
     { label: 'Source of truth', value: 100, state: 'Đã thiết lập' },
     { label: 'Repository governance', value: 100, state: 'CI đã cấu hình' },
-    { label: 'People vertical slice', value: 75, state: '22 automated tests' },
+    { label: 'People vertical slice', value: 78, state: '24 automated tests' },
     { label: 'Identity production', value: 0, state: 'Chưa chọn provider' },
   ],
   nextGates: [

@@ -99,7 +99,7 @@ function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, can
         <div className="section-title"><span>Team hiện tại</span><small>Mỗi nhân sự thuộc tối đa một Team</small></div>
         <div className="inline-action"><select value={team} onChange={(e) => setTeam(e.target.value)}><option value="">Chưa vào Team</option>{teams.map((item) => <option key={item.uuid} value={item.uuid}>{item.name}</option>)}</select><button className="secondary-button" disabled={busy} onClick={() => run(() => api.assignTeam(employee.uuid, team || null))}>Cập nhật Team</button></div>
       </section>}
-      {canPromote && employee.employment_status === 'probation' && <section className="drawer-section promotion-box">
+      {canPromote && employee.can_promote && employee.employment_status === 'probation' && <section className="drawer-section promotion-box">
         <div className="section-title"><span>Xác nhận chính thức</span><small>Chỉ nhân sự trong Team bạn lãnh đạo</small></div>
         <textarea placeholder="Ghi chú bắt buộc…" value={note} onChange={(e) => setNote(e.target.value)} />
         <button className="primary-button compact" disabled={busy || !note.trim()} onClick={() => run(() => api.promoteEmployee(employee.uuid, note))}>Chuyển sang Chính thức</button>
@@ -110,7 +110,7 @@ function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, can
 }
 
 function CreateEmployeeModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
-  const [form, setForm] = useState({ employee_code: '', username: '', password: '' })
+  const [form, setForm] = useState({ employee_code: '', create_account: true, username: '', password: '' })
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   async function submit(event: FormEvent) {
@@ -121,13 +121,14 @@ function CreateEmployeeModal({ onClose, onCreated }: { onClose: () => void; onCr
   }
   return <div className="modal-backdrop" onMouseDown={onClose}><form className="modal" onSubmit={submit} onMouseDown={(e) => e.stopPropagation()}>
     <div className="modal-head"><div><p className="eyebrow">QUICK CREATE</p><h2>Thêm nhân sự thử việc</h2></div><button type="button" className="icon-button" onClick={onClose}>×</button></div>
-    <p className="muted">Account được kích hoạt ngay. Employee chỉ được tạo khi cả tài khoản và hồ sơ đều thành công.</p>
-    <label>Mã nhân sự<input placeholder="VD: NDK13" pattern="[A-Z]{3}[0-9]+" value={form.employee_code} onChange={(e) => setForm({ ...form, employee_code: e.target.value.toUpperCase() })} required /></label>
-    <label>Tài khoản<input placeholder="nguyen.dang.khoa" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required /></label>
-    <label>Mật khẩu khởi tạo<input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required /></label>
+    <p className="muted">Employee luôn được tạo ở trạng thái Thử việc. Có thể tạo tài khoản ngay; luồng cấp tài khoản về sau chưa thuộc slice hiện tại.</p>
+    <label>Mã nhân sự<input placeholder="VD: NDK13 hoặc MRE-HR-013" value={form.employee_code} onChange={(e) => setForm({ ...form, employee_code: e.target.value })} required /></label>
+    <label className="checkbox-row"><input type="checkbox" checked={form.create_account} onChange={(e) => setForm({ ...form, create_account: e.target.checked })} /><span><strong>Tạo tài khoản đăng nhập</strong><small>Bỏ chọn nếu hiện tại chỉ cần tạo hồ sơ nhân sự.</small></span></label>
+    {form.create_account && <><label>Tài khoản<input placeholder="nguyen.dang.khoa" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required /></label>
+    <label>Mật khẩu khởi tạo<input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required /></label></>}
     <label>Trạng thái<input value="Thử việc" disabled /></label>
     {error && <div className="alert alert--error">{error}</div>}
-    <div className="modal-actions"><button type="button" className="secondary-button" onClick={onClose}>Hủy</button><button className="primary-button" disabled={busy}>{busy ? 'Đang tạo…' : 'Tạo account + Employee'}</button></div>
+    <div className="modal-actions"><button type="button" className="secondary-button" onClick={onClose}>Hủy</button><button className="primary-button" disabled={busy}>{busy ? 'Đang tạo…' : form.create_account ? 'Tạo tài khoản + Employee' : 'Tạo Employee'}</button></div>
   </form></div>
 }
 
@@ -213,7 +214,7 @@ function ProjectProgress() {
     <section className="progress-summary-grid">
       <article><span>Modules theo kế hoạch</span><strong>{projectStatus.modules.length}</strong><small>{completedModules} module hoàn tất 100%</small></article>
       <article><span>Quyết định đã giải quyết</span><strong>{projectStatus.decisions.resolved}</strong><small>{projectStatus.decisions.open} open decisions còn lại</small></article>
-      <article><span>Automated tests People</span><strong>22</strong><small>SQLite và PostgreSQL đã xanh</small></article>
+      <article><span>Automated tests People</span><strong>24</strong><small>SQLite và PostgreSQL đã xanh</small></article>
       <article><span>Ưu tiên quyết định</span><strong>OD-19</strong><small>Identity production vẫn chưa chốt</small></article>
     </section>
 
@@ -290,6 +291,7 @@ function Workspace({ session, onLogout, onSwitchSession }: { session: Session; o
   useEffect(() => { const timer = window.setTimeout(load, 180); return () => window.clearTimeout(timer) }, [load])
 
   const probation = employees.filter((item) => item.employment_status === 'probation').length
+  const promotionCandidates = employees.filter((item) => item.can_promote)
   return <div className="app-shell">
     <aside className="sidebar">
       <div className="brand"><span className="brand-mark">MRE<span>•</span></span><small>WORKSPACE</small></div>
@@ -302,10 +304,11 @@ function Workspace({ session, onLogout, onSwitchSession }: { session: Session; o
       {tab === 'progress' ? <ProjectProgress /> : <>
         <div className="people-tabs-row"><div className="segmented-tabs" role="tablist" aria-label="Các chế độ xem Nhân sự"><button className={peopleView === 'directory' ? 'active' : ''} onClick={() => setPeopleView('directory')}>Danh bạ</button><button className={peopleView === 'chart' ? 'active' : ''} onClick={() => setPeopleView('chart')}>Sơ đồ tổ chức</button><button className={peopleView === 'teams' ? 'active' : ''} onClick={() => setPeopleView('teams')}>Team</button></div>{canCreate && <button className="primary-button" onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</button>}</div>
         {peopleView === 'directory' && <>
+          {promotionCandidates.length > 0 && <section className="approval-strip"><div><span className="approval-strip__icon">✓</span><span><strong>{promotionCandidates.length} nhân sự chờ xác nhận chính thức</strong><small>Chỉ hiển thị người thuộc Team bạn đang lãnh đạo.</small></span></div><div className="approval-strip__people">{promotionCandidates.map((employee) => <button key={employee.uuid} onClick={async () => setSelected(await api.employee(employee.uuid))}>{employee.display_name || employee.employee_code}<span>Duyệt →</span></button>)}</div></section>}
           <section className="metric-grid"><article><span>Tổng hồ sơ trong scope</span><strong>{employees.length}</strong><small>Server đã lọc theo quyền</small></article><article><span>Đang thử việc</span><strong>{probation}</strong><small>{capabilities.has('people_domain.promote_employee') ? 'Chờ Leader cùng Team xác nhận' : 'Theo projection được cấp'}</small></article><article><span>Teams hiển thị</span><strong>{new Set(employees.map((item) => item.team).filter(Boolean)).size}</strong><small>{capabilities.has('people_domain.view_company_directory') ? 'Company scope' : 'Team scope'}</small></article></section>
           <section className="panel employee-panel"><div className="table-toolbar"><div className="search-box">⌕<input placeholder="Tìm theo mã, tên, vị trí…" value={search} onChange={(e) => setSearch(e.target.value)} /></div><div className="privacy-note">⌾ Payload đã áp dụng field policy</div></div>
             {error && <div className="alert alert--error">{error}</div>}
-            {loading ? <div className="empty-state">Đang tải dữ liệu theo scope…</div> : employees.length === 0 ? <div className="empty-state">Không có nhân sự phù hợp.</div> : <div className="employee-table"><div className="table-row table-head"><span>Nhân sự</span><span>Phòng ban</span><span>Team</span><span>Cấp bậc</span><span>Trạng thái</span><span /></div>{employees.map((employee) => <button className="table-row" key={employee.uuid} onClick={async () => setSelected(await api.employee(employee.uuid))}><span className="person-cell"><span className="avatar">{initials(employee)}</span><span><strong>{employee.display_name || 'Chưa có họ tên'}</strong><small>{employee.employee_code} · {employee.job_title || 'Chưa có vị trí'}</small></span></span><span>{employee.department_name || '—'}</span><span>{employee.team_name || 'Chưa gán'}</span><span>{employee.rank ? labels[employee.rank] ?? employee.rank : '—'}</span><span>{employee.employment_status_label ? <b className={`status status--${employee.employment_status}`}>{employee.employment_status_label}</b> : <b className="status status--neutral">Trong scope</b>}</span><span className="view-action">Xem →</span></button>)}</div>}
+            {loading ? <div className="empty-state">Đang tải dữ liệu theo scope…</div> : employees.length === 0 ? <div className="empty-state">Không có nhân sự phù hợp.</div> : <div className="employee-table"><div className="table-row table-head"><span>Nhân sự</span><span>Phòng ban</span><span>Team</span><span>Cấp bậc</span><span>Trạng thái</span><span /></div>{employees.map((employee) => <button className={`table-row ${employee.can_promote ? 'table-row--actionable' : ''}`} key={employee.uuid} onClick={async () => setSelected(await api.employee(employee.uuid))}><span className="person-cell"><span className="avatar">{initials(employee)}</span><span><strong>{employee.display_name || 'Chưa có họ tên'}</strong><small>{employee.employee_code} · {employee.job_title || 'Chưa có vị trí'}</small></span></span><span>{employee.department_name || '—'}</span><span>{employee.team_name || 'Chưa gán'}</span><span>{employee.rank ? labels[employee.rank] ?? employee.rank : '—'}</span><span>{employee.employment_status_label ? <b className={`status status--${employee.employment_status}`}>{employee.employment_status_label}</b> : <b className="status status--neutral">Trong scope</b>}</span><span className="view-action">{employee.can_promote ? 'Duyệt →' : 'Xem →'}</span></button>)}</div>}
           </section>
         </>}
         {peopleView === 'chart' && (loading ? <div className="empty-state panel">Đang dựng sơ đồ theo scope…</div> : <OrganizationChart departments={departments} teams={teams} employees={employees} />)}

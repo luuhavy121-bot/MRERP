@@ -47,6 +47,7 @@ export type Employee = {
   team_name: string | null
   employment_status?: 'probation' | 'official'
   employment_status_label?: string
+  can_promote?: boolean
   rank?: string
   username?: string
   national_id?: string | null
