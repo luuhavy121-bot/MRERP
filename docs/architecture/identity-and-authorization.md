@@ -100,10 +100,17 @@ Các điểm đã chốt gồm Captain có permission nền như Staff; Leader q
 
 **Chưa quyết định.** Quyền đọc Task nền của Staff/Captain, hủy/xóa Task và ranh giới cấp bậc ngoài module Task. Không suy rộng ma trận Task sang product/module khác.
 
-## 12. Tài liệu liên quan
+## 12. Chuyên biệt hóa cho People/HR Phase 1
+
+**Đề xuất mục tiêu.** [Ma trận phân quyền People](people-authorization-matrix.md) định nghĩa capability, scope, object và field dimensions cho slice. Không capability nào được gán mặc định cho persona cho tới khi ADR-0005 được chấp nhận.
+
+**Chưa quyết định.** Write authority, directory read scope, field projection, employment workflow và mock Identity trust boundary.
+
+## 13. Tài liệu liên quan
 
 - [Data ownership](data-ownership.md)
 - [Tích hợp hệ sinh thái](ecosystem-integration.md)
 - [Ma trận phân quyền Task](task-authorization-matrix.md)
+- [Ma trận phân quyền People](people-authorization-matrix.md)
 - [Test strategy](../testing/test-strategy.md)
 - [Open decisions](../decisions/open-decisions.md)

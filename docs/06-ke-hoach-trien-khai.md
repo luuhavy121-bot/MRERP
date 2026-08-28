@@ -4,7 +4,7 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 
 ## Trạng thái hiện tại
 
-**Hiện tại: Phase 0 — khóa context và nền tài liệu; chưa đóng phase.**
+**Hiện tại: Phase 1 — People/HR Foundation đang được hiện thực và kiểm chứng.**
 
 Đã có:
 
@@ -19,22 +19,24 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 - Backlog cấp Epic cho toàn roadmap và story chi tiết của Task vertical slice Phase 1 ở trạng thái `Refining`.
 - ADR-0002 và ma trận quyền đã chốt phần permission semantics của Task được người dùng xác nhận.
 - Definition of Ready và acceptance scenarios cho Task đã có bản đề xuất để duyệt.
+- Gói refinement People/HR Foundation đã có stories, field/data/API draft, permission matrix, migration approach, acceptance scenarios và readiness register.
+- ADR-0003 đến ADR-0006 đã được người sở hữu sản phẩm chấp nhận cho People/HR Foundation.
+- React/Vite frontend, Django/DRF API, migration, mock Identity development/test, authorization, audit và automated tests của slice đã được tạo.
+- Repository CI chạy docs/secret hygiene, backend tests trên PostgreSQL 16, OpenAPI validation và frontend lint/build.
 
 Chưa có:
 
-- Frontend/backend scaffold.
-- Database migration.
-- Dependency ứng dụng.
-- Identity Provider được chọn.
-- Tính năng nghiệp vụ.
-- Story Phase 1 ở trạng thái `Ready`.
+- Identity Provider production được chọn.
+- Deployment production, HTTPS/reverse proxy và runbook production hoàn chỉnh.
+- Các module ngoài People/HR Foundation.
+- Bằng chứng load/restore production.
 
 Đã có thêm một [visual prototype không dependency](../prototype/README.md) để duyệt hướng thiết kế và minh họa trạng thái màn hình. Đây không phải scaffold production và không thay đổi trạng thái các quyết định kiến trúc.
 
 ## Các phase mục tiêu
 
 1. Phase 0: context, tài liệu, conventions và ADR.
-2. Phase 1: nền Identity contract, Employee/Team, permission, shell và một Task vertical slice.
+2. Phase 1: nền Identity contract, People/HR Foundation và permission trước; shell và Task vertical slice theo sau khi dependency sẵn sàng.
 3. Phase 2: leave/attendance, approval, Task views và Dashboard fallback.
 4. Phase 3: recognition/rewards, recruitment, documents và settings.
 5. Phase 4: tích hợp ASSETCONTROL và MREKANBAN hiện hữu.
@@ -47,7 +49,7 @@ Toàn bộ roadmap là **Đề xuất mục tiêu**; phạm vi từng phase ph�
 Chỉ chuyển phase khi:
 
 - Người sở hữu sản phẩm duyệt source of truth Phase 0.
-- Phạm vi Task vertical slice được xác nhận.
+- Phạm vi vertical slice đầu tiên được xác nhận; hiện gói đề xuất là People/HR Foundation.
 - Identity contract giả lập được chấp nhận mà không chọn IdP thật.
 - Permission semantics tối thiểu cho slice được chốt.
 - Data ownership trong slice không còn mơ hồ.
@@ -55,11 +57,10 @@ Chỉ chuyển phase khi:
 
 ## Bước tiếp theo đề xuất
 
-1. Người sở hữu sản phẩm duyệt sáu tài liệu đường đọc chính.
-2. Duyệt [backlog](product/backlog.md), [Task stories](product/stories/phase-1-task-vertical-slice.md), [ma trận quyền](architecture/task-authorization-matrix.md) và [Definition of Ready](testing/definition-of-ready.md).
-3. Chốt các điểm còn chặn slice: quyền đọc Task nền, API/data contract, Identity contract giả lập và stack qua ADR.
-4. Hoàn thiện test cases từ [Task acceptance scenarios](testing/phase-1-task-acceptance.md), rồi đưa từng story đủ điều kiện sang `Ready`.
-5. Chỉ sau khi cổng Phase 1 được duyệt và có yêu cầu chuyển phase mới scaffold stack được duyệt.
+1. Hoàn tất kiểm chứng People slice trên PostgreSQL, migration/rollback, frontend build và authorization tests.
+2. Người sở hữu sản phẩm nghiệm thu luồng local theo [People acceptance scenarios](testing/phase-1-people-acceptance.md).
+3. Refinement slice tiếp theo; Task vẫn là ứng viên theo roadmap nhưng không tự động bắt đầu.
+4. Giải quyết OD-19 bằng ADR riêng trước khi kết nối Identity production.
 
 ## Đọc sâu hơn
 

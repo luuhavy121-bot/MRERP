@@ -48,3 +48,7 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 
 - [ADR-0001: Repository governance baseline](0001-repository-governance-baseline.md) — `Accepted`.
 - [ADR-0002: Task authorization baseline cho Phase 1](0002-task-authorization-baseline.md) — `Accepted`; chỉ chốt policy Task trong vertical slice đầu tiên.
+- [ADR-0003: Application stack baseline cho Phase 1](0003-phase-1-application-stack.md) — `Accepted`.
+- [ADR-0004: Mock Identity context cho Phase 1](0004-mock-identity-context.md) — `Accepted`; dev/test only.
+- [ADR-0005: People authorization và field policy Phase 1](0005-people-authorization-and-field-policy.md) — `Accepted`.
+- [ADR-0006: Employee và Identity account provisioning](0006-employee-account-provisioning.md) — `Accepted` cho mock Identity Phase 1.

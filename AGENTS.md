@@ -4,7 +4,7 @@
 
 Repository này dành cho hệ sinh thái MRERP mới. MRERP Core và MRECRM dự kiến nằm trong cùng monorepo nhưng là các deployable có ranh giới riêng. ASSETCONTROL và repository MREKANBAN hiện tại không được sao chép vào repository này ở Phase 0.
 
-Phase 0 hiện chỉ xây dựng source of truth và cơ chế ghi quyết định. Chưa được scaffold frontend/backend, cài dependency hoặc hiện thực tính năng nghiệp vụ nếu người dùng chưa yêu cầu chuyển phase.
+Phase 0 đã hoàn tất. Repository đang ở Phase 1 và chỉ triển khai theo vertical slice đã được duyệt. People/HR Foundation là slice đầu tiên; không mở rộng sang Payroll, Attendance/Leave, Recruitment, Rewards, Documents, CRM hoặc ASSETCONTROL nếu chưa có yêu cầu mới.
 
 ## 2. Thứ tự bắt buộc trước khi làm việc
 

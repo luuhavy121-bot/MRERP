@@ -1,0 +1,13 @@
+HR_GROUP = "People HR"
+LEADER_GROUP = "People Leader"
+STAFF_GROUP = "People Staff"
+
+VIEW_EMPLOYEE = "people_domain.view_employee"
+VIEW_COMPANY_DIRECTORY = "people_domain.view_company_directory"
+VIEW_HR_DETAIL = "people_domain.view_hr_detail"
+ADD_EMPLOYEE = "people_domain.add_employee"
+CHANGE_EMPLOYEE = "people_domain.change_employee"
+PROMOTE_EMPLOYEE = "people_domain.promote_employee"
+MANAGE_ORGANIZATION = "people_domain.manage_organization"
+MANAGE_MEMBERSHIP = "people_domain.manage_membership"
+VIEW_AUDIT = "people_domain.view_people_audit"

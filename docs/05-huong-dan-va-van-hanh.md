@@ -1,6 +1,6 @@
 # 05 — Hướng dẫn và vận hành
 
-Ứng dụng chưa được triển khai ở Phase 0, vì vậy hiện chưa có hướng dẫn thao tác màn hình, tài khoản production hoặc runbook sự cố có thể thực thi. Tài liệu này ghi khung vận hành cần hoàn thiện dần; chi tiết hạ tầng thuộc [Deployment và vận hành](operations/deployment.md).
+Repository đã có bản chạy local của People/HR Foundation trong Phase 1. Chưa có môi trường hoặc tài khoản production. Tài liệu này ghi phần có thể vận hành ở local và khung production cần hoàn thiện; chi tiết hạ tầng thuộc [Deployment và vận hành](operations/deployment.md).
 
 ## Dành cho người sử dụng
 
@@ -13,7 +13,18 @@
 
 **Đề xuất mục tiêu:** thực hiện đăng nhập chung bằng OIDC/OAuth 2.0. Identity Provider và chi tiết session vẫn chưa quyết định.
 
-**Chưa có ở Phase 0:** URL production đã duyệt, màn hình thật, tài khoản thật, hướng dẫn khôi phục mật khẩu và quy trình hỗ trợ người dùng.
+**Đã có ở local:** đăng nhập mock bằng session cookie, danh sách/hồ sơ nhân sự theo scope, HR quick-create và chỉnh hồ sơ, Leader quản lý cơ cấu/team và xác nhận nhân sự chính thức.
+
+**Chưa có:** URL production đã duyệt, Identity production, tài khoản thật, hướng dẫn khôi phục mật khẩu và quy trình hỗ trợ người dùng.
+
+## Chạy local
+
+1. Backend: tạo Python 3.12 virtual environment, cài `apps/mrerp/backend/requirements.txt`, migrate và chạy server cổng 8000.
+2. Seed tài khoản giả bằng lệnh `python manage.py seed_demo --password <mật-khẩu-local>`; không commit mật khẩu.
+3. Frontend: cài đúng dependency từ lockfile bằng `npm ci`, sau đó `npm run dev`; Vite chạy cổng 4173 và proxy `/api` tới backend.
+4. Có thể dùng `docker compose up --build` sau khi cấp `POSTGRES_PASSWORD` và `MRERP_SECRET_KEY` trong môi trường local.
+
+Chi tiết câu lệnh nằm tại README của [backend](../apps/mrerp/backend/README.md) và [frontend](../apps/mrerp/frontend/README.md).
 
 ## Dành cho người vận hành
 

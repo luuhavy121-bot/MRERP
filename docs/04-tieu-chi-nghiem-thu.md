@@ -54,6 +54,8 @@ Phase 0 **Không đạt** nếu tài liệu âm thầm biến đề xuất/open 
 
 Riêng Task vertical slice, điều kiện quyền phải đối chiếu với [ma trận phân quyền Task](architecture/task-authorization-matrix.md) và [acceptance scenarios Phase 1](testing/phase-1-task-acceptance.md). Mục còn **Chưa quyết định** không được giả lập thành policy production chỉ để đưa story sang `Ready`.
 
+Riêng People/HR Foundation, trạng thái từng story nằm tại [People readiness register](testing/phase-1-people-readiness.md) và phải đối chiếu [People acceptance scenarios](testing/phase-1-people-acceptance.md). Gói refinement hoàn tất không đồng nghĩa story đã `Ready`.
+
 ## Bằng chứng nghiệm thu
 
 Mỗi phase sau phải cung cấp bằng chứng phù hợp: test result, contract diff, migration/rollback evidence, authorization matrix, audit evidence và hướng dẫn vận hành. Không nghiệm thu chỉ dựa trên việc giao diện bấm được.

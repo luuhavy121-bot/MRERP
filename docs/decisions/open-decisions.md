@@ -45,6 +45,12 @@ OD-04 đến OD-07, OD-16, OD-18 và OD-19 cần được chốt đủ cho verti
 
 OD-09 đến OD-12, OD-14, OD-15 và OD-21 cần ADR trước khi lựa chọn production topology/tool. Có thể thiết kế interface/contract mà chưa chọn product cụ thể.
 
+### Phase 1 People/HR readiness
+
+OD-22 đến OD-26 đã được giải quyết cho phạm vi People/HR Foundation bằng ADR-0003 đến ADR-0006. Quyết định mock Identity không chọn IdP production và không đóng OD-01/OD-19 ngoài phạm vi slice.
+
+**Đã chốt cục bộ ngày 28/08/2026:** HR tạo Employee với initial status `Thử việc`; Leader quyết định `Thử việc → Chính thức`; form nhận mã nhân sự, tài khoản, mật khẩu khởi tạo và trạng thái công việc; thao tác chỉ thành công khi account Identity và Employee đã được tạo/liên kết; nếu một bước lỗi thì không tạo Employee. Credential vẫn thuộc IdP, vì vậy thứ tự provisioning và xử lý account đã tạo dở tiếp tục mở qua OD-19 và ADR-0006.
+
 ### Migration product hiện hữu
 
 OD-08 và OD-17 yêu cầu audit code, workflow, dữ liệu và deployment thực tế. Không import hoặc di chuyển dữ liệu chỉ vì codebase có sẵn. OD-18 chỉ được giải quyết bằng policy được người dùng duyệt; hiện không được mở cho đối tượng khác.
@@ -58,6 +64,11 @@ OD-20 đã được giải quyết bằng ADR-0001. Baseline này không lựa c
 | ID | Kết quả | ADR |
 |---|---|---|
 | OD-20 | Repository conventions, CI tối thiểu và secret-handling baseline được chấp nhận | [ADR-0001](0001-repository-governance-baseline.md) |
+| OD-22 | Actor/scope quản trị People và organization trong slice được chốt | [ADR-0005](0005-people-authorization-and-field-policy.md) |
+| OD-23 | Projection `basic`/`hr_detail` và scope đọc trong slice được chốt | [ADR-0005](0005-people-authorization-and-field-policy.md) |
+| OD-24 | Promotion/cardinality/code rule tối thiểu của slice được chốt | [ADR-0005](0005-people-authorization-and-field-policy.md) |
+| OD-25 | Mock Identity dev/test và production guard được chốt | [ADR-0004](0004-mock-identity-context.md) |
+| OD-26 | Stack Phase 1 được chấp nhận | [ADR-0003](0003-phase-1-application-stack.md) |
 
 ## Những nội dung không còn mở
 

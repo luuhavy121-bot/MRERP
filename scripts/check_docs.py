@@ -42,6 +42,19 @@ PRIVATE_KEY_RE = re.compile(r"-----BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY-----")
 
 PRIVATE_SUFFIXES = {".key", ".pem", ".p12", ".pfx", ".jks", ".keystore"}
 BACKUP_SUFFIXES = {".pgdump", ".dump", ".bak", ".backup"}
+IGNORED_DIRECTORY_NAMES = {
+    ".git",
+    ".venv",
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "__pycache__",
+}
+
+
+def is_ignored(path: Path) -> bool:
+    return any(part in IGNORED_DIRECTORY_NAMES for part in path.relative_to(ROOT).parts)
 
 
 def relative(path: Path) -> str:
@@ -88,7 +101,7 @@ def check_required_files(errors: list[str]) -> None:
 
 def check_markdown(errors: list[str]) -> None:
     for path in sorted(ROOT.rglob("*.md")):
-        if ".git" in path.parts:
+        if is_ignored(path):
             continue
 
         try:
@@ -188,7 +201,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    markdown_count = sum(1 for path in ROOT.rglob("*.md") if ".git" not in path.parts)
+    markdown_count = sum(1 for path in ROOT.rglob("*.md") if not is_ignored(path))
     print(f"Repository quality checks passed ({markdown_count} Markdown files).")
     return 0
 

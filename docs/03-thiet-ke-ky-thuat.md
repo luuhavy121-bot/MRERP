@@ -45,6 +45,8 @@ Chi tiết: [Data ownership](architecture/data-ownership.md).
 
 Task Phase 1 đã có [ma trận quyền chuyên biệt](architecture/task-authorization-matrix.md). Ma trận này không tự áp dụng sang CRM, HR, Rewards hoặc Admin Panel.
 
+People/HR Phase 1 có [data/API contract](architecture/people-data-contract.md) và [ma trận quyền riêng](architecture/people-authorization-matrix.md). Stack, mock Identity development/test, People policy và account provisioning đã được chấp nhận trong ADR-0003 đến ADR-0006 cho slice này. Việc chọn Identity Provider production vẫn **Chưa quyết định**.
+
 Chi tiết: [Identity và phân quyền](architecture/identity-and-authorization.md).
 
 ## Liên kết product
@@ -61,7 +63,7 @@ Chi tiết: [Deployment và vận hành](operations/deployment.md).
 
 ## Stack mục tiêu
 
-**Đề xuất mục tiêu cần ADR.** React/TypeScript/Vite cho frontend; Python 3.12, Django 5.2 và DRF cho backend; PostgreSQL 16; Celery/Redis khi có use case thật; OpenAPI; Docker Compose, reverse proxy và HTTPS. Không scaffold theo stack này trước khi cổng Phase 0 được duyệt.
+**Đã chốt cho Phase 1 theo ADR-0003.** React/TypeScript/Vite cho frontend; Python 3.12, Django 5.2 và DRF cho backend; PostgreSQL 16; OpenAPI và Docker Compose. Celery/Redis chỉ được thêm khi có use case background job được duyệt; reverse proxy và HTTPS production vẫn theo kế hoạch deployment.
 
 Chi tiết và giới hạn prototype: [Kiến trúc kỹ thuật](architecture/technical-architecture.md).
 

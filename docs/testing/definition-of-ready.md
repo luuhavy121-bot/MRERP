@@ -39,4 +39,5 @@ Tài liệu này quy định khi nào một story đủ rõ để bắt đầu p
 
 - [Product backlog](../product/backlog.md)
 - [Task stories Phase 1](../product/stories/phase-1-task-vertical-slice.md)
+- [People readiness register](phase-1-people-readiness.md)
 - [Test strategy](test-strategy.md)

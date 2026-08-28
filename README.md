@@ -6,11 +6,11 @@ Repository GitHub: [luuhavy121-bot/MRERP](https://github.com/luuhavy121-bot/MRER
 
 ## Trạng thái hiện tại
 
-Repository đang ở **Phase 0 — khóa context và nền tài liệu**.
+Repository đang ở **Phase 1 — vertical slice nền tảng**.
 
-Hiện chưa có frontend/backend production, database migration hoặc dependency ứng dụng. Repository có một [visual prototype không dependency](prototype/README.md) để duyệt hướng giao diện; prototype này không phải application scaffold hay bằng chứng backend/authorization đã tồn tại. Phần tài liệu của Phase 0 đã được thiết lập nhưng Phase 0 chỉ được đóng khi đạt cổng trong [04 — Tiêu chí nghiệm thu](docs/04-tieu-chi-nghiem-thu.md). Các tài liệu kiến trúc có nhãn **Đề xuất mục tiêu** chưa phải là quyết định production cuối cùng nếu chưa có ADR được chấp nhận.
+Phase 0 đã qua cổng duyệt. Slice People/HR Foundation đầu tiên hiện có React/Vite frontend, Django/DRF API, migration, authorization fail-closed, audit và automated tests. Local development dùng SQLite mặc định hoặc PostgreSQL 16 qua Docker Compose. Mock Identity chỉ dành cho development/test và tự từ chối khởi động ở production; Identity Provider production vẫn **Chưa quyết định**.
 
-Backlog cấp Epic và gói refinement Task Phase 1 đã được chuẩn bị nhưng chưa có story nào ở trạng thái `Ready`; các blocker còn lại được ghi trong [Product backlog](docs/product/backlog.md).
+Các story People/HR trong slice đã được duyệt `Ready` và đang được hiện thực. Task vẫn ở backlog, chưa thuộc slice đang triển khai. Trạng thái chi tiết nằm trong [Product backlog](docs/product/backlog.md) và [People readiness register](docs/testing/phase-1-people-readiness.md).
 
 ## Thứ tự đọc bắt buộc
 
@@ -26,10 +26,15 @@ Backlog cấp Epic và gói refinement Task Phase 1 đã được chuẩn bị n
 
 Hướng dẫn đóng góp: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Cấu trúc Phase 0
+## Cấu trúc repository
 
 ```text
 MRERP/
+├─ apps/
+│  └─ mrerp/
+│     ├─ backend/       # Django/DRF People API và mock Identity
+│     └─ frontend/      # React/Vite MRERP shell và People UI
+├─ compose.yaml
 ├─ .gitattributes
 ├─ .gitignore
 ├─ .github/
@@ -60,12 +65,15 @@ MRERP/
    │  ├─ business-requirements.md
    │  ├─ backlog.md
    │  ├─ stories/
+   │  │  ├─ phase-1-people-foundation.md
    │  │  └─ phase-1-task-vertical-slice.md
    │  └─ roadmap.md
    ├─ architecture/
    │  ├─ technical-architecture.md
    │  ├─ data-ownership.md
    │  ├─ identity-and-authorization.md
+   │  ├─ people-data-contract.md
+   │  ├─ people-authorization-matrix.md
    │  ├─ task-authorization-matrix.md
    │  └─ ecosystem-integration.md
    ├─ operations/
@@ -74,12 +82,18 @@ MRERP/
    ├─ testing/
    │  ├─ test-strategy.md
    │  ├─ definition-of-ready.md
+   │  ├─ phase-1-people-acceptance.md
+   │  ├─ phase-1-people-readiness.md
    │  └─ phase-1-task-acceptance.md
    └─ decisions/
       ├─ README.md
       ├─ ADR-TEMPLATE.md
       ├─ 0001-repository-governance-baseline.md
       ├─ 0002-task-authorization-baseline.md
+      ├─ 0003-phase-1-application-stack.md
+      ├─ 0004-mock-identity-context.md
+      ├─ 0005-people-authorization-and-field-policy.md
+      ├─ 0006-employee-account-provisioning.md
       └─ open-decisions.md
 ```
 
@@ -97,3 +111,7 @@ MRERP/
 [Prototype giao diện mới](prototype/README.md) minh họa app shell, Dashboard và các bề mặt nghiệp vụ bằng dữ liệu mock. Có thể chạy trực tiếp mà không cài dependency.
 
 Prototype chỉ minh họa giao diện và UX. Không được coi prototype là production backend, database, Identity, authorization hoặc bằng chứng cho một quyết định kiến trúc. Mọi màn hình sẽ được thay dữ liệu mock bằng vertical slice có API contract và kiểm tra quyền ở server sau khi các cổng tương ứng được duyệt.
+
+## Chạy local
+
+Xem [hướng dẫn backend](apps/mrerp/backend/README.md) và [hướng dẫn frontend](apps/mrerp/frontend/README.md). Chế độ nhanh dùng SQLite; Docker Compose dùng PostgreSQL 16. Không dùng mock Identity hoặc credential demo ở production.

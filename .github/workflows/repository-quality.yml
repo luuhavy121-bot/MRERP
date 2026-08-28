@@ -31,3 +31,81 @@ jobs:
 
       - name: Run repository checker
         run: python scripts/check_docs.py
+
+  backend:
+    name: Backend and PostgreSQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: mrerp
+          POSTGRES_USER: mrerp
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mrerp -d mrerp"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      MRERP_DB_ENGINE: postgres
+      MRERP_ENV: test
+      MRERP_MOCK_IDENTITY: "true"
+      MRERP_SECRET_KEY: ci-only-secret-key
+      POSTGRES_DB: mrerp
+      POSTGRES_USER: mrerp
+      POSTGRES_PASSWORD: ci-only-password
+      POSTGRES_HOST: 127.0.0.1
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: apps/mrerp/backend/requirements.txt
+
+      - name: Install backend dependencies
+        run: pip install -r apps/mrerp/backend/requirements.txt
+
+      - name: Check migrations and schema
+        run: |
+          python apps/mrerp/backend/manage.py makemigrations --check --dry-run
+          python apps/mrerp/backend/manage.py migrate --noinput
+          python apps/mrerp/backend/manage.py spectacular --validate --file apps/mrerp/backend/openapi.yaml
+
+      - name: Run backend tests
+        run: python apps/mrerp/backend/manage.py test people_domain mock_identity
+
+  frontend:
+    name: Frontend lint and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/mrerp/frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix apps/mrerp/frontend
+
+      - name: Lint frontend
+        run: npm --prefix apps/mrerp/frontend run lint
+
+      - name: Build frontend
+        run: npm --prefix apps/mrerp/frontend run build

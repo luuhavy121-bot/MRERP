@@ -4,7 +4,7 @@ Tài liệu này chịu trách nhiệm chính về chiến lược kiểm thử 
 
 ## 1. Trạng thái
 
-**Đề xuất mục tiêu.** Chiến lược application dưới đây cần được cụ thể hóa theo từng vertical slice. Phase 0 chưa có application code; kiểm tra repository hiện được thực thi bằng `scripts/check_docs.py` và GitHub Actions.
+**Đã chốt cho People/HR Foundation.** Chiến lược application được cụ thể hóa bằng acceptance scenarios và test suite của slice. Các module tương lai phải refinement riêng; kiểm tra tài liệu vẫn được thực thi bằng `scripts/check_docs.py` và GitHub Actions.
 
 ## 2. Các lớp kiểm thử
 
@@ -61,9 +61,9 @@ Ngưỡng timeout, retry, stale, RPO/RTO và tải mục tiêu vẫn **Chưa quy
 
 Story chỉ được đưa sang `Ready` khi đạt [Definition of Ready](definition-of-ready.md). Đây là cổng đầu vào của backlog, không thay thế Definition of Done hoặc điều kiện đạt/không đạt cấp sản phẩm.
 
-## 7. Kiểm tra tài liệu trong Phase 0
+## 7. Kiểm tra repository
 
-Phase 0 chưa có application test suite, nhưng thay đổi tài liệu vẫn phải được kiểm tra:
+Mọi thay đổi tài liệu vẫn phải được kiểm tra; slice application bổ sung test backend và frontend build/lint:
 
 - Tất cả relative Markdown link resolve được.
 - Có đúng một đường đọc `01–06` và mỗi file dẫn tới tài liệu chuyên sâu.
@@ -78,6 +78,9 @@ Lệnh chuẩn:
 ```text
 python scripts/check_docs.py
 git diff --check
+python apps/mrerp/backend/manage.py test people_domain mock_identity
+npm --prefix apps/mrerp/frontend run lint
+npm --prefix apps/mrerp/frontend run build
 ```
 
 Workflow `.github/workflows/repository-quality.yml` chạy checker khi push vào `main`, khi có pull request và khi được kích hoạt thủ công.
@@ -87,5 +90,7 @@ Workflow `.github/workflows/repository-quality.yml` chạy checker khi push vào
 - [Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md)
 - [Definition of Ready](definition-of-ready.md)
 - [Task acceptance scenarios Phase 1](phase-1-task-acceptance.md)
+- [People acceptance scenarios Phase 1](phase-1-people-acceptance.md)
+- [People readiness register](phase-1-people-readiness.md)
 - [Identity và phân quyền](../architecture/identity-and-authorization.md)
 - [Deployment](../operations/deployment.md)

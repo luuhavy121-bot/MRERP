@@ -35,6 +35,8 @@ Quyền ghi dữ liệu thuộc product nguồn chuẩn. API/event consumer khô
 
 Snapshot có thể chứa những thuộc tính cần cho display/authorization, nhưng field cụ thể phải được xác định theo use case và quyền.
 
+Contract nội bộ của People slice đang được refinement tại [People data contract](people-data-contract.md). Đây không thay đổi ownership và không chốt field chia sẻ sang product khác.
+
 ## 4. Task ownership
 
 **Đã chốt.** MRERP Task sở hữu:
@@ -66,4 +68,5 @@ Không chuyển dữ liệu hoặc secret Nhà ZUZU sang MRE chỉ vì dùng chu
 - [Tổng quan product](../product/product-overview.md)
 - [Identity và phân quyền](identity-and-authorization.md)
 - [Tích hợp hệ sinh thái](ecosystem-integration.md)
+- [People data contract](people-data-contract.md)
 - [Open decisions](../decisions/open-decisions.md)

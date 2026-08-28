@@ -29,6 +29,8 @@ Tài liệu này giúp người sở hữu sản phẩm hiểu hệ thống cầ
 
 **Đề xuất mục tiêu.** Tuyển dụng có thể nằm dưới nhóm điều hướng Nhân sự nhưng là code module riêng.
 
+People/HR Foundation là slice nghiệp vụ được refinement đầu tiên cho Phase 1. Gói này chỉ gồm Employee, Department, Team, employment status, Leader–Team, list/detail cơ bản, authorization, audit và test; quyền/field cụ thể vẫn **Chưa quyết định** trong [ma trận People](architecture/people-authorization-matrix.md).
+
 ## CRM
 
 **Đã chốt về nguyên tắc.** Sales, Marketing/Ads và Kế toán có thể cùng dùng CRM nhưng không mặc nhiên nhận cùng payload. Server CRM phải áp dụng capability, scope và field policy.
