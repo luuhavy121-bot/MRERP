@@ -3,7 +3,7 @@ import type { CSSProperties, FormEvent } from 'react'
 import './App.css'
 import { api } from './api'
 import { projectStatus, showProjectProgress } from './projectStatus'
-import type { Department, Employee, Session, Team, TeamLeader } from './types'
+import type { Employee, Session, Team, TeamLeader } from './types'
 
 const labels: Record<string, string> = {
   staff: 'Staff', captain: 'Captain', leader: 'Leader', manager: 'Manager', ceo: 'CEO',
@@ -51,13 +51,13 @@ function initials(employee?: Employee) {
   return value.split(' ').map((part) => part[0]).join('').slice(-2).toUpperCase()
 }
 
-function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, canManageMembership, onClose, onChanged }: {
-  employee: Employee; departments: Department[]; teams: Team[]; canEdit: boolean; canPromote: boolean; canManageMembership: boolean; onClose: () => void; onChanged: () => void
+function EmployeeDrawer({ employee, teams, canEdit, canPromote, canManageMembership, onClose, onChanged }: {
+  employee: Employee; teams: Team[]; canEdit: boolean; canPromote: boolean; canManageMembership: boolean; onClose: () => void; onChanged: () => void
 }) {
   const [form, setForm] = useState({
     display_name: employee.display_name ?? '', national_id: employee.national_id ?? '',
     date_of_birth: employee.date_of_birth ?? '', address: employee.address ?? '',
-    job_title: employee.job_title ?? '', department: employee.department ?? '',
+    job_title: employee.job_title ?? '',
   })
   const [note, setNote] = useState('')
   const [team, setTeam] = useState(employee.team ?? '')
@@ -80,7 +80,7 @@ function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, can
       </div>
       <div className="profile-meta">
         <div><span>Trạng thái</span><strong className={`status status--${employee.employment_status ?? 'neutral'}`}>{employee.employment_status_label ?? 'Hồ sơ cơ bản'}</strong></div>
-        <div><span>Phòng ban</span><strong>{employee.department_name || 'Chưa gán'}</strong></div>
+        <div><span>Team</span><strong>{employee.team_name || 'Chưa gán'}</strong></div>
         <div><span>Cấp bậc</span><strong>{labels[employee.rank ?? 'staff'] ?? employee.rank ?? 'Staff'}</strong></div>
       </div>
       {canPromote && employee.employment_status === 'probation' && <section className={`promotion-box promotion-box--prominent ${employee.can_promote ? '' : 'promotion-box--blocked'}`}>
@@ -97,10 +97,9 @@ function EmployeeDrawer({ employee, departments, teams, canEdit, canPromote, can
           <label>CCCD<input value={form.national_id} onChange={(e) => setForm({ ...form, national_id: e.target.value })} /></label>
           <label>Ngày sinh<input type="date" value={form.date_of_birth} onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })} /></label>
           <label>Vị trí<input value={form.job_title} onChange={(e) => setForm({ ...form, job_title: e.target.value })} /></label>
-          <label>Phòng ban<select value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}><option value="">Chưa gán</option>{departments.map((item) => <option key={item.uuid} value={item.uuid}>{item.name}</option>)}</select></label>
           <label className="span-2">Địa chỉ<textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></label>
         </div>
-        <button className="primary-button compact" disabled={busy} onClick={() => run(() => api.updateEmployee(employee.uuid, { ...form, department: form.department || null, date_of_birth: form.date_of_birth || null, expected_version: employee.version }))}>Lưu hồ sơ chi tiết</button>
+        <button className="primary-button compact" disabled={busy} onClick={() => run(() => api.updateEmployee(employee.uuid, { ...form, date_of_birth: form.date_of_birth || null, expected_version: employee.version }))}>Lưu hồ sơ chi tiết</button>
       </section>}
       {canManageMembership && <section className="drawer-section">
         <div className="section-title"><span>Team hiện tại</span><small>Mỗi nhân sự thuộc tối đa một Team</small></div>
@@ -134,13 +133,15 @@ function CreateEmployeeModal({ onClose, onCreated }: { onClose: () => void; onCr
   </form></div>
 }
 
-function OrganizationPanel({ departments, teams, employees, canManage, reload }: { departments: Department[]; teams: Team[]; employees: Employee[]; canManage: boolean; reload: () => void }) {
-  const [departmentForm, setDepartmentForm] = useState({ code: '', name: '' })
-  const [teamForm, setTeamForm] = useState({ code: '', name: '', department: '' })
+function OrganizationPanel({ teams, employees, canManage, reload, onSelectEmployee }: { teams: Team[]; employees: Employee[]; canManage: boolean; reload: () => void; onSelectEmployee: (employee: Employee) => void }) {
+  const [teamForm, setTeamForm] = useState({ code: '', name: '' })
+  const [selectedTeamUuid, setSelectedTeamUuid] = useState(teams[0]?.uuid ?? '')
   const [error, setError] = useState('')
-  const [selectedLeaders, setSelectedLeaders] = useState<Record<string, string>>({})
+  const [selectedLeader, setSelectedLeader] = useState('')
   const [teamLeaders, setTeamLeaders] = useState<Record<string, TeamLeader[]>>({})
   const leaders = employees.filter((employee) => employee.rank === 'leader')
+  const selectedTeam = teams.find((team) => team.uuid === selectedTeamUuid) ?? teams[0]
+  const selectedMembers = selectedTeam ? employees.filter((employee) => employee.team === selectedTeam.uuid) : []
   async function loadLeaders() {
     const entries = await Promise.all(teams.map(async (team) => [team.uuid, await api.teamLeaders(team.uuid)] as const))
     setTeamLeaders(Object.fromEntries(entries))
@@ -152,22 +153,21 @@ function OrganizationPanel({ departments, teams, employees, canManage, reload }:
       .catch((e) => { if (active) setError(e instanceof Error ? e.message : 'Không tải được Leader.') })
     return () => { active = false }
   }, [teams])
-  async function submitDepartment(event: FormEvent) { event.preventDefault(); try { await api.createDepartment(departmentForm); setDepartmentForm({ code: '', name: '' }); reload() } catch (e) { setError(e instanceof Error ? e.message : 'Có lỗi.') } }
-  async function submitTeam(event: FormEvent) { event.preventDefault(); try { await api.createTeam(teamForm); setTeamForm({ code: '', name: '', department: '' }); reload() } catch (e) { setError(e instanceof Error ? e.message : 'Có lỗi.') } }
-  return <div className="organization-grid">
-    <section className="panel"><div className="panel-head"><div><p className="eyebrow">ORGANIZATION</p><h3>Phòng ban</h3></div><span className="count-pill">{departments.length}</span></div>
-      <div className="stack-list">{departments.map((item) => <div className="stack-row" key={item.uuid}><span className="org-icon">D</span><div><strong>{item.name}</strong><small>{item.code}</small></div><span className="status status--official">Hoạt động</span></div>)}</div>
-      {canManage && <form className="inline-form" onSubmit={submitDepartment}><input placeholder="Mã" value={departmentForm.code} onChange={(e) => setDepartmentForm({ ...departmentForm, code: e.target.value.toUpperCase() })} required /><input placeholder="Tên phòng ban" value={departmentForm.name} onChange={(e) => setDepartmentForm({ ...departmentForm, name: e.target.value })} required /><button className="primary-button compact">Thêm</button></form>}
+  async function submitTeam(event: FormEvent) { event.preventDefault(); try { const created = await api.createTeam(teamForm); setTeamForm({ code: '', name: '' }); setSelectedTeamUuid(created.uuid); reload() } catch (e) { setError(e instanceof Error ? e.message : 'Có lỗi.') } }
+  return <div className="team-split-view">
+    <section className="panel team-list-panel"><div className="panel-head"><div><p className="eyebrow">CEO → TEAMS</p><h3>Danh sách Team</h3></div><span className="count-pill">{teams.length}</span></div>
+      <div className="team-selector-list">{teams.length === 0 ? <div className="empty-state">Chưa có Team.</div> : teams.map((item) => { const members = employees.filter((employee) => employee.team === item.uuid); return <button className={`team-selector ${selectedTeam?.uuid === item.uuid ? 'active' : ''}`} key={item.uuid} onClick={() => setSelectedTeamUuid(item.uuid)}><span className="org-icon org-icon--team">T</span><span><strong>{item.name}</strong><small>{item.code} · {members.length} nhân sự</small></span><b>›</b></button> })}</div>
+      {canManage && <form className="team-create-form" onSubmit={submitTeam}><p>Tạo Team mới</p><div><input placeholder="Mã Team" value={teamForm.code} onChange={(e) => setTeamForm({ ...teamForm, code: e.target.value.toUpperCase() })} required /><input placeholder="Tên Team" value={teamForm.name} onChange={(e) => setTeamForm({ ...teamForm, name: e.target.value })} required /><button className="primary-button compact">Thêm</button></div></form>}
     </section>
-    <section className="panel"><div className="panel-head"><div><p className="eyebrow">TEAM MAP</p><h3>Teams</h3></div><span className="count-pill">{teams.length}</span></div>
-      <div className="stack-list">{teams.map((item) => <div className="stack-row stack-row--team" key={item.uuid}><span className="org-icon org-icon--team">T</span><div><strong>{item.name}</strong><small>{item.department_name} · {employees.filter((employee) => employee.team === item.uuid).length} thành viên · {(teamLeaders[item.uuid] ?? []).map((link) => link.leader_name || link.leader_code).join(', ') || 'Chưa có Leader'}</small></div>{canManage && <div className="leader-actions"><select aria-label={`Chọn Leader cho ${item.name}`} value={selectedLeaders[item.uuid] ?? ''} onChange={(e) => setSelectedLeaders({ ...selectedLeaders, [item.uuid]: e.target.value })}><option value="">Chọn Leader</option>{leaders.filter((leader) => !(teamLeaders[item.uuid] ?? []).some((link) => link.leader === leader.uuid)).map((leader) => <option key={leader.uuid} value={leader.uuid}>{leader.display_name || leader.employee_code}</option>)}</select><button className="text-button" disabled={!selectedLeaders[item.uuid]} onClick={() => api.addLeader(item.uuid, selectedLeaders[item.uuid]).then(() => { setSelectedLeaders({ ...selectedLeaders, [item.uuid]: '' }); reload(); return loadLeaders() }).catch((e) => setError(e.message))}>+ Leader</button>{(teamLeaders[item.uuid] ?? []).length > 0 && <button className="text-button text-button--danger" onClick={() => api.removeLeader(item.uuid, teamLeaders[item.uuid][teamLeaders[item.uuid].length - 1].leader).then(() => { reload(); return loadLeaders() }).catch((e) => setError(e.message))}>Gỡ cuối</button>}</div>}</div>)}</div>
-      {canManage && <form className="inline-form inline-form--team" onSubmit={submitTeam}><input placeholder="Mã" value={teamForm.code} onChange={(e) => setTeamForm({ ...teamForm, code: e.target.value.toUpperCase() })} required /><input placeholder="Tên Team" value={teamForm.name} onChange={(e) => setTeamForm({ ...teamForm, name: e.target.value })} required /><select value={teamForm.department} onChange={(e) => setTeamForm({ ...teamForm, department: e.target.value })} required><option value="">Phòng ban</option>{departments.map((item) => <option key={item.uuid} value={item.uuid}>{item.name}</option>)}</select><button className="primary-button compact">Thêm</button></form>}
-      {error && <div className="alert alert--error">{error}</div>}
-    </section>
+    <section className="panel team-detail-panel">{selectedTeam ? <>
+      <div className="team-detail-head"><div><p className="eyebrow">TEAM DETAIL</p><h3>{selectedTeam.name}</h3><small>{selectedTeam.code} · {selectedMembers.length} nhân sự</small></div><span className="count-pill">{selectedMembers.length}</span></div>
+      <div className="team-leadership-block"><div className="section-title"><span>Leader của Team</span><small>Một Team có thể có nhiều Leader</small></div><div className="leader-chip-list">{(teamLeaders[selectedTeam.uuid] ?? []).length === 0 ? <span className="muted">Chưa có Leader</span> : (teamLeaders[selectedTeam.uuid] ?? []).map((link) => <span className="leader-chip" key={link.uuid}>{link.leader_name || link.leader_code}{canManage && <button aria-label={`Gỡ ${link.leader_name || link.leader_code}`} onClick={() => api.removeLeader(selectedTeam.uuid, link.leader).then(loadLeaders).catch((e) => setError(e.message))}>×</button>}</span>)}</div>{canManage && <div className="leader-picker"><select aria-label={`Chọn Leader cho ${selectedTeam.name}`} value={selectedLeader} onChange={(e) => setSelectedLeader(e.target.value)}><option value="">Chọn nhân sự cấp Leader</option>{leaders.filter((leader) => !(teamLeaders[selectedTeam.uuid] ?? []).some((link) => link.leader === leader.uuid)).map((leader) => <option key={leader.uuid} value={leader.uuid}>{leader.display_name || leader.employee_code}</option>)}</select><button className="secondary-button compact" disabled={!selectedLeader} onClick={() => api.addLeader(selectedTeam.uuid, selectedLeader).then(() => { setSelectedLeader(''); return loadLeaders() }).catch((e) => setError(e.message))}>Gán Leader</button></div>}</div>
+      <div className="team-member-block"><div className="section-title"><span>Nhân sự trong Team</span><small>Bấm vào một người để mở hồ sơ</small></div>{selectedMembers.length === 0 ? <div className="empty-state">Team này chưa có nhân sự.</div> : <div className="team-member-list">{selectedMembers.map((employee) => <button key={employee.uuid} onClick={() => onSelectEmployee(employee)}><span className="avatar">{initials(employee)}</span><span><strong>{employee.display_name || 'Chưa bổ sung họ tên'}</strong><small>{employee.employee_code} · {labels[employee.rank ?? 'staff'] ?? employee.rank ?? 'Staff'}</small></span><b className={`status status--${employee.employment_status ?? 'neutral'}`}>{employee.employment_status_label ?? 'Trong Team'}</b><i>›</i></button>)}</div>}</div>
+    </> : <div className="empty-state">Chọn hoặc tạo một Team để xem nhân sự.</div>}{error && <div className="alert alert--error">{error}</div>}</section>
   </div>
 }
 
-function OrganizationChart({ departments, teams, employees }: { departments: Department[]; teams: Team[]; employees: Employee[] }) {
+function OrganizationChart({ teams, employees }: { teams: Team[]; employees: Employee[] }) {
   const [teamLeaders, setTeamLeaders] = useState<Record<string, TeamLeader[]>>({})
   const [error, setError] = useState('')
   useEffect(() => {
@@ -181,11 +181,9 @@ function OrganizationChart({ departments, teams, employees }: { departments: Dep
   return <section className="org-chart panel">
     <div className="org-chart__intro"><div><p className="eyebrow">ORGANIZATION MAP</p><h3>Sơ đồ tổ chức trong phạm vi của bạn</h3></div><span className="privacy-note">Dữ liệu đã lọc tại server</span></div>
     {error && <div className="alert alert--error">{error}</div>}
-    <div className="department-tree">{departments.map((department) => {
-      const departmentTeams = teams.filter((team) => team.department === department.uuid)
-      return <article className="department-node" key={department.uuid}>
-        <header><span className="org-icon">D</span><div><strong>{department.name}</strong><small>{department.code} · {departmentTeams.length} Team</small></div></header>
-        <div className="team-branches">{departmentTeams.length === 0 ? <p className="tree-empty">Chưa có Team trong phạm vi.</p> : departmentTeams.map((team) => {
+    <div className="company-tree"><article className="company-node">
+      <header><span className="org-icon org-icon--ceo">C</span><div><strong>CEO</strong><small>Cơ cấu phẳng · {teams.length} Team</small></div></header>
+      <div className="team-branches">{teams.length === 0 ? <p className="tree-empty">Chưa có Team trong phạm vi.</p> : teams.map((team) => {
           const members = employees.filter((employee) => employee.team === team.uuid)
           return <section className="team-node" key={team.uuid}>
             <div className="team-node__head"><div><span className="org-icon org-icon--team">T</span><span><strong>{team.name}</strong><small>{team.code}</small></span></div><b>{members.length} người</b></div>
@@ -193,8 +191,7 @@ function OrganizationChart({ departments, teams, employees }: { departments: Dep
             <div className="member-cloud">{members.length === 0 ? <small>Chưa có thành viên</small> : members.map((employee) => <span className="member-chip" key={employee.uuid}><i>{initials(employee)}</i><b>{employee.display_name || employee.employee_code}</b></span>)}</div>
           </section>
         })}</div>
-      </article>
-    })}</div>
+    </article></div>
   </section>
 }
 
@@ -216,7 +213,7 @@ function ProjectProgress() {
     <section className="progress-summary-grid">
       <article><span>Modules theo kế hoạch</span><strong>{projectStatus.modules.length}</strong><small>{completedModules} module hoàn tất 100%</small></article>
       <article><span>Quyết định đã giải quyết</span><strong>{projectStatus.decisions.resolved}</strong><small>{projectStatus.decisions.open} open decisions còn lại</small></article>
-      <article><span>Automated tests People</span><strong>25</strong><small>SQLite và PostgreSQL đã xanh</small></article>
+      <article><span>Automated tests People</span><strong>26</strong><small>SQLite và PostgreSQL đã xanh</small></article>
       <article><span>Ưu tiên quyết định</span><strong>OD-19</strong><small>Identity production vẫn chưa chốt</small></article>
     </section>
 
@@ -261,7 +258,6 @@ function Workspace({ session, onLogout, onSwitchSession }: { session: Session; o
   const canManageOrg = capabilities.has('people_domain.manage_organization')
   const canManageMembership = capabilities.has('people_domain.manage_membership')
   const [employees, setEmployees] = useState<Employee[]>([])
-  const [departments, setDepartments] = useState<Department[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [selected, setSelected] = useState<Employee | null>(null)
   const [showCreate, setShowCreate] = useState(false)
@@ -284,8 +280,8 @@ function Workspace({ session, onLogout, onSwitchSession }: { session: Session; o
   const load = useCallback(async () => {
     setLoading(true); setError('')
     try {
-      const [people, departmentItems, teamItems] = await Promise.all([api.allEmployees(search), api.allDepartments(), api.allTeams()])
-      setEmployees(people); setDepartments(departmentItems); setTeams(teamItems)
+      const [people, teamItems] = await Promise.all([api.allEmployees(search), api.allTeams()])
+      setEmployees(people); setTeams(teamItems)
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Không tải được dữ liệu.') }
     finally { setLoading(false) }
   }, [search])
@@ -310,15 +306,15 @@ function Workspace({ session, onLogout, onSwitchSession }: { session: Session; o
           <section className="metric-grid"><article><span>Tổng hồ sơ trong scope</span><strong>{employees.length}</strong><small>Server đã lọc theo quyền</small></article><article><span>Đang thử việc</span><strong>{probation}</strong><small>{capabilities.has('people_domain.promote_employee') ? 'Chờ Leader cùng Team xác nhận' : 'Theo projection được cấp'}</small></article><article><span>Teams hiển thị</span><strong>{new Set(employees.map((item) => item.team).filter(Boolean)).size}</strong><small>{capabilities.has('people_domain.view_company_directory') ? 'Company scope' : 'Team scope'}</small></article></section>
           <section className="panel employee-panel"><div className="table-toolbar"><div className="search-box">⌕<input placeholder="Tìm theo mã, tên, vị trí…" value={search} onChange={(e) => setSearch(e.target.value)} /></div><div className="privacy-note">⌾ Payload đã áp dụng field policy</div></div>
             {error && <div className="alert alert--error">{error}</div>}
-            {loading ? <div className="empty-state">Đang tải dữ liệu theo scope…</div> : employees.length === 0 ? <div className="empty-state">Không có nhân sự phù hợp.</div> : <div className="employee-table"><div className="table-row table-head"><span>Nhân sự</span><span>Phòng ban</span><span>Team</span><span>Cấp bậc</span><span>Trạng thái</span><span /></div>{employees.map((employee) => <button className={`table-row ${employee.can_promote ? 'table-row--actionable' : ''}`} key={employee.uuid} onClick={async () => setSelected(await api.employee(employee.uuid))}><span className="person-cell"><span className="avatar">{initials(employee)}</span><span><strong>{employee.display_name || 'Chưa có họ tên'}</strong><small>{employee.employee_code} · {employee.job_title || 'Chưa có vị trí'}</small></span></span><span>{employee.department_name || '—'}</span><span>{employee.team_name || 'Chưa gán'}</span><span>{employee.rank ? labels[employee.rank] ?? employee.rank : '—'}</span><span>{employee.employment_status_label ? <b className={`status status--${employee.employment_status}`}>{employee.employment_status_label}</b> : <b className="status status--neutral">Trong scope</b>}</span><span className="view-action">{employee.can_promote ? 'Duyệt →' : 'Xem →'}</span></button>)}</div>}
+            {loading ? <div className="empty-state">Đang tải dữ liệu theo scope…</div> : employees.length === 0 ? <div className="empty-state">Không có nhân sự phù hợp.</div> : <div className="employee-table"><div className="table-row table-head"><span>Nhân sự</span><span>Team</span><span>Cấp bậc</span><span>Trạng thái</span><span /></div>{employees.map((employee) => <button className={`table-row ${employee.can_promote ? 'table-row--actionable' : ''}`} key={employee.uuid} onClick={async () => setSelected(await api.employee(employee.uuid))}><span className="person-cell"><span className="avatar">{initials(employee)}</span><span><strong>{employee.display_name || 'Chưa có họ tên'}</strong><small>{employee.employee_code} · {employee.job_title || 'Chưa có vị trí'}</small></span></span><span>{employee.team_name || 'Chưa gán'}</span><span>{employee.rank ? labels[employee.rank] ?? employee.rank : '—'}</span><span>{employee.employment_status_label ? <b className={`status status--${employee.employment_status}`}>{employee.employment_status_label}</b> : <b className="status status--neutral">Trong scope</b>}</span><span className="view-action">{employee.can_promote ? 'Duyệt →' : 'Xem →'}</span></button>)}</div>}
           </section>
         </>}
-        {peopleView === 'chart' && (loading ? <div className="empty-state panel">Đang dựng sơ đồ theo scope…</div> : <OrganizationChart departments={departments} teams={teams} employees={employees} />)}
-        {peopleView === 'teams' && (loading ? <div className="empty-state panel">Đang tải Team…</div> : <OrganizationPanel departments={departments} teams={teams} employees={employees} canManage={canManageOrg && canManageMembership} reload={load} />)}
+        {peopleView === 'chart' && (loading ? <div className="empty-state panel">Đang dựng sơ đồ theo scope…</div> : <OrganizationChart teams={teams} employees={employees} />)}
+        {peopleView === 'teams' && (loading ? <div className="empty-state panel">Đang tải Team…</div> : <OrganizationPanel teams={teams} employees={employees} canManage={canManageOrg && canManageMembership} reload={load} onSelectEmployee={async (employee) => setSelected(await api.employee(employee.uuid))} />)}
       </>}
     </main>
     {showCreate && <CreateEmployeeModal onClose={() => setShowCreate(false)} onCreated={() => { setShowCreate(false); load() }} />}
-    {selected && <EmployeeDrawer employee={selected} departments={departments} teams={teams} canEdit={canEdit} canPromote={canPromote} canManageMembership={canManageMembership} onClose={() => setSelected(null)} onChanged={async () => { const refreshed = await api.employee(selected.uuid); setSelected(refreshed); setEmployees(await api.allEmployees(search)) }} />}
+    {selected && <EmployeeDrawer employee={selected} teams={teams} canEdit={canEdit} canPromote={canPromote} canManageMembership={canManageMembership} onClose={() => setSelected(null)} onChanged={async () => { const refreshed = await api.employee(selected.uuid); setSelected(refreshed); setEmployees(await api.allEmployees(search)) }} />}
   </div>
 }
 

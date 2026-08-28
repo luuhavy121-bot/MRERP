@@ -47,10 +47,10 @@ Chọn Option A trong phạm vi Task Phase 1:
 
 - Captain có permission nền giống Staff.
 - Leader có team scope cho Task.
-- Manager tương lai có department scope; giai đoạn đầu không có user Manager và Leader không bị tự nâng cấp.
+- Manager tương lai từng được đề xuất có department scope; phần này đã bị ADR-0009 làm mất tiền đề vì MRE không có Department. Scope Manager trở lại **Chưa quyết định**; giai đoạn đầu không có user Manager.
 - CEO có company data scope nhưng từng action vẫn cần capability.
 - `tasks.create` thuộc gói capability cơ bản của employment đang hoạt động.
-- Staff/Captain chỉ tự giao; Leader giao trong team; Manager tương lai trong department; CEO trong company scope.
+- Staff/Captain chỉ tự giao; Leader giao trong Team; CEO trong company scope. Scope Manager tương lai đã được ADR-0009 mở lại vì không còn Department.
 - Creator sửa definition fields; assignee sửa execution fields; `tasks.manage` chỉ có hiệu lực trong scope.
 - Assignee submit `Chờ xác nhận`; creator hoặc người có `tasks.accept` trong scope chọn hoàn thành/rework.
 - Self-task không được tự accept: Staff/Captain do Leader xác nhận, Leader do CEO xác nhận; CEO self-task không thuộc workflow slice.

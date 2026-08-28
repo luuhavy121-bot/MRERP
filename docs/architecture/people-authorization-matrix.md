@@ -4,7 +4,7 @@ Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-a
 
 ## 1. Nguyên tắc bắt buộc
 
-**Đã chốt.** Mỗi endpoint nhạy cảm kiểm account/employment, product capability, action capability, data scope, object rule và field policy tại server. Không tin role, `employee_uuid`, department/team hoặc capability do client gửi.
+**Đã chốt.** Mỗi endpoint nhạy cảm kiểm account/employment, product capability, action capability, data scope, object rule và field policy tại server. Không tin role, `employee_uuid`, Team hoặc capability do client gửi.
 
 **Đã chốt.** MRERP sở hữu organization mapping và capability cấp hệ sinh thái. Tên cấp bậc/phòng ban/team là company configuration, không được hard-code vào permission core.
 
@@ -23,7 +23,7 @@ Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-a
 | `people_domain.change_employee` | Sửa allow-list hồ sơ HR | **Đã chốt cho HR** |
 | `people_domain.promote_employee` | Chuyển `Thử việc → Chính thức` | **Đã chốt cho Leader cùng Team** |
 | `people_domain.promote_any_employee` | Mở rộng promotion ra toàn công ty | **Đã chốt riêng cho CEO** |
-| `people_domain.manage_organization` | Tạo/sửa Department/Team | **Đã chốt cho Leader** |
+| `people_domain.manage_organization` | Tạo/sửa Team | **Đã chốt cho Leader và CEO** |
 | `people_domain.manage_membership` | Quản lý Employee–Team và Leader–Team | **Đã chốt cho Leader** |
 | `people_domain.view_people_audit` | Đọc audit People | Capability có sẵn; actor/UI **Chưa quyết định** |
 
@@ -35,7 +35,6 @@ Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader k
 |---|---|
 | `self` | Employee được ánh xạ với actor |
 | `managed_team` | Team mà actor có quan hệ quản lý hiệu lực |
-| `managed_department` | Department actor được giao quản lý |
 | `assigned` | Scope được cấp rõ bằng configuration |
 | `company` | Toàn công ty, vẫn cần action capability |
 
@@ -52,7 +51,7 @@ Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader k
 | HR tạo Employee `Thử việc` | `people_domain.add_employee` | Chỉ initial `Thử việc`; input/field allow-list | **Đã chốt** |
 | HR sửa hồ sơ chi tiết | `people_domain.change_employee` | Company scope, allow-list HR | **Đã chốt** |
 | Leader chuyển `Thử việc → Chính thức` | `people_domain.promote_employee` | Team mình lãnh đạo, hiệu lực ngay, note bắt buộc | **Đã chốt** |
-| Leader quản lý Department/Team | `people_domain.manage_organization` | Company scope, object rule/audit | **Đã chốt** |
+| Leader quản lý Team | `people_domain.manage_organization` | Company scope, object rule/audit | **Đã chốt** |
 | Leader gán membership/Leader–Team | `people_domain.manage_membership` | Một Employee tối đa một Team; Team nhiều Leader | **Đã chốt** |
 | CEO thực hiện nghiệp vụ People | Tất cả capability People hiện có | Company scope; vẫn tuân object rule, audit và các transition được hỗ trợ | **Đã chốt** |
 | Đọc audit | `people_domain.view_people_audit` | CEO được cấp capability; UI audit chưa hiện thực | **Đã chốt actor CEO** |
@@ -76,7 +75,7 @@ Server phải tạo projection rõ; không serialize toàn bộ model rồi dự
 - Không tự sửa field hệ thống hoặc tự gán capability/scope.
 - Không dùng endpoint Employee để tạo credential IdP.
 - Không xóa cứng Employee đã được tham chiếu.
-- Không archive Department/Team còn quan hệ hiệu lực khi chưa xử lý thành viên.
+- Không archive Team còn quan hệ hiệu lực khi chưa xử lý thành viên.
 - Không cho actor sửa organization mapping của chính mình nếu policy chưa có phê duyệt/segregation phù hợp.
 - Employment không hợp lệ làm fail account/employment gate cho nghiệp vụ được bảo vệ.
 

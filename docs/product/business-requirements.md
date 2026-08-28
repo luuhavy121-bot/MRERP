@@ -20,7 +20,7 @@ Tài liệu này là source of truth chịu trách nhiệm chính cho miền ngh
 **Đã chốt về miền nghiệp vụ; workflow/policy chi tiết triển khai theo phase.** Ranh giới module phải dựa trên workflow và dữ liệu, không chỉ theo menu.
 
 1. Dashboard: thông báo, Task, trạng thái đơn, recognition và số liệu cá nhân hóa.
-2. People/HR: Employee, Department, Team, hồ sơ, employment status và quan hệ quản lý.
+2. People/HR: Employee, Team, hồ sơ, employment status và quan hệ quản lý theo cấu trúc `CEO → Team → Employee`.
 3. Attendance/Leave: đơn nghỉ, số công, lịch và dữ liệu cá nhân được phép.
 4. Approvals: workflow theo từng loại yêu cầu; không mặc định một quyền duyệt cho mọi loại.
 5. Tasks: giao/nhận việc, List, Calendar và view cơ bản.

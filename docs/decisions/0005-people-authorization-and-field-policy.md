@@ -49,7 +49,7 @@ Chọn Option A trong People slice:
 - HR được xem/sửa hồ sơ chi tiết gồm tên hiển thị, CCCD, ngày sinh, phòng ban và địa chỉ. Field nhạy cảm không xuất hiện trong payload Staff/Leader.
 - Staff xem projection cơ bản của Employee thuộc cùng Team.
 - Leader xem projection cơ bản của Employee ở mọi Team, nhưng chỉ chuyển `Thử việc → Chính thức` cho Employee cùng Team mình lãnh đạo.
-- Leader quản lý Department, Team, membership và Leader–Team; thay đổi organization có audit và không được tin scope do client gửi.
+- Leader quản lý Team, membership và Leader–Team; thay đổi organization có audit và không được tin scope do client gửi. Phần Department ban đầu đã được ADR-0009 thay thế.
 - Một Employee chỉ thuộc một Team tại một thời điểm; một Team có thể có nhiều Leader.
 - Promotion có hiệu lực ngay và bắt buộc ghi chú.
 - Captain/Manager tồn tại như rank configuration tương lai; giai đoạn đầu không có user và không tự nhận capability.

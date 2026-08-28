@@ -48,7 +48,7 @@ Chỉ viện dẫn “xác nhận trực tiếp mới nhất” khi xác nhận 
 
 ## 5. Ranh giới bắt buộc
 
-- MRERP là nguồn chuẩn của Employee, Department, Team, employment status và Task nghiệp vụ.
+- MRERP là nguồn chuẩn của Employee, Team, employment status và Task nghiệp vụ. Cấu hình MRE hiện dùng cơ cấu phẳng `CEO → Team → Employee`; Department không phải tầng tổ chức hoạt động.
 - Identity Provider sở hữu credential, quy trình đăng nhập, subject và phiên SSO. Identity Provider cụ thể chưa được chọn.
 - MRECRM sở hữu Customer, Order, Product, Channel, connector, FFM, đối soát và báo cáo CRM.
 - ASSETCONTROL sở hữu Resource, Grant, Vault và audit tài nguyên; không gửi secret sang MRERP.

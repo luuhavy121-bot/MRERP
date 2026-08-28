@@ -10,7 +10,7 @@ Tài liệu này đánh giá từng story People/HR theo [Definition of Ready](d
 
 **Đã chốt thêm:** HR tạo Employee với initial status `Thử việc`; Leader quyết định transition `Thử việc → Chính thức`; HR chọn có tạo account hay không. Khi chọn tạo account, account và Employee phải cùng thành công; khi không chọn, Employee được phép chưa có Identity mapping.
 
-**Đã chốt bổ sung:** stack, mock Identity, account cleanup, field/scope, organization cardinality, mã nhân sự linh hoạt, promotion rule và CEO full-access bundle đã được duyệt qua ADR-0003 đến ADR-0008.
+**Đã chốt bổ sung:** stack, mock Identity, account cleanup, field/scope, mã nhân sự linh hoạt, promotion, CEO full-access và cơ cấu phẳng Team đã được duyệt qua ADR-0003 đến ADR-0009.
 
 Kết quả sau duyệt: P1-PLAT-01 và P1-PPL-01 đến P1-PPL-08 đạt `Ready` cho phạm vi slice đã khóa. Nội dung ngoài slice vẫn không được tự mở rộng.
 

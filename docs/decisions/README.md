@@ -54,3 +54,4 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 - [ADR-0006: Employee và Identity account provisioning](0006-employee-account-provisioning.md) — `Superseded` một phần bởi ADR-0007.
 - [ADR-0007: Tài khoản Employee tùy chọn và mã nhân sự linh hoạt](0007-optional-employee-account-and-flexible-code.md) — `Accepted`.
 - [ADR-0008: CEO có toàn quyền trong People/HR Phase 1](0008-ceo-people-full-access.md) — `Accepted`.
+- [ADR-0009: Cơ cấu MRE phẳng theo Team](0009-flat-team-organization-for-mre.md) — `Accepted`.

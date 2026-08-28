@@ -17,7 +17,7 @@
 
 ## Decision
 
-Tạo bundle `People CEO` gồm toàn bộ capability People hiện có: đọc toàn công ty, projection HR, tạo/sửa Employee, quản lý Department/Team/membership/Leader–Team, promotion toàn công ty và đọc audit. Promotion toàn công ty dùng capability riêng `promote_any_employee`; service không hard-code chuỗi role `CEO`.
+Tạo bundle `People CEO` gồm toàn bộ capability People hiện có: đọc toàn công ty, projection HR, tạo/sửa Employee, quản lý Team/membership/Leader–Team, promotion toàn công ty và đọc audit. Promotion toàn công ty dùng capability riêng `promote_any_employee`; service không hard-code chuỗi role `CEO`.
 
 “Toàn quyền” chỉ bao phủ hành động mà People Phase 1 đang hỗ trợ. Nó không mở xóa cứng, transition ngoài `Thử việc → Chính thức`, Admin Panel hoặc policy module khác.
 

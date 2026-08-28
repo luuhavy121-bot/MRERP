@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
 from people_domain.capabilities import CEO_GROUP, HR_GROUP, LEADER_GROUP, STAFF_GROUP
-from people_domain.models import Department, Employee, Team, TeamLeadership
+from people_domain.models import Employee, Team, TeamLeadership
 
 
 GROUP_PERMISSIONS = {
@@ -14,9 +14,6 @@ GROUP_PERMISSIONS = {
         "promote_employee",
         "manage_organization",
         "manage_membership",
-        "add_department",
-        "change_department",
-        "view_department",
         "add_team",
         "change_team",
         "view_team",
@@ -33,9 +30,6 @@ GROUP_PERMISSIONS = {
         "manage_organization",
         "manage_membership",
         "view_people_audit",
-        "add_department",
-        "change_department",
-        "view_department",
         "add_team",
         "change_team",
         "view_team",
@@ -58,9 +52,8 @@ class Command(BaseCommand):
             group.permissions.set(permissions)
             groups[group_name] = group
 
-        department, _ = Department.objects.get_or_create(code="MRE", defaults={"name": "MRE"})
-        team_alpha, _ = Team.objects.get_or_create(code="ALPHA", defaults={"name": "Alpha", "department": department})
-        team_beta, _ = Team.objects.get_or_create(code="BETA", defaults={"name": "Beta", "department": department})
+        team_alpha, _ = Team.objects.update_or_create(code="ALPHA", defaults={"name": "Alpha", "department": None})
+        team_beta, _ = Team.objects.update_or_create(code="BETA", defaults={"name": "Beta", "department": None})
 
         user_model = get_user_model()
         demos = [
@@ -83,7 +76,7 @@ class Command(BaseCommand):
                     "employee_code": code,
                     "display_name": display_name,
                     "rank": rank,
-                    "department": department,
+                    "department": None,
                     "team": team,
                     "employment_status": Employee.EmploymentStatus.OFFICIAL,
                 },
@@ -96,7 +89,7 @@ class Command(BaseCommand):
                 "identity_user": None,
                 "display_name": "Nhân sự thử việc Alpha",
                 "rank": Employee.Rank.STAFF,
-                "department": department,
+                "department": None,
                 "team": team_alpha,
                 "employment_status": Employee.EmploymentStatus.PROBATION,
             },

@@ -7,7 +7,7 @@ Tài liệu này là source of truth duy nhất cho product sở hữu từng mi
 | Miền dữ liệu | Product nguồn chuẩn | Dữ liệu product khác được nhận | Trạng thái |
 |---|---|---|---|
 | Credential, login, subject, phiên SSO | Identity Provider | Subject/claim tối thiểu theo OIDC | Ownership **Đã chốt**; provider **Chưa quyết định** |
-| Employee, Department, Team, employment status | MRERP | UUID và snapshot tối thiểu theo quyền | **Đã chốt** |
+| Employee, Team, employment status | MRERP | UUID và snapshot tối thiểu theo quyền; MRE hiện không có tầng Department | **Đã chốt** |
 | Capability cấp hệ sinh thái | MRERP/Admin | Claim/snapshot; product đích vẫn tự kiểm tra | **Đã chốt** |
 | Task nghiệp vụ | MRERP Task | Kanban/CRM tham chiếu hoặc tạo qua API | **Đã chốt** |
 | Board, column, swimlane, card placement | MREKANBAN trong giai đoạn chuyển tiếp | MRERP nhận deep link/metadata cần thiết | **Đã chốt theo hướng chuyển tiếp** |

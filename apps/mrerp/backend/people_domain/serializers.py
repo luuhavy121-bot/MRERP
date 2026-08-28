@@ -11,22 +11,20 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    department_name = serializers.CharField(source="department.name", read_only=True)
     leader_count = serializers.IntegerField(source="leaderships.count", read_only=True)
 
     class Meta:
         model = Team
-        fields = ["uuid", "code", "name", "department", "department_name", "is_active", "leader_count", "created_at", "updated_at"]
-        read_only_fields = ["uuid", "created_at", "updated_at", "department_name", "leader_count"]
+        fields = ["uuid", "code", "name", "is_active", "leader_count", "created_at", "updated_at"]
+        read_only_fields = ["uuid", "created_at", "updated_at", "leader_count"]
 
 
 class EmployeeBasicSerializer(serializers.ModelSerializer):
-    department_name = serializers.CharField(source="department.name", read_only=True)
     team_name = serializers.CharField(source="team.name", read_only=True)
 
     class Meta:
         model = Employee
-        fields = ["uuid", "employee_code", "display_name", "job_title", "department", "department_name", "team", "team_name"]
+        fields = ["uuid", "employee_code", "display_name", "job_title", "team", "team_name"]
 
 
 class EmployeeLeaderSerializer(EmployeeBasicSerializer):
@@ -95,7 +93,7 @@ class EmployeeUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ["display_name", "national_id", "date_of_birth", "address", "job_title", "department", "expected_version"]
+        fields = ["display_name", "national_id", "date_of_birth", "address", "job_title", "expected_version"]
 
     def validate_national_id(self, value):
         return value or None

@@ -39,7 +39,7 @@ Trạng thái: `Blocked` — cần ADR Identity contract.
 
 ### P1-PEOPLE-01 — Organization fixture được kiểm soát
 
-**Là một** policy engine, **tôi muốn** có Employee, Team, Department và quan hệ quản lý tối thiểu **để** đánh giá scope của Task.
+**Là một** policy engine, **tôi muốn** có Employee, Team và quan hệ quản lý tối thiểu **để** đánh giá scope của Task.
 
 Trạng thái: `Refining` — fixture phải được ghi là test data, không trở thành cơ cấu MRE chính thức.
 

@@ -4,7 +4,7 @@ Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ow
 
 ## 1. Ranh giới dữ liệu
 
-**Đã chốt.** MRERP sở hữu Employee, Department, Team, employment status và organization mapping. Identity Provider production sở hữu credential, login, subject và phiên. Adapter mock development/test dùng Django auth để mô phỏng boundary này trong cùng deployable; password chỉ được hash bởi auth subsystem, không là field Employee và không xuất hiện trong audit/response. Slice không đồng bộ product khác.
+**Đã chốt.** MRERP sở hữu Employee, Team, employment status và organization mapping. Cơ cấu MRE hiện là `CEO → Team → Employee`, không có tầng Department. Identity Provider production sở hữu credential, login, subject và phiên. Adapter mock development/test dùng Django auth để mô phỏng boundary này trong cùng deployable; password chỉ được hash bởi auth subsystem, không là field Employee và không xuất hiện trong audit/response.
 
 ## 2. Field catalog
 
@@ -24,7 +24,6 @@ Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ow
 - `display_name`;
 - `employee_code`;
 - `job_title`;
-- `department_uuid` và tên hiển thị;
 - `team_uuid` và tên hiển thị.
 
 Staff nhận `basic` trong cùng Team; Leader nhận `basic` toàn công ty. Projection `hr_detail` dành cho HR và CEO, bổ sung username/account mapping, CCCD, ngày sinh, địa chỉ và employment status. Leader nhận employment status của target trong command promotion nhưng field nhạy cảm không xuất hiện trong directory payload.
@@ -57,16 +56,15 @@ Loại khỏi slice không có nghĩa các field này được chấp nhận cho
 
 | Entity | Trách nhiệm | Quan hệ chính |
 |---|---|---|
-| `Employee` | Hồ sơ công việc và trạng thái hiện tại | Tham chiếu tối đa một Department và một Team |
-| `Department` | Đơn vị tổ chức cấp phòng ban | Có nhiều Team; dùng UUID |
-| `Team` | Đơn vị làm việc | Thuộc Department; dùng UUID |
+| `Employee` | Hồ sơ công việc và trạng thái hiện tại | Tham chiếu tối đa một Team |
+| `Team` | Đơn vị làm việc trực tiếp dưới CEO | Có nhiều Employee và nhiều Leader; dùng UUID |
 | `TeamLeadership` | Quan hệ Leader–Team | Unique theo cặp Team–Leader; một Team có nhiều Leader |
 | `EmploymentTransition` | Lịch sử chuyển trạng thái | Employee, from/to, effective time, note và actor |
 | `AuditEvent` | Bằng chứng hành động nhạy cảm | Actor, action, target, timestamp, correlation ID |
 
 **Chưa quyết định:**
 
-- Department có cần cây nhiều cấp hay chỉ một cấp trong slice.
+- Nếu tương lai MRE phát sinh tầng tổ chức khác Team thì phải mở decision/ADR mới; không tái kích hoạt Department âm thầm.
 - Retention/anonymization sau khi employment kết thúc.
 
 **Đã chốt cho slice:** một Employee thuộc tối đa một Team tại một thời điểm; một Team có thể có nhiều Leader; chỉ có `Thử việc` và `Chính thức`; promotion hiệu lực ngay và note bắt buộc.
@@ -74,7 +72,7 @@ Loại khỏi slice không có nghĩa các field này được chấp nhận cho
 ## 4. Invariant dự thảo
 
 - UUID do server tạo và không đổi khi tên/email thay đổi.
-- Department/Team được archive thay vì xóa cứng khi đã được tham chiếu.
+- Team được archive thay vì xóa cứng khi đã được tham chiếu.
 - Employee nghỉ việc không bị xóa cứng.
 - Membership/leadership không trỏ tới entity không tồn tại hoặc đã vô hiệu theo rule được duyệt.
 - Client không được đặt audit actor, created timestamp, capability hoặc scope.
@@ -95,7 +93,6 @@ Prefix đã dùng: `/api/v1`. OpenAPI version-control tại `apps/mrerp/backend/
 | `PATCH /people/employees/{uuid}/` | HR sửa allow-list, bắt buộc `expected_version` | **Đã chốt/đã hiện thực** |
 | `POST /people/employees/{uuid}/promote/` | Leader chuyển `Thử việc → Chính thức` trong Team lãnh đạo | **Đã chốt/đã hiện thực** |
 | `PUT /people/employees/{uuid}/membership/` | Leader gán tối đa một Team | **Đã chốt/đã hiện thực** |
-| `GET/POST/PATCH /people/departments/` | Đọc/quản lý Department theo quyền | **Đã chốt/đã hiện thực** |
 | `GET/POST/PATCH /people/teams/` | Đọc/quản lý Team theo quyền | **Đã chốt/đã hiện thực** |
 | `GET/POST /people/teams/{uuid}/leaders/` | Đọc/thêm Leader–Team | **Đã chốt/đã hiện thực** |
 | `DELETE /people/teams/{uuid}/leaders/{employee_uuid}/` | Gỡ Leader–Team | **Đã chốt/đã hiện thực** |

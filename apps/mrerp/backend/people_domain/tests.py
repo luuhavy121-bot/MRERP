@@ -50,9 +50,20 @@ class PeopleApiTests(APITestCase):
     def test_staff_only_sees_own_organization_scope(self):
         self.client.force_login(self.staff)
         teams = self.client.get("/api/v1/people/teams/")
-        departments = self.client.get("/api/v1/people/departments/")
         self.assertEqual([item["code"] for item in teams.data["results"]], ["ALPHA"])
-        self.assertEqual([item["code"] for item in departments.data["results"]], ["MRE"])
+        self.assertEqual(self.client.get("/api/v1/people/departments/").status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_leader_creates_flat_team_without_department(self):
+        self.client.force_login(self.leader)
+        response = self.client.post(
+            "/api/v1/people/teams/",
+            {"code": "CREATIVE", "name": "Creative"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        team = Team.objects.get(code="CREATIVE")
+        self.assertIsNone(team.department_id)
+        self.assertNotIn("department", response.data)
 
     def test_hr_creates_active_probation_account_and_employee(self):
         self.client.force_login(self.hr)

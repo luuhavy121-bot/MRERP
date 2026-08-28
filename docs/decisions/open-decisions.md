@@ -21,7 +21,7 @@ Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết địn
 | OD-13 | Công thức lương, chấm công, phép và reward policy | Business requirements |
 | OD-14 | Object storage và retention cho Documents | Data ownership, deployment |
 | OD-15 | Reverse proxy, error tracking và monitoring product cụ thể | Deployment |
-| OD-16 | Danh sách phòng ban, team, cấp bậc và capability chính thức | Company configuration, authorization |
+| OD-16 | Danh sách Team, cấp bậc và capability chính thức; MRE hiện không dùng Phòng ban | Company configuration, authorization |
 | OD-17 | Quan hệ codebase ASSETCONTROL Nhà ZUZU với ASSETCONTROL MRE | Product boundary, migration, security |
 | OD-18 | Có mở quyền ASSETCONTROL cho đối tượng ngoài CEO và Leader hay không, và theo policy nào | Product boundary, authorization |
 | OD-19 | Ranh giới thao tác giữa Admin Panel MRERP và IdP: provisioning, deprovisioning, approval và audit | Identity, Admin Panel, operations |
@@ -47,7 +47,7 @@ OD-09 đến OD-12, OD-14, OD-15 và OD-21 cần ADR trước khi lựa chọn p
 
 ### Phase 1 People/HR readiness
 
-OD-22 đến OD-26 đã được giải quyết cho phạm vi People/HR Foundation bằng ADR-0003 đến ADR-0008. CEO đã được chốt toàn quyền trong People nhưng quyết định này không tự áp dụng sang module/product khác. Mock Identity không chọn IdP production và không đóng OD-01/OD-19 ngoài phạm vi slice.
+OD-22 đến OD-26 đã được giải quyết cho phạm vi People/HR Foundation bằng ADR-0003 đến ADR-0009. ADR-0009 chốt cấu hình MRE phẳng `CEO → Team → Employee`; danh sách Team thực tế trong OD-16 vẫn mở. CEO toàn quyền People không tự áp dụng sang module/product khác. Mock Identity không chọn IdP production và không đóng OD-01/OD-19.
 
 **Đã chốt cục bộ ngày 28/08/2026:** HR tạo Employee với initial status `Thử việc`; Leader quyết định `Thử việc → Chính thức` trong Team mình lãnh đạo; CEO có toàn bộ capability People và company scope. HR nhập tự do mã nhân sự duy nhất và chọn có tạo account hay không. Khi chọn tạo account, account và Employee phải cùng thành công; khi không chọn, Employee được phép chưa có account. Credential và workflow cấp account production về sau vẫn thuộc IdP/OD-19.
 

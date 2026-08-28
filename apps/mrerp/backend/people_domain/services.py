@@ -132,8 +132,7 @@ def assign_team(*, actor, employee: Employee, team: Team | None) -> Employee:
         locked = Employee.objects.select_for_update().get(pk=employee.pk)
         old_team = str(locked.team_id) if locked.team_id else None
         locked.team = team
-        if team:
-            locked.department = team.department
+        locked.department = None
         locked.version += 1
         locked.save(update_fields=["team", "department", "version", "updated_at"])
         audit(

@@ -28,7 +28,13 @@ class Department(TimeStampedModel):
 
 class Team(TimeStampedModel):
     uuid = models.UUIDField(primary_key=True, default=uuid_lib.uuid4, editable=False)
-    department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name="teams")
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.PROTECT,
+        related_name="teams",
+        null=True,
+        blank=True,
+    )
     code = models.CharField(max_length=24, unique=True)
     name = models.CharField(max_length=120)
     is_active = models.BooleanField(default=True)

@@ -16,9 +16,8 @@ from .capabilities import (
     VIEW_COMPANY_DIRECTORY,
     VIEW_EMPLOYEE,
 )
-from .models import Department, Employee, Team, TeamLeadership
+from .models import Employee, Team, TeamLeadership
 from .serializers import (
-    DepartmentSerializer,
     EmployeeBasicSerializer,
     EmployeeCreateSerializer,
     EmployeeHRSerializer,
@@ -159,19 +158,6 @@ class OrganizationViewSetMixin:
     def perform_update(self, serializer):
         instance = serializer.save()
         audit(actor=self.request.user, action=f"people.{instance.__class__.__name__.lower()}.updated", target=instance)
-
-
-class DepartmentViewSet(OrganizationViewSetMixin, viewsets.ModelViewSet):
-    queryset = Department.objects.all()
-    serializer_class = DepartmentSerializer
-
-    def get_queryset(self):
-        actor = get_actor_employee(self.request.user)
-        if self.request.user.has_perm(VIEW_COMPANY_DIRECTORY) or can_view_hr_detail(self.request.user):
-            return self.queryset
-        if actor.department_id:
-            return self.queryset.filter(pk=actor.department_id)
-        return self.queryset.none()
 
 
 class TeamViewSet(OrganizationViewSetMixin, viewsets.ModelViewSet):

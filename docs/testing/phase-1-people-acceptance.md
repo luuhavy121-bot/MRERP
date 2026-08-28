@@ -133,26 +133,26 @@ Trạng thái: `Blocked` — cần chốt Leader scope trước khi xác định
 ### PEOPLE-ORG-001 — Quản lý đơn vị được phép
 
 - Given actor có capability quản lý organization.
-- When tạo/sửa Department hoặc Team hợp lệ.
+- When tạo/sửa Team hợp lệ.
 - Then UUID ổn định và audit được ghi.
 
 Trạng thái: `Blocked` — chờ actor/structure policy.
 
 ### PEOPLE-ORG-002 — Client tự gán scope
 
-- Given actor gửi team/department của mình để tự mở scope.
+- Given actor gửi Team hoặc scope tự khai báo để tự mở quyền.
 - When thay đổi membership hoặc leadership.
 - Then server đánh giá từ permission/configuration hiện hữu và từ chối nếu không được phép.
 
 ### PEOPLE-ORG-003 — Quan hệ mồ côi hoặc không hợp lệ
 
-- Given Employee/Team/Department không tồn tại hoặc không còn hiệu lực.
+- Given Employee/Team không tồn tại hoặc không còn hiệu lực.
 - When tạo membership/leadership.
 - Then server từ chối và không tạo quan hệ mồ côi.
 
 ### PEOPLE-ORG-004 — Archive đơn vị còn thành viên
 
-- Given Team/Department còn relation hiệu lực.
+- Given Team còn relation hiệu lực.
 - When yêu cầu archive.
 - Then server từ chối hoặc yêu cầu migration plan theo contract được duyệt.
 

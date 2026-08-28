@@ -1,4 +1,4 @@
-import type { Department, Employee, Page, Session, Team, TeamLeader } from './types'
+import type { Employee, Page, Session, Team, TeamLeader } from './types'
 
 function csrfToken() {
   return document.cookie
@@ -59,13 +59,9 @@ export const api = {
     request<Employee>(`/api/v1/people/employees/${uuid}/promote/`, { method: 'POST', body: JSON.stringify({ note }) }),
   assignTeam: (uuid: string, team_uuid: string | null) =>
     request<Employee>(`/api/v1/people/employees/${uuid}/membership/`, { method: 'PUT', body: JSON.stringify({ team_uuid }) }),
-  departments: () => request<Page<Department>>('/api/v1/people/departments/'),
-  allDepartments: () => requestAll<Department>('/api/v1/people/departments/'),
-  createDepartment: (payload: { code: string; name: string }) =>
-    request<Department>('/api/v1/people/departments/', { method: 'POST', body: JSON.stringify(payload) }),
   teams: () => request<Page<Team>>('/api/v1/people/teams/'),
   allTeams: () => requestAll<Team>('/api/v1/people/teams/'),
-  createTeam: (payload: { code: string; name: string; department: string }) =>
+  createTeam: (payload: { code: string; name: string }) =>
     request<Team>('/api/v1/people/teams/', { method: 'POST', body: JSON.stringify(payload) }),
   addLeader: (teamUuid: string, employeeUuid: string) =>
     request<TeamLeader>(`/api/v1/people/teams/${teamUuid}/leaders/`, { method: 'POST', body: JSON.stringify({ employee_uuid: employeeUuid }) }),

@@ -11,12 +11,12 @@ Identity context giả lập
     → account/employment gate
     → UI danh sách và hồ sơ nhân sự cơ bản
     → API kiểm capability/scope/field policy
-    → PostgreSQL lưu Employee/Department/Team/quan hệ quản lý
+    → PostgreSQL lưu Employee/Team/quan hệ quản lý
     → audit hành động ghi
     → automated tests allowed và denied
 ```
 
-**Đã chốt.** MRERP People/HR sở hữu Employee, Department, Team, employment status và organization mapping. Identity Provider vẫn sở hữu credential, login, subject và phiên.
+**Đã chốt.** MRERP People/HR sở hữu Employee, Team, employment status và organization mapping. MRE dùng cấu trúc `CEO → Team → Employee`; Identity Provider vẫn sở hữu credential, login, subject và phiên.
 
 ## 2. Ngoài phạm vi slice đầu tiên
 
@@ -73,7 +73,7 @@ Acceptance criteria dự thảo:
 
 - Endpoint kiểm action capability, data scope, object rule và field policy.
 - UUID không tồn tại và UUID ngoài scope không làm rò rỉ dữ liệu trái phép.
-- Department, Team và Leader được đọc từ dữ liệu server.
+- Team và Leader được đọc từ dữ liệu server.
 
 Trạng thái: `Ready`.
 
@@ -109,9 +109,9 @@ Acceptance criteria dự thảo:
 
 Trạng thái: `Ready` — Leader cùng Team, hiệu lực ngay và note bắt buộc.
 
-### P1-PPL-06 — Quản lý Department và Team
+### P1-PPL-06 — Quản lý Team
 
-**Là một** người quản trị organization được ủy quyền, **tôi muốn** tạo/sửa Department và Team **để** Employee được gắn vào cơ cấu có UUID ổn định.
+**Là một** người quản trị organization được ủy quyền, **tôi muốn** tạo/sửa Team **để** Employee được gắn trực tiếp vào Team có UUID ổn định dưới CEO.
 
 Acceptance criteria dự thảo:
 

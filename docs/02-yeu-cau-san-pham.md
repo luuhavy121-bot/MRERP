@@ -29,7 +29,7 @@ Tài liệu này giúp người sở hữu sản phẩm hiểu hệ thống cầ
 
 **Đề xuất mục tiêu.** Tuyển dụng có thể nằm dưới nhóm điều hướng Nhân sự nhưng là code module riêng.
 
-People/HR Foundation là slice nghiệp vụ được refinement đầu tiên cho Phase 1. Gói này chỉ gồm Employee, Department, Team, employment status, Leader–Team, list/detail cơ bản, authorization, audit và test; quyền/field cụ thể vẫn **Chưa quyết định** trong [ma trận People](architecture/people-authorization-matrix.md).
+People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu hình MRE dùng cơ cấu phẳng `CEO → Team → Employee`; slice gồm Employee, Team, employment status, Leader–Team, list/detail, authorization, audit và test. Không có tầng Phòng ban trong cơ cấu hiện tại.
 
 ## CRM
 
@@ -41,7 +41,7 @@ People/HR Foundation là slice nghiệp vụ được refinement đầu tiên ch
 
 **Đã chốt.** MRERP sở hữu Task dài hạn. MREKANBAN không được tạo nguồn Task cạnh tranh; nó tham chiếu `task_uuid` và có thể quản lý cấu hình view chuyên sâu.
 
-**Đã chốt trong phạm vi Task Phase 1.** Captain có permission nền như Staff; Leader có team scope; Manager tương lai có department scope nhưng ban đầu không có user Manager; CEO có company scope nhưng hành động vẫn cần capability. Luồng tạo, giao, cập nhật, gửi xác nhận và self-task chi tiết nằm tại [ma trận phân quyền Task](architecture/task-authorization-matrix.md).
+**Đã chốt trong phạm vi Task Phase 1.** Captain có permission nền như Staff; Leader có Team scope; ban đầu không có user Manager; CEO có company scope nhưng hành động vẫn cần capability. Scope Manager tương lai phải thiết kế lại vì MRE không có tầng Department. Luồng chi tiết nằm tại [ma trận phân quyền Task](architecture/task-authorization-matrix.md).
 
 **Chưa quyết định.** Quyền đọc Task nền của Staff/Captain và policy hủy/xóa Task.
 

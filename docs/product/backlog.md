@@ -30,7 +30,7 @@ Visual prototype không tự chuyển story sang `In progress` hoặc `Accepted`
 |---|---|---|---|
 | EPIC-00 | Source of truth, ADR, governance và repository quality | Phase 0 | `In progress` — chưa đóng Phase 0 |
 | EPIC-01 | Identity contract, capability, scope và guard fail-closed | Phase 1 | `Ready` trong phạm vi mock Identity dev/test |
-| EPIC-02 | Employee, Department, Team và employment status | Phase 1 | `Ready` — bắt đầu implementation |
+| EPIC-02 | Employee, Team và employment status | Phase 1 | `Active` — cơ cấu phẳng CEO → Team → Employee |
 | EPIC-03 | Task vertical slice chạy xuyên UI, API, DB, quyền, audit và test | Phase 1 | `Refining` |
 | EPIC-04 | MRERP shell và Dashboard tối thiểu, sau đó snapshot/fallback | Phase 1–2 | `Refining` |
 | EPIC-05 | Attendance/Leave và Approval theo từng loại | Phase 2 | `Idea` |
@@ -49,7 +49,7 @@ ADR-0003 và ADR-0004 đã được chấp nhận; foundation đạt `Ready` tro
 
 ### EPIC-02 — People foundation
 
-**Đề xuất mục tiêu.** Có dữ liệu tối thiểu cho Employee, Team, Department, employment status và quan hệ quản lý dùng trong Task authorization.
+**Đề xuất mục tiêu.** Có dữ liệu tối thiểu cho Employee, Team, employment status và quan hệ quản lý dùng trong Task authorization.
 
 **Chưa quyết định:** danh mục cơ cấu MRE chính thức thuộc OD-16. Slice chỉ được dùng fixture/config đã duyệt, không hard-code vào permission core.
 

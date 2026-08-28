@@ -45,7 +45,7 @@ Chi tiết: [Data ownership](architecture/data-ownership.md).
 
 Task Phase 1 đã có [ma trận quyền chuyên biệt](architecture/task-authorization-matrix.md). Ma trận này không tự áp dụng sang CRM, HR, Rewards hoặc Admin Panel.
 
-People/HR Phase 1 có [data/API contract](architecture/people-data-contract.md) và [ma trận quyền riêng](architecture/people-authorization-matrix.md). Stack, mock Identity development/test, People policy, account provisioning tùy chọn và bundle CEO đã được chấp nhận trong ADR-0003 đến ADR-0008 cho slice này. Việc chọn Identity Provider production vẫn **Chưa quyết định**.
+People/HR Phase 1 có [data/API contract](architecture/people-data-contract.md) và [ma trận quyền riêng](architecture/people-authorization-matrix.md). Stack, mock Identity, People policy, account tùy chọn, bundle CEO và cơ cấu phẳng theo Team đã được chấp nhận trong ADR-0003 đến ADR-0009. Identity Provider production vẫn **Chưa quyết định**.
 
 Chi tiết: [Identity và phân quyền](architecture/identity-and-authorization.md).
 

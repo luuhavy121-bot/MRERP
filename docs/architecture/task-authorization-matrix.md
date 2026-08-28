@@ -8,7 +8,7 @@ Tài liệu này chuyên biệt hóa authorization model tại [Identity và ph�
 
 **Đã chốt.** Captain có permission nền giống Staff.
 
-**Đã chốt.** Giai đoạn đầu không có user Manager. Data model vẫn hỗ trợ Manager tương lai với department scope; không tự nâng Leader hiện tại thành Manager.
+**Đã chốt.** Giai đoạn đầu không có user Manager và không tự nâng Leader thành Manager. Department scope cũ không còn áp dụng cho cơ cấu MRE; scope Manager tương lai trở lại trạng thái **Chưa quyết định**.
 
 ## 2. Scope mặc định cho Task
 
@@ -17,7 +17,7 @@ Tài liệu này chuyên biệt hóa authorization model tại [Identity và ph�
 | Staff | `self` cho hành động tự giao | Baseline `tasks.read` đầy đủ vẫn cần xác nhận |
 | Captain | Giống Staff | Không có quyền tăng thêm chỉ vì là Captain |
 | Leader | Team mình phụ trách | Quan hệ quản lý lấy từ server |
-| Manager | Phòng ban mình phụ trách | Hỗ trợ tương lai; ban đầu không có user Manager |
+| Manager | **Chưa quyết định** | Hỗ trợ tương lai; MRE hiện không có Department và ban đầu không có user Manager |
 | CEO | Toàn công ty | Mỗi action vẫn cần capability; không phải superuser ngầm |
 
 OD-04 vẫn mở cho policy ngoài Task và module khác.
@@ -44,9 +44,9 @@ OD-04 vẫn mở cho policy ngoài Task và module khác.
 | Giao cho bản thân | Có `tasks.assign:self` | Giống Staff | Có | Có | Không dùng self-task cần xác nhận |
 | Giao cho người khác | Không | Không | Thành viên team phụ trách | Nhân sự trong phòng ban phụ trách | Nhân sự toàn công ty |
 | Sửa phần định nghĩa | Khi là người tạo và object rule cho phép | Giống Staff | Người tạo hoặc `tasks.manage` trong team | Người tạo hoặc `tasks.manage` trong phòng ban | Người tạo hoặc `tasks.manage` company scope |
-| Sửa phần thực hiện | Khi là người nhận | Giống Staff | Khi là người nhận; quản lý cần `tasks.manage` | Tương tự trong department scope | Tương tự trong company scope |
+| Sửa phần thực hiện | Khi là người nhận | Giống Staff | Khi là người nhận; quản lý cần `tasks.manage` | **Chưa quyết định** | Tương tự trong company scope |
 | Submit hoàn thành | Khi là người nhận | Giống Staff | Khi là người nhận | Khi là người nhận | Khi là người nhận, trừ self-task bị loại khỏi workflow |
-| Accept/rework | Khi là người tạo, không phải self-task | Giống Staff | Người tạo hoặc `tasks.accept` trong team | Tương lai trong department scope | Người tạo hoặc `tasks.accept` company scope |
+| Accept/rework | Khi là người tạo, không phải self-task | Giống Staff | Người tạo hoặc `tasks.accept` trong team | **Chưa quyết định** | Người tạo hoặc `tasks.accept` company scope |
 
 Mọi ô “Có” vẫn phụ thuộc account/employment hợp lệ và capability tương ứng. Client không được gửi cấp bậc/scope để tự mở quyền.
 

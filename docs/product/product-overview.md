@@ -33,7 +33,7 @@ Sự thống nhất không có nghĩa gom mọi code, process và database vào 
 - Mọi nhân sự MRE có tài khoản và bắt đầu ngày làm việc từ MRERP.
 - Dashboard hiển thị thông tin cá nhân hóa, thông báo và công việc phù hợp.
 - Người dùng chuyển sang product được cấp quyền mà không nhập lại mật khẩu.
-- Employee, Department, Team và employment status có một nguồn chuẩn.
+- Employee, Team và employment status có một nguồn chuẩn; MRE hiện không có tầng Phòng ban.
 - Product chuyên biệt vẫn cô lập được dữ liệu, tải và quyền nhạy cảm.
 - Kiến trúc đủ đơn giản để một developer cùng AI vận hành.
 - Cấu hình tổ chức được dữ liệu hóa để tái sử dụng platform cho công ty khác.
@@ -63,7 +63,7 @@ Các persona hiện được mô tả:
 
 - Là cổng làm việc chung cho toàn bộ nhân sự.
 - Kiến trúc nội bộ: modular monolith.
-- Sở hữu Employee, Department, Team, employment status, capability hệ sinh thái, Task, phê duyệt nội bộ, nghỉ phép/chấm công, recognition/rewards, recruitment, documents và preference cá nhân.
+- Sở hữu Employee, Team, employment status, capability hệ sinh thái, Task, phê duyệt nội bộ, nghỉ phép/chấm công, recognition/rewards, recruitment, documents và preference cá nhân.
 - Không sở hữu Customer/Order CRM, credential kênh bán hoặc nội dung Vault.
 - Admin Panel nằm trong MRERP để quản lý account/employee/access cấp cao; credential và phiên đăng nhập vẫn thuộc Identity Provider.
 

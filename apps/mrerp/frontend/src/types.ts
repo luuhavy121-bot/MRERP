@@ -11,19 +11,10 @@ export type Session = {
   debug_personas?: Array<{ username: string; label: string }>
 }
 
-export type Department = {
-  uuid: string
-  code: string
-  name: string
-  is_active: boolean
-}
-
 export type Team = {
   uuid: string
   code: string
   name: string
-  department: string
-  department_name: string
   is_active: boolean
   leader_count: number
 }
@@ -41,8 +32,6 @@ export type Employee = {
   employee_code: string
   display_name: string
   job_title: string
-  department: string | null
-  department_name: string | null
   team: string | null
   team_name: string | null
   employment_status?: 'probation' | 'official'
