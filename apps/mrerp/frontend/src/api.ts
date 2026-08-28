@@ -63,6 +63,10 @@ export const api = {
   allTeams: () => requestAll<Team>('/api/v1/people/teams/'),
   createTeam: (payload: { code: string; name: string }) =>
     request<Team>('/api/v1/people/teams/', { method: 'POST', body: JSON.stringify(payload) }),
+  updateTeam: (uuid: string, payload: { code: string; name: string }) =>
+    request<Team>(`/api/v1/people/teams/${uuid}/`, { method: 'PATCH', body: JSON.stringify(payload) }),
+  archiveTeam: (uuid: string) =>
+    request<Team>(`/api/v1/people/teams/${uuid}/archive/`, { method: 'POST' }),
   addLeader: (teamUuid: string, employeeUuid: string) =>
     request<TeamLeader>(`/api/v1/people/teams/${teamUuid}/leaders/`, { method: 'POST', body: JSON.stringify({ employee_uuid: employeeUuid }) }),
   teamLeaders: (teamUuid: string) => request<TeamLeader[]>(`/api/v1/people/teams/${teamUuid}/leaders/`),

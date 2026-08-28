@@ -136,7 +136,7 @@ Trạng thái: `Blocked` — cần chốt Leader scope trước khi xác định
 - When tạo/sửa Team hợp lệ.
 - Then UUID ổn định và audit được ghi.
 
-Trạng thái: `Blocked` — chờ actor/structure policy.
+Trạng thái: `Ready` — Leader và CEO có capability, cơ cấu phẳng theo ADR-0009.
 
 ### PEOPLE-ORG-002 — Client tự gán scope
 
@@ -153,8 +153,8 @@ Trạng thái: `Blocked` — chờ actor/structure policy.
 ### PEOPLE-ORG-004 — Archive đơn vị còn thành viên
 
 - Given Team còn relation hiệu lực.
-- When yêu cầu archive.
-- Then server từ chối hoặc yêu cầu migration plan theo contract được duyệt.
+- When yêu cầu archive Team.
+- Then server từ chối cho tới khi Team không còn nhân sự và Leader; archive thành công phải được audit và Team không còn xuất hiện trong danh sách active.
 
 ## 7. Migration, audit và E2E
 

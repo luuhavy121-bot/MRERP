@@ -65,6 +65,33 @@ class PeopleApiTests(APITestCase):
         self.assertIsNone(team.department_id)
         self.assertNotIn("department", response.data)
 
+    def test_leader_updates_team_and_change_is_audited(self):
+        team = Team.objects.get(code="BETA")
+        self.client.force_login(self.leader)
+        response = self.client.patch(
+            f"/api/v1/people/teams/{team.pk}/",
+            {"code": "BETA-OPS", "name": "Beta Operations", "is_active": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        team.refresh_from_db()
+        self.assertEqual(team.code, "BETA-OPS")
+        self.assertTrue(team.is_active)
+        self.assertTrue(AuditEvent.objects.filter(action="people.team.updated", target_uuid=str(team.pk)).exists())
+
+    def test_team_archive_requires_no_members_or_leaders_and_is_audited(self):
+        alpha = Team.objects.get(code="ALPHA")
+        self.client.force_login(self.leader)
+        blocked = self.client.post(f"/api/v1/people/teams/{alpha.pk}/archive/", {}, format="json")
+        self.assertEqual(blocked.status_code, status.HTTP_400_BAD_REQUEST)
+
+        empty = Team.objects.create(code="EMPTY", name="Empty")
+        response = self.client.post(f"/api/v1/people/teams/{empty.pk}/archive/", {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        empty.refresh_from_db()
+        self.assertFalse(empty.is_active)
+        self.assertTrue(AuditEvent.objects.filter(action="people.team.archived", target_uuid=str(empty.pk)).exists())
+
     def test_hr_creates_active_probation_account_and_employee(self):
         self.client.force_login(self.hr)
         response = self.client.post(

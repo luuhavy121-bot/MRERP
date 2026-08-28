@@ -558,6 +558,40 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/people/teams/{uuid}/archive/:
+    post:
+      operationId: api_v1_people_teams_archive_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this team.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Team'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
   /api/v1/people/teams/{uuid}/leaders/:
     get:
       operationId: api_v1_people_teams_leaders_retrieve
@@ -778,6 +812,7 @@ components:
           maxLength: 120
         is_active:
           type: boolean
+          readOnly: true
         leader_count:
           type: integer
           readOnly: true
@@ -837,6 +872,7 @@ components:
           maxLength: 120
         is_active:
           type: boolean
+          readOnly: true
         leader_count:
           type: integer
           readOnly: true
@@ -851,6 +887,7 @@ components:
       required:
       - code
       - created_at
+      - is_active
       - leader_count
       - name
       - updated_at

@@ -94,6 +94,7 @@ Prefix đã dùng: `/api/v1`. OpenAPI version-control tại `apps/mrerp/backend/
 | `POST /people/employees/{uuid}/promote/` | Leader chuyển `Thử việc → Chính thức` trong Team lãnh đạo | **Đã chốt/đã hiện thực** |
 | `PUT /people/employees/{uuid}/membership/` | Leader gán tối đa một Team | **Đã chốt/đã hiện thực** |
 | `GET/POST/PATCH /people/teams/` | Đọc/quản lý Team theo quyền | **Đã chốt/đã hiện thực** |
+| `POST /people/teams/{uuid}/archive/` | Archive Team sau khi đã chuyển hết nhân sự và gỡ Leader | **Đã chốt/đã hiện thực** |
 | `GET/POST /people/teams/{uuid}/leaders/` | Đọc/thêm Leader–Team | **Đã chốt/đã hiện thực** |
 | `DELETE /people/teams/{uuid}/leaders/{employee_uuid}/` | Gỡ Leader–Team | **Đã chốt/đã hiện thực** |
 

@@ -13,7 +13,7 @@ Repository đã có bản chạy local của People/HR Foundation trong Phase 1.
 
 **Đề xuất mục tiêu:** thực hiện đăng nhập chung bằng OIDC/OAuth 2.0. Identity Provider và chi tiết session vẫn chưa quyết định.
 
-**Đã có ở local:** đăng nhập mock bằng session cookie; ba view People gồm Danh bạ, Sơ đồ tổ chức và Team; HR quick-create có lựa chọn tạo account; Leader/CEO quản lý Team và membership. View Team dùng split view: chọn Team bên trái, xem Leader và nhân sự của Team bên phải. Sơ đồ tổ chức theo cấu trúc phẳng `CEO → Team → Employee`.
+**Đã có ở local:** đăng nhập mock bằng session cookie; ba view People gồm Danh bạ, Sơ đồ tổ chức và Team; HR quick-create có lựa chọn tạo account; Leader/CEO quản lý Team và membership. View Team dùng split view, cho đổi mã/tên và chỉ archive Team sau khi đã chuyển hết nhân sự, gỡ toàn bộ Leader. Sơ đồ tổ chức theo cấu trúc phẳng `CEO → Team → Employee`.
 
 Trong môi trường development/test, thanh trên cùng có bộ chọn **Xem theo vai trò** để đổi giữa các persona demo đã seed: CEO toàn quyền People, HR People, Leader Team Alpha, Staff Team Alpha và Staff Team Beta. Thao tác này tạo lại session ở backend và vì vậy dùng đúng capability, scope và field policy của persona được chọn; đây không phải cách frontend giả quyền. Danh sách persona là allow-list phía server, không nhận username tùy ý. Bộ chọn và endpoint tương ứng không khả dụng ngoài development/test. Captain và Manager chưa xuất hiện vì dự án chưa chốt capability/người dùng demo cho hai vai trò này.
 

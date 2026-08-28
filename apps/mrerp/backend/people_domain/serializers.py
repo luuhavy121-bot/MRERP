@@ -16,7 +16,7 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ["uuid", "code", "name", "is_active", "leader_count", "created_at", "updated_at"]
-        read_only_fields = ["uuid", "created_at", "updated_at", "leader_count"]
+        read_only_fields = ["uuid", "is_active", "created_at", "updated_at", "leader_count"]
 
 
 class EmployeeBasicSerializer(serializers.ModelSerializer):

@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from .access import can_view_hr_detail, get_actor_employee, visible_employee_queryset
@@ -161,7 +161,7 @@ class OrganizationViewSetMixin:
 
 
 class TeamViewSet(OrganizationViewSetMixin, viewsets.ModelViewSet):
-    queryset = Team.objects.select_related("department").prefetch_related("leaderships")
+    queryset = Team.objects.filter(is_active=True).select_related("department").prefetch_related("leaderships")
     serializer_class = TeamSerializer
 
     def get_queryset(self):
@@ -197,3 +197,14 @@ class TeamViewSet(OrganizationViewSetMixin, viewsets.ModelViewSet):
         link.delete()
         audit(actor=request.user, action="people.leadership.removed", target=team, changes={"leadership_uuid": target_uuid})
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["post"])
+    def archive(self, request, pk=None):
+        require_capability(request.user, MANAGE_ORGANIZATION)
+        team = self.get_object()
+        if team.members.exists() or team.leaderships.exists():
+            raise ValidationError({"team": "Phải chuyển hết nhân sự và gỡ toàn bộ Leader trước khi archive Team."})
+        team.is_active = False
+        team.save(update_fields=["is_active", "updated_at"])
+        audit(actor=request.user, action="people.team.archived", target=team, changes={"is_active": False})
+        return Response(TeamSerializer(team).data)
