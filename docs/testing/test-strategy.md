@@ -59,6 +59,8 @@ Ngưỡng timeout, retry, stale, RPO/RTO và tải mục tiêu vẫn **Chưa quy
 - Authorization matrix cho phạm vi đã hiện thực.
 - Load/restore evidence khi thay đổi có rủi ro tương ứng.
 
+Story chỉ được đưa sang `Ready` khi đạt [Definition of Ready](definition-of-ready.md). Đây là cổng đầu vào của backlog, không thay thế Definition of Done hoặc điều kiện đạt/không đạt cấp sản phẩm.
+
 ## 7. Kiểm tra tài liệu trong Phase 0
 
 Phase 0 chưa có application test suite, nhưng thay đổi tài liệu vẫn phải được kiểm tra:
@@ -83,5 +85,7 @@ Workflow `.github/workflows/repository-quality.yml` chạy checker khi push vào
 ## 8. Tài liệu liên quan
 
 - [Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md)
+- [Definition of Ready](definition-of-ready.md)
+- [Task acceptance scenarios Phase 1](phase-1-task-acceptance.md)
 - [Identity và phân quyền](../architecture/identity-and-authorization.md)
 - [Deployment](../operations/deployment.md)

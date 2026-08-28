@@ -37,6 +37,10 @@ OD-01, OD-02 và OD-03 cần được giải quyết trước khi migration logi
 
 OD-04 đến OD-07, OD-16, OD-18 và OD-19 cần được chốt đủ cho vertical slice bị ảnh hưởng trước khi hiện thực endpoint nghiệp vụ. Không hard-code giả định vào lõi platform.
 
+**Đã chốt cục bộ cho Task Phase 1 qua [ADR-0002](0002-task-authorization-baseline.md):** Captain có permission nền như Staff; Leader có scope các team mình quản lý; Manager tương lai có scope phòng ban nhưng ban đầu không có user Manager; CEO có scope toàn công ty nhưng từng hành động vẫn cần capability. Các quyết định này không tự áp dụng sang CRM, HR, Rewards, Admin Panel hoặc product khác.
+
+**Chưa quyết định:** OD-04 vẫn mở cho ranh giới Captain/Leader/Manager ngoài Task; quyền đọc Task nền của Staff/Captain và policy hủy/xóa Task cũng chưa được chốt.
+
 ### Topology và vận hành
 
 OD-09 đến OD-12, OD-14, OD-15 và OD-21 cần ADR trước khi lựa chọn production topology/tool. Có thể thiết kế interface/contract mà chưa chọn product cụ thể.

@@ -43,6 +43,8 @@ Chi tiết: [Data ownership](architecture/data-ownership.md).
 
 **Đã chốt.** Product đích tự kiểm sáu lớp quyền tại server: account/employment, product, action, scope, object và field.
 
+Task Phase 1 đã có [ma trận quyền chuyên biệt](architecture/task-authorization-matrix.md). Ma trận này không tự áp dụng sang CRM, HR, Rewards hoặc Admin Panel.
+
 Chi tiết: [Identity và phân quyền](architecture/identity-and-authorization.md).
 
 ## Liên kết product

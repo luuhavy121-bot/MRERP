@@ -16,6 +16,9 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 - Glossary và test strategy ban đầu.
 - Governance baseline: `.gitignore`, `.gitattributes`, CONTRIBUTING, PR template và CI repository checker.
 - Workflow `Repository quality` đã chạy thành công trên GitHub sau khi baseline được push.
+- Backlog cấp Epic cho toàn roadmap và story chi tiết của Task vertical slice Phase 1 ở trạng thái `Refining`.
+- ADR-0002 và ma trận quyền đã chốt phần permission semantics của Task được người dùng xác nhận.
+- Definition of Ready và acceptance scenarios cho Task đã có bản đề xuất để duyệt.
 
 Chưa có:
 
@@ -24,6 +27,7 @@ Chưa có:
 - Dependency ứng dụng.
 - Identity Provider được chọn.
 - Tính năng nghiệp vụ.
+- Story Phase 1 ở trạng thái `Ready`.
 
 Đã có thêm một [visual prototype không dependency](../prototype/README.md) để duyệt hướng thiết kế và minh họa trạng thái màn hình. Đây không phải scaffold production và không thay đổi trạng thái các quyết định kiến trúc.
 
@@ -52,9 +56,10 @@ Chỉ chuyển phase khi:
 ## Bước tiếp theo đề xuất
 
 1. Người sở hữu sản phẩm duyệt sáu tài liệu đường đọc chính.
-2. Ưu tiên các open decision chặn Phase 1: role boundary, Admin access, cơ cấu/capability chính thức và Identity contract giả lập.
-3. Tạo ADR cho những lựa chọn cần hiện thực.
-4. Chỉ sau khi có yêu cầu chuyển Phase 1 mới scaffold stack được duyệt.
+2. Duyệt [backlog](product/backlog.md), [Task stories](product/stories/phase-1-task-vertical-slice.md), [ma trận quyền](architecture/task-authorization-matrix.md) và [Definition of Ready](testing/definition-of-ready.md).
+3. Chốt các điểm còn chặn slice: quyền đọc Task nền, API/data contract, Identity contract giả lập và stack qua ADR.
+4. Hoàn thiện test cases từ [Task acceptance scenarios](testing/phase-1-task-acceptance.md), rồi đưa từng story đủ điều kiện sang `Ready`.
+5. Chỉ sau khi cổng Phase 1 được duyệt và có yêu cầu chuyển phase mới scaffold stack được duyệt.
 
 ## Đọc sâu hơn
 

@@ -92,9 +92,18 @@ Thêm test object state/ownership khi endpoint có object rule.
 
 **Chưa quyết định.** Cần chọn service account/token rotation hoặc cơ chế tương đương. Token tĩnh dùng chung chỉ được phép trong demo cục bộ, không phải production.
 
-## 11. Tài liệu liên quan
+## 11. Chuyên biệt hóa cho Task Phase 1
+
+**Đã chốt trong phạm vi Task Phase 1.** [ADR-0002](../decisions/0002-task-authorization-baseline.md) và [ma trận phân quyền Task](task-authorization-matrix.md) áp dụng sáu lớp kiểm tra trên vào capability, scope, field responsibility và state transition của Task.
+
+Các điểm đã chốt gồm Captain có permission nền như Staff; Leader quản lý trong team; Manager tương lai quản lý trong phòng ban nhưng ban đầu không có user Manager; CEO có scope toàn công ty nhưng không bỏ qua capability. Người tạo quản lý trường định nghĩa, người nhận quản lý trường thực thi và hoàn thành cần bước xác nhận riêng.
+
+**Chưa quyết định.** Quyền đọc Task nền của Staff/Captain, hủy/xóa Task và ranh giới cấp bậc ngoài module Task. Không suy rộng ma trận Task sang product/module khác.
+
+## 12. Tài liệu liên quan
 
 - [Data ownership](data-ownership.md)
 - [Tích hợp hệ sinh thái](ecosystem-integration.md)
+- [Ma trận phân quyền Task](task-authorization-matrix.md)
 - [Test strategy](../testing/test-strategy.md)
 - [Open decisions](../decisions/open-decisions.md)

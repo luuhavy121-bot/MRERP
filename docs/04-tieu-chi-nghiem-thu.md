@@ -48,6 +48,12 @@ Phase 0 **Đạt** khi:
 
 Phase 0 **Không đạt** nếu tài liệu âm thầm biến đề xuất/open decision thành quyết định hoặc có hai nguồn sự thật mâu thuẫn.
 
+## Cổng đầu vào story Phase 1
+
+**Đề xuất mục tiêu.** Trước khi một story được đưa từ `Refining` sang `Ready`, story phải đạt [Definition of Ready](testing/definition-of-ready.md): có outcome, actor, data owner, acceptance criteria, capability/scope/object/field rule, contract, audit, dependency và test tối thiểu. Cổng này không thay thế Definition of Done.
+
+Riêng Task vertical slice, điều kiện quyền phải đối chiếu với [ma trận phân quyền Task](architecture/task-authorization-matrix.md) và [acceptance scenarios Phase 1](testing/phase-1-task-acceptance.md). Mục còn **Chưa quyết định** không được giả lập thành policy production chỉ để đưa story sang `Ready`.
+
 ## Bằng chứng nghiệm thu
 
 Mỗi phase sau phải cung cấp bằng chứng phù hợp: test result, contract diff, migration/rollback evidence, authorization matrix, audit evidence và hướng dẫn vận hành. Không nghiệm thu chỉ dựa trên việc giao diện bấm được.

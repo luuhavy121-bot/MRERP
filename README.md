@@ -10,6 +10,8 @@ Repository đang ở **Phase 0 — khóa context và nền tài liệu**.
 
 Hiện chưa có frontend/backend production, database migration hoặc dependency ứng dụng. Repository có một [visual prototype không dependency](prototype/README.md) để duyệt hướng giao diện; prototype này không phải application scaffold hay bằng chứng backend/authorization đã tồn tại. Phần tài liệu của Phase 0 đã được thiết lập nhưng Phase 0 chỉ được đóng khi đạt cổng trong [04 — Tiêu chí nghiệm thu](docs/04-tieu-chi-nghiem-thu.md). Các tài liệu kiến trúc có nhãn **Đề xuất mục tiêu** chưa phải là quyết định production cuối cùng nếu chưa có ADR được chấp nhận.
 
+Backlog cấp Epic và gói refinement Task Phase 1 đã được chuẩn bị nhưng chưa có story nào ở trạng thái `Ready`; các blocker còn lại được ghi trong [Product backlog](docs/product/backlog.md).
+
 ## Thứ tự đọc bắt buộc
 
 1. [AGENTS.md](AGENTS.md) — quy tắc làm việc và giới hạn chủ động.
@@ -56,20 +58,28 @@ MRERP/
    ├─ product/
    │  ├─ product-overview.md
    │  ├─ business-requirements.md
+   │  ├─ backlog.md
+   │  ├─ stories/
+   │  │  └─ phase-1-task-vertical-slice.md
    │  └─ roadmap.md
    ├─ architecture/
    │  ├─ technical-architecture.md
    │  ├─ data-ownership.md
    │  ├─ identity-and-authorization.md
+   │  ├─ task-authorization-matrix.md
    │  └─ ecosystem-integration.md
    ├─ operations/
    │  ├─ deployment.md
    │  └─ configuration-and-secrets.md
    ├─ testing/
-   │  └─ test-strategy.md
+   │  ├─ test-strategy.md
+   │  ├─ definition-of-ready.md
+   │  └─ phase-1-task-acceptance.md
    └─ decisions/
       ├─ README.md
       ├─ ADR-TEMPLATE.md
+      ├─ 0001-repository-governance-baseline.md
+      ├─ 0002-task-authorization-baseline.md
       └─ open-decisions.md
 ```
 

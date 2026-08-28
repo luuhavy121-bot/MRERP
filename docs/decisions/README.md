@@ -47,3 +47,4 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 ## Danh sách ADR
 
 - [ADR-0001: Repository governance baseline](0001-repository-governance-baseline.md) — `Accepted`.
+- [ADR-0002: Task authorization baseline cho Phase 1](0002-task-authorization-baseline.md) — `Accepted`; chỉ chốt policy Task trong vertical slice đầu tiên.

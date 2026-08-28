@@ -39,6 +39,10 @@ Tài liệu này giúp người sở hữu sản phẩm hiểu hệ thống cầ
 
 **Đã chốt.** MRERP sở hữu Task dài hạn. MREKANBAN không được tạo nguồn Task cạnh tranh; nó tham chiếu `task_uuid` và có thể quản lý cấu hình view chuyên sâu.
 
+**Đã chốt trong phạm vi Task Phase 1.** Captain có permission nền như Staff; Leader có team scope; Manager tương lai có department scope nhưng ban đầu không có user Manager; CEO có company scope nhưng hành động vẫn cần capability. Luồng tạo, giao, cập nhật, gửi xác nhận và self-task chi tiết nằm tại [ma trận phân quyền Task](architecture/task-authorization-matrix.md).
+
+**Chưa quyết định.** Quyền đọc Task nền của Staff/Captain và policy hủy/xóa Task.
+
 **Chưa quyết định.** MREKANBAN sẽ được retire hay tiếp tục làm client/view chuyên sâu.
 
 ## ASSETCONTROL
@@ -49,7 +53,7 @@ Tài liệu này giúp người sở hữu sản phẩm hiểu hệ thống cầ
 
 ## Những policy chưa được phép tự chọn
 
-- Ranh giới Captain/Leader/Manager.
+- Ranh giới Captain/Leader/Manager ngoài policy Task Phase 1.
 - Người được vào Admin Panel và quản trị Rewards.
 - Field matrix CRM.
 - Công thức lương, chấm công, phép và đổi thưởng.

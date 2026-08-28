@@ -64,6 +64,10 @@ Khi source product lỗi:
 
 MREKANBAN hiện tại chỉ tham chiếu Task và có thể sở hữu bố cục/view chuyên sâu. Không được tạo nguồn Task cạnh tranh.
 
+**Đã chốt trong phạm vi Task Phase 1.** Capability, scope, trách nhiệm theo field, luồng gửi xác nhận và quy tắc self-task được ghi tại [ADR-0002](../decisions/0002-task-authorization-baseline.md) và [ma trận phân quyền Task](../architecture/task-authorization-matrix.md).
+
+**Chưa quyết định.** Quyền đọc Task nền của Staff/Captain, hủy/xóa Task và các workflow nâng cao chưa thuộc vertical slice đầu tiên.
+
 **Chưa quyết định.** Retire MREKANBAN hay giữ làm client/view chuyên sâu dài hạn.
 
 ## 6. Recognition và Rewards
@@ -89,12 +93,14 @@ Không tin `role`, `team_id`, `owner_id`, `price_access` hoặc capability do cl
 - Quy trình/phạm vi phê duyệt chi tiết.
 - Chính sách đổi thưởng.
 - Field matrix CRM.
-- Ranh giới Captain/Leader/Manager.
+- Ranh giới Captain/Leader/Manager ngoài policy Task Phase 1.
 - Danh sách phòng ban, team, cấp bậc và capability chính thức.
 
 ## 10. Tài liệu liên quan
 
 - [Tổng quan sản phẩm](product-overview.md)
 - [Identity và phân quyền](../architecture/identity-and-authorization.md)
+- [Product backlog](backlog.md)
+- [Task stories Phase 1](stories/phase-1-task-vertical-slice.md)
 - [Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md)
 - [Open decisions](../decisions/open-decisions.md)

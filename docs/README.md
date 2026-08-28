@@ -29,14 +29,18 @@ Các file `01–06` là bản dẫn đường ngắn gọn. Chúng không sao ch
 |---|---|
 | Mục tiêu, product boundary và đối tượng sử dụng | [product/product-overview.md](product/product-overview.md) |
 | Yêu cầu nghiệp vụ và ranh giới module | [product/business-requirements.md](product/business-requirements.md) |
+| Epic, backlog status và story chi tiết | [product/backlog.md](product/backlog.md) và [product/stories/](product/stories/phase-1-task-vertical-slice.md) |
 | Kiến trúc, stack và cấu trúc monorepo | [architecture/technical-architecture.md](architecture/technical-architecture.md) |
 | Nguồn dữ liệu chuẩn và quy tắc đồng bộ | [architecture/data-ownership.md](architecture/data-ownership.md) |
 | Identity, SSO và authorization | [architecture/identity-and-authorization.md](architecture/identity-and-authorization.md) |
+| Ma trận authorization chuyên biệt của Task Phase 1 | [architecture/task-authorization-matrix.md](architecture/task-authorization-matrix.md) |
 | API, event, snapshot và tích hợp product | [architecture/ecosystem-integration.md](architecture/ecosystem-integration.md) |
 | VPS, database, worker, backup và quan sát | [operations/deployment.md](operations/deployment.md) |
 | Cấu hình và secret ở mức repository | [operations/configuration-and-secrets.md](operations/configuration-and-secrets.md) |
 | Điều kiện đạt/không đạt cấp sản phẩm và phase | [04-tieu-chi-nghiem-thu.md](04-tieu-chi-nghiem-thu.md) |
 | Chiến lược kiểm thử kỹ thuật | [testing/test-strategy.md](testing/test-strategy.md) |
+| Cổng đầu vào story | [testing/definition-of-ready.md](testing/definition-of-ready.md) |
+| Acceptance scenarios của Task Phase 1 | [testing/phase-1-task-acceptance.md](testing/phase-1-task-acceptance.md) |
 | Phase và thứ tự triển khai | [product/roadmap.md](product/roadmap.md) |
 | Danh sách quyết định chưa chốt | [decisions/open-decisions.md](decisions/open-decisions.md) |
 | Quyết định kiến trúc đã được xem xét | [decisions/](decisions/README.md) |
