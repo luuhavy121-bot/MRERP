@@ -15,6 +15,8 @@ Repository đã có bản chạy local của People/HR Foundation trong Phase 1.
 
 **Đã có ở local:** đăng nhập mock bằng session cookie, danh sách/hồ sơ nhân sự theo scope, HR quick-create và chỉnh hồ sơ, Leader quản lý cơ cấu/team và xác nhận nhân sự chính thức.
 
+Mục **Tiến độ** trong thanh điều hướng là bề mặt quản trị tạm thời: hiển thị phase, module, bằng chứng chất lượng, open decisions và cổng tiếp theo. Chỉ số lấy từ roadmap/source of truth và phải cập nhật cùng bằng chứng thực tế; mục này tự ẩn khi tổng tiến độ đạt 100%.
+
 **Chưa có:** URL production đã duyệt, Identity production, tài khoản thật, hướng dẫn khôi phục mật khẩu và quy trình hỗ trợ người dùng.
 
 ## Chạy local

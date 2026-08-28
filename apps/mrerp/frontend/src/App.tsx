@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { FormEvent } from 'react'
+import type { CSSProperties, FormEvent } from 'react'
 import './App.css'
 import { api } from './api'
+import { projectStatus, showProjectProgress } from './projectStatus'
 import type { Department, Employee, Session, Team, TeamLeader } from './types'
 
 const labels: Record<string, string> = {
@@ -163,6 +164,61 @@ function OrganizationPanel({ departments, teams, employees, reload }: { departme
   </div>
 }
 
+function ProjectProgress() {
+  const completedModules = projectStatus.modules.filter((module) => module.percent === 100).length
+  return <div className="progress-dashboard">
+    <section className="progress-hero">
+      <div className="progress-hero__copy">
+        <p className="eyebrow">PROJECT DELIVERY · CẬP NHẬT {projectStatus.updatedAt}</p>
+        <h2>MRERP đang được xây đến đâu?</h2>
+        <p>Tiến độ được đối chiếu với roadmap, story, code và bằng chứng kiểm thử. Prototype không được tính như một tính năng production đã hoàn thành.</p>
+        <div className="phase-chip"><span className="live-dot" />{projectStatus.currentPhase} · {projectStatus.currentPhaseName}</div>
+      </div>
+      <div className="progress-orbit" style={{ '--progress': `${projectStatus.overallPercent * 3.6}deg` } as CSSProperties}>
+        <div><strong>{projectStatus.overallPercent}%</strong><span>toàn dự án</span></div>
+      </div>
+    </section>
+
+    <section className="progress-summary-grid">
+      <article><span>Modules theo kế hoạch</span><strong>{projectStatus.modules.length}</strong><small>{completedModules} module hoàn tất 100%</small></article>
+      <article><span>Quyết định đã giải quyết</span><strong>{projectStatus.decisions.resolved}</strong><small>{projectStatus.decisions.open} open decisions còn lại</small></article>
+      <article><span>Automated tests People</span><strong>18</strong><small>SQLite và PostgreSQL đã xanh</small></article>
+      <article><span>Ưu tiên quyết định</span><strong>OD-19</strong><small>Identity production vẫn chưa chốt</small></article>
+    </section>
+
+    <section className="progress-section">
+      <div className="progress-section__head"><div><p className="eyebrow">ROADMAP</p><h3>Tiến độ theo phase</h3></div><small>{projectStatus.calculation}</small></div>
+      <div className="phase-track">{projectStatus.phases.map((phase) => <article className={`phase-card phase-card--${phase.tone}`} key={phase.id}>
+        <div><span>{phase.id}</span><b>{phase.percent}%</b></div><strong>{phase.name}</strong><small>{phase.state}</small><div className="mini-progress"><i style={{ width: `${phase.percent}%` }} /></div>
+      </article>)}</div>
+    </section>
+
+    <section className="progress-layout">
+      <div className="progress-section">
+        <div className="progress-section__head"><div><p className="eyebrow">12 MODULES</p><h3>Bản đồ hoàn thiện</h3></div><span className="legend"><i /> Production slice <i /> Prototype/kế hoạch</span></div>
+        <div className="module-progress-grid">{projectStatus.modules.map((module) => <article className="module-progress-card" key={module.name}>
+          <div className="module-progress-card__top"><span className={`progress-state progress-state--${module.tone}`}>{module.state}</span><b>{module.percent}%</b></div>
+          <h4>{module.name}</h4><small>{module.phase}</small>
+          <div className="mini-progress"><i className={`tone--${module.tone}`} style={{ width: `${module.percent}%` }} /></div>
+          <p>{module.next}</p>
+        </article>)}</div>
+      </div>
+      <aside className="progress-side">
+        <section className="progress-section">
+          <p className="eyebrow">QUALITY SIGNALS</p><h3>Bằng chứng hiện tại</h3>
+          <div className="quality-list">{projectStatus.quality.map((item) => <div key={item.label}><span><b>{item.label}</b><em>{item.state}</em></span><strong>{item.value}%</strong><div className="mini-progress"><i style={{ width: `${item.value}%` }} /></div></div>)}</div>
+        </section>
+        <section className="progress-section next-gates">
+          <p className="eyebrow">NEXT GATES</p><h3>Việc cần làm tiếp</h3>
+          <ol>{projectStatus.nextGates.map((gate) => <li key={gate}>{gate}</li>)}</ol>
+          <div className="decision-note"><span>Decision debt ưu tiên</span><strong>{projectStatus.decisions.priority}</strong></div>
+        </section>
+      </aside>
+    </section>
+    <p className="progress-disclaimer">Màn hình Tiến độ là công cụ quản trị tạm thời và sẽ tự ẩn khi tổng tiến độ đạt 100%.</p>
+  </div>
+}
+
 function Workspace({ session, onLogout }: { session: Session; onLogout: () => void }) {
   const capabilities = useMemo(() => new Set(session.capabilities ?? []), [session])
   const canCreate = capabilities.has('people_domain.add_employee')
@@ -175,7 +231,7 @@ function Workspace({ session, onLogout }: { session: Session; onLogout: () => vo
   const [teams, setTeams] = useState<Team[]>([])
   const [selected, setSelected] = useState<Employee | null>(null)
   const [showCreate, setShowCreate] = useState(false)
-  const [tab, setTab] = useState<'people' | 'organization'>('people')
+  const [tab, setTab] = useState<'people' | 'organization' | 'progress'>('people')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -195,12 +251,12 @@ function Workspace({ session, onLogout }: { session: Session; onLogout: () => vo
   return <div className="app-shell">
     <aside className="sidebar">
       <div className="brand"><span className="brand-mark">MRE<span>•</span></span><small>WORKSPACE</small></div>
-      <nav><button className="nav-link"><span>⌂</span>Tổng quan</button><button className={`nav-link ${tab === 'people' ? 'active' : ''}`} onClick={() => setTab('people')}><span>◎</span>Nhân sự<strong>{employees.length}</strong></button>{canManageOrg && <button className={`nav-link ${tab === 'organization' ? 'active' : ''}`} onClick={() => setTab('organization')}><span>◇</span>Cơ cấu</button>}<button className="nav-link"><span>✓</span>Công việc<em>Sắp tới</em></button></nav>
+      <nav><button className="nav-link"><span>⌂</span>Tổng quan</button>{showProjectProgress && <button className={`nav-link ${tab === 'progress' ? 'active' : ''}`} onClick={() => setTab('progress')}><span>↗</span>Tiến độ<strong>{projectStatus.overallPercent}%</strong></button>}<button className={`nav-link ${tab === 'people' ? 'active' : ''}`} onClick={() => setTab('people')}><span>◎</span>Nhân sự<strong>{employees.length}</strong></button>{canManageOrg && <button className={`nav-link ${tab === 'organization' ? 'active' : ''}`} onClick={() => setTab('organization')}><span>◇</span>Cơ cấu</button>}<button className="nav-link"><span>✓</span>Công việc<em>Sắp tới</em></button></nav>
       <div className="sidebar-foot"><div className="mock-badge"><span className="live-dot" />Mock Identity</div><button className="user-card" onClick={onLogout}><span className="avatar">{(session.display_name ?? 'MR').slice(0, 2).toUpperCase()}</span><span><strong>{session.display_name}</strong><small>{session.employee_code} · Đăng xuất</small></span></button></div>
     </aside>
     <main className="workspace">
-      <header className="topbar"><div><p className="eyebrow">PHASE 1 · PEOPLE FOUNDATION</p><h1>{tab === 'people' ? 'Nhân sự' : 'Cơ cấu tổ chức'}</h1></div><div className="top-actions"><button className="icon-button">◐</button>{canCreate && tab === 'people' && <button className="primary-button" onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</button>}</div></header>
-      {tab === 'people' ? <>
+      <header className="topbar"><div><p className="eyebrow">PHASE 1 · PEOPLE FOUNDATION</p><h1>{tab === 'people' ? 'Nhân sự' : tab === 'organization' ? 'Cơ cấu tổ chức' : 'Tiến độ dự án'}</h1></div><div className="top-actions"><button className="icon-button">◐</button>{canCreate && tab === 'people' && <button className="primary-button" onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</button>}</div></header>
+      {tab === 'progress' ? <ProjectProgress /> : tab === 'people' ? <>
         <section className="metric-grid"><article><span>Tổng hồ sơ trong scope</span><strong>{employees.length}</strong><small>Server đã lọc theo quyền</small></article><article><span>Đang thử việc</span><strong>{probation}</strong><small>Chờ Leader cùng Team xác nhận</small></article><article><span>Teams hiển thị</span><strong>{new Set(employees.map((item) => item.team).filter(Boolean)).size}</strong><small>{capabilities.has('people_domain.view_company_directory') ? 'Company scope' : 'Team scope'}</small></article></section>
         <section className="panel employee-panel"><div className="table-toolbar"><div className="search-box">⌕<input placeholder="Tìm theo mã, tên, vị trí…" value={search} onChange={(e) => setSearch(e.target.value)} /></div><div className="privacy-note">⌾ Payload đã áp dụng field policy</div></div>
           {error && <div className="alert alert--error">{error}</div>}

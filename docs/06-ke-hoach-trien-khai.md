@@ -23,6 +23,7 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 - ADR-0003 đến ADR-0006 đã được người sở hữu sản phẩm chấp nhận cho People/HR Foundation.
 - React/Vite frontend, Django/DRF API, migration, mock Identity development/test, authorization, audit và automated tests của slice đã được tạo.
 - Repository CI chạy docs/secret hygiene, backend tests trên PostgreSQL 16, OpenAPI validation và frontend lint/build.
+- App React có màn hình Tiến độ tạm thời cho phase/module/gate; màn hình tự ẩn khi tổng tiến độ đạt 100% và không được dùng thay bằng chứng nghiệm thu.
 
 Chưa có:
 

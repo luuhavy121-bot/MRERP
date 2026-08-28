@@ -8,7 +8,7 @@ Repository GitHub: [luuhavy121-bot/MRERP](https://github.com/luuhavy121-bot/MRER
 
 Repository đang ở **Phase 1 — vertical slice nền tảng**.
 
-Phase 0 đã qua cổng duyệt. Slice People/HR Foundation đầu tiên hiện có React/Vite frontend, Django/DRF API, migration, authorization fail-closed, audit và automated tests. Local development dùng SQLite mặc định hoặc PostgreSQL 16 qua Docker Compose. Mock Identity chỉ dành cho development/test và tự từ chối khởi động ở production; Identity Provider production vẫn **Chưa quyết định**.
+Phase 0 đã qua cổng duyệt. Slice People/HR Foundation đầu tiên hiện có React/Vite frontend, Django/DRF API, migration, authorization fail-closed, audit và automated tests. App có màn hình Tiến độ quản trị tạm thời, tự ẩn khi tổng tiến độ đạt 100%; phần trăm không thay thế bằng chứng nghiệm thu. Local development dùng SQLite mặc định hoặc PostgreSQL 16 qua Docker Compose. Mock Identity chỉ dành cho development/test và tự từ chối khởi động ở production; Identity Provider production vẫn **Chưa quyết định**.
 
 Các story People/HR trong slice đã được duyệt `Ready` và đang được hiện thực. Task vẫn ở backlog, chưa thuộc slice đang triển khai. Trạng thái chi tiết nằm trong [Product backlog](docs/product/backlog.md) và [People readiness register](docs/testing/phase-1-people-readiness.md).
 
