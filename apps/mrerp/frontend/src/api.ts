@@ -45,6 +45,9 @@ export const api = {
     method: 'POST', body: JSON.stringify({ username, password }),
   }),
   logout: () => request<void>('/api/v1/auth/logout/', { method: 'POST' }),
+  switchPersona: (username: string) => request<Session>('/api/v1/auth/debug/switch/', {
+    method: 'POST', body: JSON.stringify({ username }),
+  }),
   employees: (search = '') => request<Page<Employee>>(`/api/v1/people/employees/?search=${encodeURIComponent(search)}`),
   allEmployees: (search = '') => requestAll<Employee>(`/api/v1/people/employees/?search=${encodeURIComponent(search)}`),
   employee: (uuid: string) => request<Employee>(`/api/v1/people/employees/${uuid}/`),

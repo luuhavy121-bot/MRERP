@@ -42,7 +42,7 @@
 
 ## Decision
 
-Chọn Option A. Backend có development/test identity adapter và local login bằng session cookie. Mock account lưu password hash, không lưu plaintext; cấu hình production phải fail startup nếu mock Identity được bật. Business code chỉ nhận normalized actor context để có thể thay adapter bằng OIDC sau này.
+Chọn Option A. Backend có development/test identity adapter và local login bằng session cookie. Mock account lưu password hash, không lưu plaintext; cấu hình production phải fail startup nếu mock Identity được bật. Business code chỉ nhận normalized actor context để có thể thay adapter bằng OIDC sau này. Công cụ debug có thể đổi session giữa một allow-list persona fixture phía server; client không được tự khai báo role, capability hoặc scope.
 
 ## Remaining open questions
 
@@ -83,6 +83,7 @@ Chọn Option A. Backend có development/test identity adapter và local login b
 ## Validation
 
 - Test actor hợp lệ, subject không mapping, account khóa, employment kết thúc, client spoofing và audit actor.
+- Test persona switch: phải đăng nhập, chỉ nhận persona trong allow-list, session mới phản ánh đúng actor và endpoint trả `404` ngoài development/test.
 
 ## Documentation updates
 

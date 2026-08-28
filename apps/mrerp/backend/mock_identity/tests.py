@@ -23,6 +23,11 @@ class MockIdentityTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["employee_code"], "HRA01")
+        self.assertTrue(response.data["mock_identity"])
+        self.assertEqual(len(response.data["debug_personas"]), 4)
+        session_response = self.client.get("/api/v1/auth/session/")
+        self.assertTrue(session_response.data["authenticated"])
+        self.assertEqual(session_response.data["username"], "hr.demo")
         logout_response = self.client.post("/api/v1/auth/logout/")
         self.assertEqual(logout_response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -33,4 +38,27 @@ class MockIdentityTests(APITestCase):
             {"username": "hr.demo", "password": "Test-Only-1234!"},
             format="json",
         )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_authenticated_user_can_switch_to_allowlisted_debug_persona(self):
+        self.client.login(username="hr.demo", password="Test-Only-1234!")
+        response = self.client.post("/api/v1/auth/debug/switch/", {"username": "leader.demo"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["employee_code"], "LDR01")
+        session = self.client.get("/api/v1/auth/session/")
+        self.assertEqual(session.data["username"], "leader.demo")
+
+    def test_debug_switch_rejects_user_outside_allowlist(self):
+        self.client.login(username="hr.demo", password="Test-Only-1234!")
+        response = self.client.post("/api/v1/auth/debug/switch/", {"username": "not-allowed"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_debug_switch_requires_authenticated_session(self):
+        response = self.client.post("/api/v1/auth/debug/switch/", {"username": "leader.demo"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(APP_ENV="production")
+    def test_debug_switch_is_closed_outside_debug_mode(self):
+        self.client.login(username="hr.demo", password="Test-Only-1234!")
+        response = self.client.post("/api/v1/auth/debug/switch/", {"username": "leader.demo"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

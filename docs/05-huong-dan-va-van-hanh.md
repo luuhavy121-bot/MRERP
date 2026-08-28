@@ -15,6 +15,8 @@ Repository đã có bản chạy local của People/HR Foundation trong Phase 1.
 
 **Đã có ở local:** đăng nhập mock bằng session cookie; ba view People gồm Danh bạ, Sơ đồ tổ chức và Team; danh sách/hồ sơ nhân sự theo scope; HR quick-create và chỉnh hồ sơ; Leader quản lý cơ cấu/team và xác nhận nhân sự chính thức. Sơ đồ và Team view chỉ trình bày payload đã được backend lọc, không mở rộng scope ở frontend.
 
+Trong môi trường development/test, thanh trên cùng có bộ chọn **Xem theo vai trò** để đổi giữa các persona demo đã seed: HR People, Leader Team Alpha, Staff Team Alpha và Staff Team Beta. Thao tác này tạo lại session ở backend và vì vậy dùng đúng capability, scope và field policy của persona được chọn; đây không phải cách frontend giả quyền. Danh sách persona là allow-list phía server, không nhận username tùy ý. Bộ chọn và endpoint tương ứng không khả dụng ngoài development/test. Captain và Manager chưa xuất hiện vì dự án chưa chốt capability/người dùng demo cho hai vai trò này.
+
 Mục **Tiến độ** trong thanh điều hướng là bề mặt quản trị tạm thời: hiển thị phase, module, bằng chứng chất lượng, open decisions và cổng tiếp theo. Chỉ số lấy từ roadmap/source of truth và phải cập nhật cùng bằng chứng thực tế; mục này tự ẩn khi tổng tiến độ đạt 100%.
 
 **Chưa có:** URL production đã duyệt, Identity production, tài khoản thật, hướng dẫn khôi phục mật khẩu và quy trình hỗ trợ người dùng.
@@ -22,7 +24,7 @@ Mục **Tiến độ** trong thanh điều hướng là bề mặt quản trị 
 ## Chạy local
 
 1. Backend: tạo Python 3.12 virtual environment, cài `apps/mrerp/backend/requirements.txt`, migrate và chạy server cổng 8000.
-2. Seed tài khoản giả bằng lệnh `python manage.py seed_demo --password <mật-khẩu-local>`; không commit mật khẩu.
+2. Seed tài khoản giả bằng lệnh `python manage.py seed_demo --password <mật-khẩu-local>`; không commit mật khẩu. Sau khi đăng nhập một tài khoản demo, có thể dùng **Xem theo vai trò** để kiểm tra nhanh các scope đã duyệt.
 3. Frontend: cài đúng dependency từ lockfile bằng `npm ci`, sau đó `npm run dev`; Vite chạy cổng 4173 và proxy `/api` tới backend.
 4. Có thể dùng `docker compose up --build` sau khi cấp `POSTGRES_PASSWORD` và `MRERP_SECRET_KEY` trong môi trường local.
 

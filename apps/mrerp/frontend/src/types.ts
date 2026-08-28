@@ -8,6 +8,7 @@ export type Session = {
   capabilities?: string[]
   csrf_token?: string
   mock_identity?: boolean
+  debug_personas?: Array<{ username: string; label: string }>
 }
 
 export type Department = {

@@ -14,7 +14,7 @@ python -m venv .venv
 .venv\Scripts\python apps\mrerp\backend\manage.py runserver 127.0.0.1:8000
 ```
 
-Lệnh seed tạo dữ liệu giả và bắt buộc nhận mật khẩu từ CLI; không commit mật khẩu. Mock Identity chỉ được bật ở development/test và cấu hình production sẽ fail-fast nếu nó còn bật.
+Lệnh seed tạo dữ liệu giả và bắt buộc nhận mật khẩu từ CLI; không commit mật khẩu. Mock Identity chỉ được bật ở development/test và cấu hình production sẽ fail-fast nếu nó còn bật. Sau khi đăng nhập, giao diện có thể đổi session giữa allow-list persona demo để kiểm tra authorization; endpoint này không tồn tại trong production.
 
 ## Kiểm tra
 

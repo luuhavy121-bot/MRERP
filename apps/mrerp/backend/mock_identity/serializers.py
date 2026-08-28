@@ -6,6 +6,15 @@ class LoginRequestSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
 
+class DebugPersonaSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    label = serializers.CharField()
+
+
+class DebugSwitchRequestSerializer(serializers.Serializer):
+    username = serializers.CharField()
+
+
 class SessionResponseSerializer(serializers.Serializer):
     authenticated = serializers.BooleanField()
     username = serializers.CharField(required=False)
@@ -16,3 +25,4 @@ class SessionResponseSerializer(serializers.Serializer):
     capabilities = serializers.ListField(child=serializers.CharField(), required=False)
     csrf_token = serializers.CharField(required=False)
     mock_identity = serializers.BooleanField(required=False)
+    debug_personas = DebugPersonaSerializer(many=True, required=False)

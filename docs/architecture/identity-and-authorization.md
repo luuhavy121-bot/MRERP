@@ -106,7 +106,13 @@ Các điểm đã chốt gồm Captain có permission nền như Staff; Leader q
 
 **Chưa quyết định.** Write authority, directory read scope, field projection, employment workflow và mock Identity trust boundary.
 
-## 13. Tài liệu liên quan
+## 13. Persona switcher development/test
+
+**Đã chốt trong phạm vi Mock Identity Phase 1.** Theo [ADR-0004](../decisions/0004-mock-identity-context.md), development/test có thể đổi giữa các persona fixture bằng endpoint phía server. Endpoint chỉ chấp nhận allow-list được cấu hình trong backend, tạo một session mới cho account demo hợp lệ và trả normalized actor context. Client không được gửi role, capability hoặc scope để tự nâng quyền.
+
+**Không làm.** Không bật endpoint hoặc hiển thị bộ chọn này trong production; không coi persona demo là quyết định về cơ cấu tổ chức thật; không tự bổ sung Captain/Manager khi capability và dữ liệu mẫu chưa được duyệt.
+
+## 14. Tài liệu liên quan
 
 - [Data ownership](data-ownership.md)
 - [Tích hợp hệ sinh thái](ecosystem-integration.md)

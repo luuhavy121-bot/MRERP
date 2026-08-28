@@ -149,6 +149,32 @@ paths:
                 type: object
                 additionalProperties: {}
           description: ''
+  /api/v1/auth/debug/switch/:
+    post:
+      operationId: api_v1_auth_debug_switch_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebugSwitchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DebugSwitchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DebugSwitchRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+          description: ''
   /api/v1/auth/login/:
     post:
       operationId: api_v1_auth_login_create
@@ -191,6 +217,7 @@ paths:
       tags:
       - api
       security:
+      - cookieAuth: []
       - {}
       responses:
         '200':
@@ -762,6 +789,23 @@ paths:
           description: No response body
 components:
   schemas:
+    DebugPersona:
+      type: object
+      properties:
+        username:
+          type: string
+        label:
+          type: string
+      required:
+      - label
+      - username
+    DebugSwitchRequest:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+      - username
     Department:
       type: object
       properties:
@@ -1020,6 +1064,10 @@ components:
           type: string
         mock_identity:
           type: boolean
+        debug_personas:
+          type: array
+          items:
+            $ref: '#/components/schemas/DebugPersona'
       required:
       - authenticated
     Team:

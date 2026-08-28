@@ -213,7 +213,7 @@ function ProjectProgress() {
     <section className="progress-summary-grid">
       <article><span>Modules theo kế hoạch</span><strong>{projectStatus.modules.length}</strong><small>{completedModules} module hoàn tất 100%</small></article>
       <article><span>Quyết định đã giải quyết</span><strong>{projectStatus.decisions.resolved}</strong><small>{projectStatus.decisions.open} open decisions còn lại</small></article>
-      <article><span>Automated tests People</span><strong>18</strong><small>SQLite và PostgreSQL đã xanh</small></article>
+      <article><span>Automated tests People</span><strong>22</strong><small>SQLite và PostgreSQL đã xanh</small></article>
       <article><span>Ưu tiên quyết định</span><strong>OD-19</strong><small>Identity production vẫn chưa chốt</small></article>
     </section>
 
@@ -250,7 +250,7 @@ function ProjectProgress() {
   </div>
 }
 
-function Workspace({ session, onLogout }: { session: Session; onLogout: () => void }) {
+function Workspace({ session, onLogout, onSwitchSession }: { session: Session; onLogout: () => void; onSwitchSession: (session: Session) => void }) {
   const capabilities = useMemo(() => new Set(session.capabilities ?? []), [session])
   const canCreate = capabilities.has('people_domain.add_employee')
   const canEdit = capabilities.has('people_domain.change_employee')
@@ -267,6 +267,16 @@ function Workspace({ session, onLogout }: { session: Session; onLogout: () => vo
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [switchingPersona, setSwitchingPersona] = useState(false)
+  const [personaError, setPersonaError] = useState('')
+
+  async function switchPersona(username: string) {
+    if (!username || username === session.username) return
+    setSwitchingPersona(true); setPersonaError('')
+    try { onSwitchSession(await api.switchPersona(username)) }
+    catch (reason) { setPersonaError(reason instanceof Error ? reason.message : 'Không chuyển được persona debug.') }
+    finally { setSwitchingPersona(false) }
+  }
 
   const load = useCallback(async () => {
     setLoading(true); setError('')
@@ -287,7 +297,8 @@ function Workspace({ session, onLogout }: { session: Session; onLogout: () => vo
       <div className="sidebar-foot"><div className="mock-badge"><span className="live-dot" />Mock Identity</div><button className="user-card" onClick={onLogout}><span className="avatar">{(session.display_name ?? 'MR').slice(0, 2).toUpperCase()}</span><span><strong>{session.display_name}</strong><small>{session.employee_code} · Đăng xuất</small></span></button></div>
     </aside>
     <main className="workspace">
-      <header className="topbar"><div><p className="eyebrow">PHASE 1 · PEOPLE FOUNDATION</p><h1>{tab === 'people' ? 'Nhân sự' : 'Tiến độ dự án'}</h1></div><div className="top-actions"><button className="icon-button">◐</button></div></header>
+      <header className="topbar"><div><p className="eyebrow">PHASE 1 · PEOPLE FOUNDATION</p><h1>{tab === 'people' ? 'Nhân sự' : 'Tiến độ dự án'}</h1></div><div className="top-actions">{session.mock_identity && (session.debug_personas?.length ?? 0) > 0 && <label className="debug-role-switcher"><span><i className="live-dot" />Xem theo vai trò</span><select aria-label="Xem theo vai trò debug" value={session.username} disabled={switchingPersona} onChange={(event) => switchPersona(event.target.value)}>{session.debug_personas?.map((persona) => <option key={persona.username} value={persona.username}>{persona.label}</option>)}</select></label>}<button className="icon-button">◐</button></div></header>
+      {personaError && <div className="alert alert--error persona-error">{personaError}</div>}
       {tab === 'progress' ? <ProjectProgress /> : <>
         <div className="people-tabs-row"><div className="segmented-tabs" role="tablist" aria-label="Các chế độ xem Nhân sự"><button className={peopleView === 'directory' ? 'active' : ''} onClick={() => setPeopleView('directory')}>Danh bạ</button><button className={peopleView === 'chart' ? 'active' : ''} onClick={() => setPeopleView('chart')}>Sơ đồ tổ chức</button><button className={peopleView === 'teams' ? 'active' : ''} onClick={() => setPeopleView('teams')}>Team</button></div>{canCreate && <button className="primary-button" onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</button>}</div>
         {peopleView === 'directory' && <>
@@ -312,5 +323,5 @@ export default function App() {
   useEffect(() => { api.session().then(setSession).finally(() => setLoading(false)) }, [])
   if (loading) return <div className="boot-screen"><span className="brand-mark">MRE<span>•</span></span><p>Đang khởi tạo workspace…</p></div>
   if (!session?.authenticated) return <Login onLogin={setSession} />
-  return <Workspace session={session} onLogout={async () => { await api.logout(); setSession({ authenticated: false }) }} />
+  return <Workspace key={session.username} session={session} onSwitchSession={setSession} onLogout={async () => { await api.logout(); setSession({ authenticated: false }) }} />
 }
