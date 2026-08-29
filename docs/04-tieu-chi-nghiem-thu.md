@@ -54,6 +54,10 @@ Phase 0 **Không đạt** nếu tài liệu âm thầm biến đề xuất/open 
 
 Riêng Task vertical slice, điều kiện quyền phải đối chiếu với [ma trận phân quyền Task](architecture/task-authorization-matrix.md) và [acceptance scenarios Phase 1](testing/phase-1-task-acceptance.md). Mục còn **Chưa quyết định** không được giả lập thành policy production chỉ để đưa story sang `Ready`.
 
+Gói Tổng quan–Bảng tin–Công việc phải đồng thời đạt [acceptance ba module](testing/dashboard-feed-task-acceptance.md), gồm audience/share không rò dữ liệu, file protected download, recurrence idempotent/backfill và Dashboard general/private đúng recipient.
+
+Phase 3 phải đạt [acceptance Phase 3](testing/phase-3-acceptance.md): Recruitment không lộ PII/vượt Team, Documents không lộ file ngoài audience, Recognition không tự cộng sao, Star ledger append-only và notification bắt buộc không bị preference xã hội tắt. Trạng thái implementation hoặc test xanh không tự thay thế nghiệm thu của người sở hữu sản phẩm.
+
 Riêng People/HR Foundation, trạng thái từng story nằm tại [People readiness register](testing/phase-1-people-readiness.md) và phải đối chiếu [People acceptance scenarios](testing/phase-1-people-acceptance.md). Gói refinement hoàn tất không đồng nghĩa story đã `Ready`.
 
 ## Bằng chứng nghiệm thu

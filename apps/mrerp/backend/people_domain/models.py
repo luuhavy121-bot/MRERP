@@ -50,6 +50,8 @@ class Employee(TimeStampedModel):
     class EmploymentStatus(models.TextChoices):
         PROBATION = "probation", "Thử việc"
         OFFICIAL = "official", "Chính thức"
+        PAUSED = "paused", "Tạm nghỉ"
+        TERMINATED = "terminated", "Nghỉ việc"
 
     class Rank(models.TextChoices):
         STAFF = "staff", "Staff"
@@ -107,6 +109,16 @@ class Employee(TimeStampedModel):
             ("manage_organization", "Can manage departments and teams"),
             ("manage_membership", "Can manage team membership and leadership"),
             ("view_people_audit", "Can view People audit events"),
+            ("change_own_profile", "Can change allowed fields on own profile"),
+            ("change_own_password", "Can change own account password"),
+            ("provision_employee_account", "Can provision an account for an employee"),
+            ("manage_employee_account", "Can lock and unlock employee accounts"),
+            ("reset_employee_password", "Can reset employee account passwords"),
+            ("change_employment_status", "Can pause, terminate and reactivate employment"),
+            ("import_export_employee", "Can import and export employees"),
+            ("view_people_admin_panel", "Can view People access administration"),
+            ("manage_people_access", "Can manage People access bundles"),
+            ("access_assetcontrol", "Can access the ASSETCONTROL product"),
         ]
 
     def __str__(self):
@@ -135,6 +147,43 @@ class EmploymentTransition(models.Model):
 
     class Meta:
         ordering = ["-effective_at"]
+
+
+class TeamMembershipHistory(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid_lib.uuid4, editable=False)
+    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name="team_membership_history")
+    from_team = models.ForeignKey(
+        Team,
+        on_delete=models.PROTECT,
+        related_name="membership_history_from",
+        null=True,
+        blank=True,
+    )
+    to_team = models.ForeignKey(
+        Team,
+        on_delete=models.PROTECT,
+        related_name="membership_history_to",
+        null=True,
+        blank=True,
+    )
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    effective_at = models.DateTimeField()
+
+    class Meta:
+        ordering = ["-effective_at"]
+
+
+class EmployeeAccountState(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name="account_state")
+    must_change_password = models.BooleanField(default=False)
+    revoked_group_names = models.JSONField(default=list, blank=True)
+    previous_active_status = models.CharField(
+        max_length=16,
+        choices=Employee.EmploymentStatus.choices,
+        null=True,
+        blank=True,
+    )
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class AuditEvent(models.Model):

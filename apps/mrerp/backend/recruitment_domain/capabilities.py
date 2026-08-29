@@ -1,0 +1,6 @@
+CREATE_REQUEST = "recruitment_domain.create_hiring_request"
+APPROVE_REQUEST = "recruitment_domain.approve_hiring_request"
+VIEW_SCOPED_RECRUITMENT = "recruitment_domain.view_scoped_recruitment"
+VIEW_COMPANY_RECRUITMENT = "recruitment_domain.view_company_recruitment"
+MANAGE_CANDIDATES = "recruitment_domain.manage_candidates"
+CONVERT_CANDIDATE = "recruitment_domain.convert_candidate"

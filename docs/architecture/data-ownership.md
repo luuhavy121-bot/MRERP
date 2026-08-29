@@ -8,8 +8,10 @@ Tài liệu này là source of truth duy nhất cho product sở hữu từng mi
 |---|---|---|---|
 | Credential, login, subject, phiên SSO | Identity Provider | Subject/claim tối thiểu theo OIDC | Ownership **Đã chốt**; provider **Chưa quyết định** |
 | Employee, Team, employment status | MRERP | UUID và snapshot tối thiểu theo quyền; MRE hiện không có tầng Department | **Đã chốt** |
+| Đơn nghỉ và bảng công | MRERP Leave/Attendance | Module Payroll tương lai chỉ nhận projection đã được duyệt | Ownership **Đã chốt**; policy chi tiết **Chưa quyết định** |
 | Capability cấp hệ sinh thái | MRERP/Admin | Claim/snapshot; product đích vẫn tự kiểm tra | **Đã chốt** |
 | Task nghiệp vụ | MRERP Task | Kanban/CRM tham chiếu hoặc tạo qua API | **Đã chốt** |
+| Post, audience, Comment, Reaction, Notification, Goal, Recurrence và attachment metadata | MRERP | Chỉ chia sẻ qua contract theo quyền | **Đã chốt qua ADR-0011** |
 | Board, column, swimlane, card placement | MREKANBAN trong giai đoạn chuyển tiếp | MRERP nhận deep link/metadata cần thiết | **Đã chốt theo hướng chuyển tiếp** |
 | Recognition, stars, redemption | MRERP Rewards | CRM phát sự kiện thành tích | **Đã chốt** |
 | Customer, Order, Product, Channel, FFM | MRECRM | MRERP nhận aggregate được phép | **Đã chốt** |
@@ -51,6 +53,8 @@ MREKANBAN có thể sở hữu cấu hình view nhưng không được sửa Tas
 
 **Chưa quyết định.** MREKANBAN retire hay tiếp tục dài hạn và cách migrate layout/workflow cũ.
 
+Feed/Task/Documents/Recruitment attachment binary hiện lưu trong local-media volume của MRERP; database chỉ giữ metadata và storage key nội bộ. Đường dẫn storage không xuất qua API. Object storage production dài hạn vẫn **Chưa quyết định** theo OD-14.
+
 ## 5. Secret boundary
 
 **Đã chốt.** Password, cookie, token, OTP, key và nội dung Vault không được gửi từ ASSETCONTROL sang MRERP. MRERP chỉ có thể nhận metadata/notification không chứa secret theo quyền.
@@ -69,4 +73,5 @@ Không chuyển dữ liệu hoặc secret Nhà ZUZU sang MRE chỉ vì dùng chu
 - [Identity và phân quyền](identity-and-authorization.md)
 - [Tích hợp hệ sinh thái](ecosystem-integration.md)
 - [People data contract](people-data-contract.md)
+- [Dashboard–Feed–Task contract](dashboard-feed-task-contract.md)
 - [Open decisions](../decisions/open-decisions.md)

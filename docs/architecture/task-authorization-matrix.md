@@ -1,94 +1,49 @@
-# Ma trận phân quyền Task — Phase 1
+# Ma trận phân quyền Task
 
-Tài liệu này chuyên biệt hóa authorization model tại [Identity và phân quyền](identity-and-authorization.md) cho Task vertical slice. Source of truth tổng quát vẫn là tài liệu Identity; quyết định baseline của slice được ghi tại [ADR-0002](../decisions/0002-task-authorization-baseline.md).
+Tài liệu này chuyên biệt hóa authorization Task theo ADR-0002 và ADR-0011. Backend luôn kiểm account/employment, capability, data scope, object rule và field policy; frontend không phải hàng rào bảo mật.
 
-## 1. Nguyên tắc
+## Read scope đã chốt
 
-**Đã chốt.** Backend kiểm account/employment, action capability, data scope, object rule và field policy. Cấp bậc chỉ được dùng để cấu hình capability/scope mặc định của MRE; permission core không hard-code tên cấp bậc.
+| Actor | Task được đọc |
+|---|---|
+| Staff/Captain | Task mình tạo hoặc được giao |
+| HR | Task mình tạo hoặc được giao; HR role không tự mở company Task |
+| Leader | Task cá nhân và Task thuộc Team đang lãnh đạo |
+| Manager | **Chưa quyết định**; giai đoạn đầu không có user Manager |
+| CEO | Task toàn công ty khi có capability đọc |
 
-**Đã chốt.** Captain có permission nền giống Staff.
+## Hành động
 
-**Đã chốt.** Giai đoạn đầu không có user Manager và không tự nâng Leader thành Manager. Department scope cũ không còn áp dụng cho cơ cấu MRE; scope Manager tương lai trở lại trạng thái **Chưa quyết định**.
-
-## 2. Scope mặc định cho Task
-
-| Cấp bậc MRE | Data scope Task đã xác nhận | Ghi chú |
-|---|---|---|
-| Staff | `self` cho hành động tự giao | Baseline `tasks.read` đầy đủ vẫn cần xác nhận |
-| Captain | Giống Staff | Không có quyền tăng thêm chỉ vì là Captain |
-| Leader | Team mình phụ trách | Quan hệ quản lý lấy từ server |
-| Manager | **Chưa quyết định** | Hỗ trợ tương lai; MRE hiện không có Department và ban đầu không có user Manager |
-| CEO | Toàn công ty | Mỗi action vẫn cần capability; không phải superuser ngầm |
-
-OD-04 vẫn mở cho policy ngoài Task và module khác.
-
-## 3. Capability Task
-
-| Capability | Ý nghĩa | Cấp mặc định trong slice |
-|---|---|---|
-| `tasks.create` | Tạo Task | Gói capability cơ bản cho mọi employment đang hoạt động |
-| `tasks.assign` | Chọn người nhận | Theo scope tại mục 4 |
-| `tasks.read` | Đọc Task | **Chưa quyết định đầy đủ** cho Staff/Captain; cần chốt trước khi story P1-TASK-01 Ready |
-| `tasks.update_definition` | Sửa tiêu đề, mô tả, deadline, người nhận | Người tạo; phải qua object/field/scope rule |
-| `tasks.update_execution` | Sửa trạng thái thực hiện, tiến độ, bình luận, bằng chứng | Người nhận |
-| `tasks.manage` | Quản lý Task trong scope | Chỉ có hiệu lực khi được cấp capability và scope |
-| `tasks.submit` | Gửi `Chờ xác nhận` | Người nhận hợp lệ |
-| `tasks.accept` | Chọn `Đã hoàn thành` hoặc `Yêu cầu làm lại` | Người tạo hoặc người xác nhận trong scope, trừ self-task |
-| `tasks.cancel` | Hủy Task | **Chưa quyết định**; không thuộc slice đầu tiên |
-
-## 4. Ma trận hành động và scope
-
-| Hành động | Staff | Captain | Leader | Manager tương lai | CEO |
-|---|---|---|---|---|---|
-| Tạo Task | Có `tasks.create` | Giống Staff | Có `tasks.create` | Có `tasks.create` | Có `tasks.create` |
-| Giao cho bản thân | Có `tasks.assign:self` | Giống Staff | Có | Có | Không dùng self-task cần xác nhận |
-| Giao cho người khác | Không | Không | Thành viên team phụ trách | Nhân sự trong phòng ban phụ trách | Nhân sự toàn công ty |
-| Sửa phần định nghĩa | Khi là người tạo và object rule cho phép | Giống Staff | Người tạo hoặc `tasks.manage` trong team | Người tạo hoặc `tasks.manage` trong phòng ban | Người tạo hoặc `tasks.manage` company scope |
-| Sửa phần thực hiện | Khi là người nhận | Giống Staff | Khi là người nhận; quản lý cần `tasks.manage` | **Chưa quyết định** | Tương tự trong company scope |
-| Submit hoàn thành | Khi là người nhận | Giống Staff | Khi là người nhận | Khi là người nhận | Khi là người nhận, trừ self-task bị loại khỏi workflow |
-| Accept/rework | Khi là người tạo, không phải self-task | Giống Staff | Người tạo hoặc `tasks.accept` trong team | **Chưa quyết định** | Người tạo hoặc `tasks.accept` company scope |
-
-Mọi ô “Có” vẫn phụ thuộc account/employment hợp lệ và capability tương ứng. Client không được gửi cấp bậc/scope để tự mở quyền.
-
-## 5. Field policy
-
-| Nhóm field | Người tạo | Người nhận | Người có `tasks.manage` trong scope |
+| Hành động | Staff/Captain/HR | Leader | CEO |
 |---|---|---|---|
-| Tiêu đề, mô tả, deadline, assignee | Được sửa theo object rule | Chỉ đọc | Được sửa theo scope/object rule |
-| Trạng thái thực hiện, tiến độ | Chỉ đọc/accept transition | Được cập nhật theo state machine | Được cập nhật nếu policy cho phép |
-| Bình luận, bằng chứng | Được thêm bình luận | Được thêm/cập nhật phần của mình | Được xem trong scope; sửa nội dung người khác không thuộc slice |
-| Audit fields nội bộ | Không được sửa | Không được sửa | Không được sửa qua Task API |
+| Tạo/giao | Chỉ tự giao | Bản thân hoặc thành viên Team lãnh đạo | Nhân sự trong công ty; không self-task |
+| Sửa definition | Khi là creator | Creator hoặc Task trong Team lãnh đạo | Company scope |
+| Sửa progress | Chỉ khi là assignee | Chỉ khi là assignee | Chỉ khi là assignee; CEO self-task bị chặn |
+| Submit | Assignee | Assignee | Assignee hợp lệ |
+| Accept/rework | Không có capability mặc định | Task trong Team, không tự accept | Company scope, không tự accept |
+| Brief attachment | Creator | Creator/manager Team | Company scope |
+| Evidence attachment | Assignee | Khi là assignee | Khi là assignee |
+| Goal | Đọc company + Team hiện tại | Quản lý Goal Team lãnh đạo | Quản lý Goal company và mọi Team |
+| Recurrence | Không mở UI quản lý mặc định | Quản lý series mình tạo trong Team | Quản lý company scope |
 
-## 6. State transition đã chốt
+Captain giữ permission nền như Staff. HR không nhận quyền Task cao hơn chỉ vì quản lý People.
 
-```text
-Đang thực hiện
-    ↓ người nhận có tasks.submit
-Chờ xác nhận
-    ├─ người xác nhận có tasks.accept → Đã hoàn thành
-    └─ người xác nhận có tasks.accept → Yêu cầu làm lại
-```
+## Object và field rule
 
-UI có thể dùng status dropdown. Server mới là nơi kiểm tra actor, capability, scope và transition.
+- State machine: `Đang thực hiện/Yêu cầu làm lại → Chờ xác nhận → Đã hoàn thành hoặc Yêu cầu làm lại`.
+- Task hoàn thành không sửa definition/progress trong phạm vi hiện tại.
+- Rework cần ghi chú. Assignee không tự accept Task của mình.
+- Goal Team chỉ liên kết Task cùng Team; deadline Task phải nằm trong timebox Goal.
+- Recurrence gắn Goal phải dừng trong timebox; occurrence unique theo series + scheduled time.
+- Client không gửi role/capability/scope để tự mở quyền.
 
-## 7. Self-task
+## Không làm và chưa quyết định
 
-**Đã chốt.** Người tạo đồng thời là người nhận không được tự accept:
+- **Không làm trong phạm vi hiện tại:** cancel/delete/reopen Task, dependency, checklist, delegation và Task comments.
+- **Chưa quyết định:** scope Manager và policy Task ngoài phạm vi ADR-0002/0011.
 
-- Staff/Captain self-task → Leader trực tiếp có `tasks.accept` xác nhận.
-- Leader self-task → CEO có `tasks.accept` xác nhận.
-- CEO không tạo self-task trong workflow cần xác nhận.
+## Tài liệu liên quan
 
-## 8. Chưa quyết định và ngoài slice
-
-- Baseline `tasks.read` chi tiết cho Staff/Captain.
-- Xóa/hủy, mở lại sau khi hoàn thành và escalation quá hạn.
-- Comment visibility/mention policy chi tiết.
-- Delegation khi Leader vắng mặt.
-- Manager cross-module policy và danh sách organization chính thức.
-
-## 9. Tài liệu liên quan
-
+- [Contract](dashboard-feed-task-contract.md)
 - [Task stories](../product/stories/phase-1-task-vertical-slice.md)
-- [Task acceptance scenarios](../testing/phase-1-task-acceptance.md)
-- [Open decisions](../decisions/open-decisions.md)
+- [Acceptance](../testing/dashboard-feed-task-acceptance.md)

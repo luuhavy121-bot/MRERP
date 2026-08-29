@@ -18,6 +18,9 @@ Mặc định Vite phục vụ tại `http://localhost:4173` và proxy `/api` t�
 ```text
 npm run lint
 npm run build
+npm run e2e
 ```
+
+Lệnh E2E giả định backend đã migrate/seed và frontend đang chạy. Test dùng `E2E_BASE_URL` cùng `E2E_DEMO_PASSWORD`; chỉ có một scenario xuyên suốt People để giữ suite nhỏ. CI chạy scenario này với PostgreSQL 16.
 
 Không lưu access token trong `localStorage`. Local mock Identity dùng session cookie HttpOnly do backend cấp.

@@ -40,6 +40,21 @@ MRERP và CRM phải có credential riêng/tối thiểu. Cùng PostgreSQL insta
 
 Vị trí triển khai và mô hình HA/backup của Identity Provider bị cố ý để mở theo OD-01; sơ đồ trên không được dùng để kết luận IdP chạy cùng VPS Platform.
 
+### Runtime MRERP đã chốt cho baseline hiện tại
+
+Theo ADR-0011, Docker Compose local và topology VPS mục tiêu của MRERP có thêm:
+
+```text
+MRERP backend/web
+├─ PostgreSQL 16
+├─ Redis broker
+├─ Celery worker
+├─ Celery Beat
+└─ persistent media volume (Feed, Task, Documents, Recruitment)
+```
+
+Redis/Celery phục vụ recurring Task, deadline notification và retention purge; không dùng result backend. Redis lỗi không được làm hỏng request CRUD Feed/Task. Media volume phải vào backup; binary chỉ tải qua API có ACL. Object storage production vẫn **Chưa quyết định** theo OD-14.
+
 ## 3. Khả năng tách CRM
 
 **Đề xuất mục tiêu.** CRM được thiết kế thành deployable riêng ngay từ đầu để có thể chuyển VPS mà không tái thiết kế product boundary.

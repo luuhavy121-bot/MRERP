@@ -10,7 +10,7 @@ Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-a
 
 **Đã chốt cho slice.** HR tạo Employee ở trạng thái `Thử việc` và xem/sửa hồ sơ chi tiết. Staff đọc nhân sự cùng Team. Leader đọc mọi Team, quản lý organization và chỉ chuyển `Thử việc → Chính thức` trong Team mình lãnh đạo. CEO có toàn bộ capability People hiện có, projection HR và company scope.
 
-**Chưa quyết định ngoài slice.** Người được vào Admin Panel, quyền Captain/Manager tương lai và các employment transition khác.
+**Đã chốt qua ADR-0010.** Admin access bundle chỉ dành cho CEO; HR quản lý account/lifecycle toàn công ty; Leader reset mật khẩu trong Team lãnh đạo; Staff self-edit theo field allow-list. Captain/Manager tương lai vẫn **Chưa quyết định**.
 
 ## 2. Capability catalog của slice
 
@@ -25,7 +25,16 @@ Tài liệu này chuyên biệt hóa [Identity và phân quyền](identity-and-a
 | `people_domain.promote_any_employee` | Mở rộng promotion ra toàn công ty | **Đã chốt riêng cho CEO** |
 | `people_domain.manage_organization` | Tạo/sửa Team | **Đã chốt cho Leader và CEO** |
 | `people_domain.manage_membership` | Quản lý Employee–Team và Leader–Team | **Đã chốt cho Leader** |
-| `people_domain.view_people_audit` | Đọc audit People | Capability có sẵn; actor/UI **Chưa quyết định** |
+| `people_domain.view_people_audit` | Đọc audit People | **Đã chốt cho CEO toàn People; HR chỉ Employee/account audit** |
+| `people_domain.change_own_profile` | Sửa field self-service được phép | **Đã chốt cho mọi account đang hoạt động** |
+| `people_domain.provision_employee_account` | Cấp account cho Employee chưa có account | **Đã chốt cho HR và CEO** |
+| `people_domain.manage_employee_account` | Khóa/mở account | **Đã chốt cho HR và CEO** |
+| `people_domain.reset_employee_password` | Tạo mật khẩu tạm một lần | **Đã chốt cho HR/CEO company; Leader managed-team** |
+| `people_domain.change_employment_status` | Tạm nghỉ, nghỉ việc, kích hoạt lại | **Đã chốt cho HR và CEO** |
+| `people_domain.import_export_employee` | Import/export CSV không password | **Đã chốt cho HR và CEO** |
+| `people_domain.view_people_admin_panel` | Xem Admin access bundle | **Đã chốt riêng cho CEO** |
+| `people_domain.manage_people_access` | Gán permission bundle allow-list | **Đã chốt riêng cho CEO; cấm tự hạ quyền** |
+| `people_domain.access_assetcontrol` | Cấp product entitlement để hiện lối chuyển ASSETCONTROL; product đích vẫn tự kiểm tra quyền | **Đã chốt cho CEO và Leader** |
 
 Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader không nhận CCCD, ngày sinh hoặc địa chỉ.
 
@@ -61,7 +70,7 @@ Projection nhạy cảm dùng capability riêng `view_hr_detail`; Staff/Leader k
 | Nhóm field | Projection | Quy tắc |
 |---|---|---|
 | Field hệ thống | `system` | Chỉ server ghi; response tối thiểu theo use case |
-| Hồ sơ công việc cơ bản | `basic` | UUID, mã nhân sự, tên hiển thị, vị trí, phòng ban, Team; Staff cùng Team và Leader company scope |
+| Hồ sơ công việc cơ bản | `basic` | UUID, mã nhân sự, tên hiển thị, vị trí và Team; Staff cùng Team và Leader company scope |
 | Hồ sơ HR | `hr_detail` | `basic` cộng account, CCCD, ngày sinh, địa chỉ và employment status; HR và CEO |
 | Organization relation | `organization` | Đọc/ghi theo capability và scope |
 | Employment lifecycle | `employment` | Hạn chế hơn `basic`; transition riêng |
@@ -78,14 +87,15 @@ Server phải tạo projection rõ; không serialize toàn bộ model rồi dự
 - Không archive Team còn quan hệ hiệu lực khi chưa xử lý thành viên.
 - Không cho actor sửa organization mapping của chính mình nếu policy chưa có phê duyệt/segregation phù hợp.
 - Employment không hợp lệ làm fail account/employment gate cho nghiệp vụ được bảo vệ.
+- Leader chỉ reset account của Employee thuộc Team đang lãnh đạo và không tự dùng endpoint quản trị.
+- `Nghỉ việc` khóa account, thu hồi bundle và giữ history; `Tạm nghỉ` khóa account nhưng giữ bundle.
+- Password tạm chỉ xuất hiện một lần trong response command và không được đọc lại.
 
 Các rule của slice được ADR-0005 chấp nhận; rule ngoài slice không được suy diễn.
 
 ## 7. Ngoài phạm vi/chưa quyết định
 
-- Transition khác ngoài `Thử việc → Chính thức` và quy tắc thu hồi quyết định.
-- Self-service edit.
-- Ai được xem audit People.
+- Captain/Manager account scope, MFA, production session revocation và break-glass.
 
 ## 8. Tài liệu liên quan
 

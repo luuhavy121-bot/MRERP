@@ -1,0 +1,5 @@
+SUBMIT_LEAVE = "leave_domain.submit_leave_request"
+VIEW_OWN_LEAVE = "leave_domain.view_own_leave_request"
+REVIEW_TEAM_LEAVE = "leave_domain.review_team_leave_request"
+VIEW_COMPANY_ATTENDANCE = "leave_domain.view_company_attendance"
+ADJUST_COMPANY_ATTENDANCE = "leave_domain.adjust_company_attendance"

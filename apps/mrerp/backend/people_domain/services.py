@@ -1,19 +1,11 @@
-import logging
-
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from .capabilities import PROMOTE_ANY_EMPLOYEE, STAFF_GROUP
-from .models import AuditEvent, Employee, EmploymentTransition, Team, TeamLeadership
-
-logger = logging.getLogger(__name__)
-User = get_user_model()
-
+from .identity_adapter import provision_account
+from .models import AuditEvent, Employee, EmploymentTransition, Team, TeamLeadership, TeamMembershipHistory
 
 def audit(*, actor, action: str, target, changes: dict | None = None):
     return AuditEvent.objects.create(
@@ -26,47 +18,27 @@ def audit(*, actor, action: str, target, changes: dict | None = None):
 
 
 def create_probation_employee(
-    *, actor, employee_code: str, create_account: bool = True, username: str = "", password: str = ""
-) -> Employee:
-    identity_user = None
-    if create_account:
+    *, actor, employee_code: str, create_account: bool = True, username: str = ""
+) -> tuple[Employee, str | None]:
+    with transaction.atomic():
         try:
-            validate_password(password, user=User(username=username))
-        except DjangoValidationError as exc:
-            raise ValidationError({"password": list(exc.messages)}) from exc
-
-        try:
-            identity_user = User.objects.create_user(username=username, password=password, is_active=True)
-        except IntegrityError as exc:
-            raise ValidationError({"username": "Tài khoản đã tồn tại."}) from exc
-
-    try:
-        with transaction.atomic():
             employee = Employee.objects.create(
                 employee_code=employee_code,
-                identity_user=identity_user,
                 employment_status=Employee.EmploymentStatus.PROBATION,
             )
+        except IntegrityError as exc:
+            raise ValidationError({"employee_code": "Mã nhân sự đã tồn tại."}) from exc
+        temporary_password = None
+        if create_account:
+            identity_user, temporary_password = provision_account(employee=employee, username=username)
+            employee.identity_user = identity_user
+            employee.save(update_fields=["identity_user", "updated_at"])
             if identity_user:
                 staff_group, _ = Group.objects.get_or_create(name=STAFF_GROUP)
                 identity_user.groups.add(staff_group)
-            audit(
-                actor=actor,
-                action="people.employee.created",
-                target=employee,
-                changes={
-                    "employment_status": Employee.EmploymentStatus.PROBATION,
-                    "account_created": bool(identity_user),
-                },
-            )
-            return employee
-    except Exception:
-        if identity_user:
-            try:
-                identity_user.delete()
-            except Exception:
-                logger.critical("Failed to clean up orphan mock identity account", exc_info=True)
-        raise
+                audit(actor=actor, action="people.account.provisioned", target=employee, changes={"username": username, "temporary_password": "returned_once"})
+        audit(actor=actor, action="people.employee.created", target=employee, changes={"employment_status": Employee.EmploymentStatus.PROBATION, "account_created": create_account})
+        return employee, temporary_password
 
 
 def update_employee_details(*, actor, employee: Employee, validated_data: dict) -> Employee:
@@ -80,7 +52,10 @@ def update_employee_details(*, actor, employee: Employee, validated_data: dict) 
             old_value = getattr(locked, field)
             if old_value != value:
                 setattr(locked, field, value)
-                changed[field] = "updated" if field in {"national_id", "date_of_birth", "address"} else value
+                if field in {"national_id", "date_of_birth", "address"}:
+                    changed[field] = {"changed": True}
+                else:
+                    changed[field] = {"from": old_value, "to": value}
         if changed:
             locked.version += 1
             locked.full_clean()
@@ -96,7 +71,7 @@ def promote_employee(*, actor, target: Employee, note: str) -> Employee:
         target.team_id and TeamLeadership.objects.filter(team_id=target.team_id, leader=actor_employee).exists()
     )
     if not has_company_promotion_scope and not manages_target_team:
-        raise ValidationError({"scope": "Leader chỉ được xác nhận nhân sự trong Team mình lãnh đạo."})
+        raise PermissionDenied("Leader chỉ được xác nhận nhân sự trong Team mình lãnh đạo.")
     if target.employment_status != Employee.EmploymentStatus.PROBATION:
         raise ValidationError({"employment_status": "Chỉ có thể chuyển từ Thử việc sang Chính thức."})
     if not note.strip():
@@ -128,6 +103,9 @@ def promote_employee(*, actor, target: Employee, note: str) -> Employee:
 
 
 def assign_team(*, actor, employee: Employee, team: Team | None) -> Employee:
+    actor_employee = actor.employee_profile
+    if employee.pk == actor_employee.pk:
+        raise PermissionDenied("Không được tự thay đổi quan hệ Team của chính mình.")
     with transaction.atomic():
         locked = Employee.objects.select_for_update().get(pk=employee.pk)
         old_team = str(locked.team_id) if locked.team_id else None
@@ -135,6 +113,13 @@ def assign_team(*, actor, employee: Employee, team: Team | None) -> Employee:
         locked.department = None
         locked.version += 1
         locked.save(update_fields=["team", "department", "version", "updated_at"])
+        TeamMembershipHistory.objects.create(
+            employee=locked,
+            from_team_id=old_team,
+            to_team=team,
+            actor=actor,
+            effective_at=timezone.now(),
+        )
         audit(
             actor=actor,
             action="people.membership.changed",
@@ -142,3 +127,7 @@ def assign_team(*, actor, employee: Employee, team: Team | None) -> Employee:
             changes={"from_team": old_team, "to_team": str(team.pk) if team else None},
         )
         return locked
+
+
+def update_self_profile(*, actor, validated_data: dict) -> Employee:
+    return update_employee_details(actor=actor, employee=actor.employee_profile, validated_data=validated_data)

@@ -41,16 +41,17 @@ Không chia thành microservice theo Customer, Order, Product hoặc Channel ở
 
 ## 3. Tech stack
 
-Toàn bộ mục này là **Đề xuất mục tiêu cần ADR** trước khi scaffold production:
+**Đã chốt cho MRERP Phase 1 qua ADR-0003 và ADR-0011:**
 
 - Frontend: React, TypeScript và Vite bản ổn định.
 - Backend: Python 3.12, Django 5.2 và Django REST Framework.
 - Database: PostgreSQL 16.
-- Background processing khi có use case: Celery và Redis.
+- Background processing: Celery và Redis cho recurrence, deadline notification và retention; không dùng result backend.
 - API contract: OpenAPI; frontend client sinh hoặc được kiểm soát từ contract.
-- SSO: OpenID Connect/OAuth 2.0 với Identity Provider chuẩn.
-- Deployment: Docker Compose, reverse proxy và HTTPS.
+- Deployment local: Docker Compose. Reverse proxy và HTTPS production vẫn **Đề xuất mục tiêu**.
 - Observability: structured logs, error tracking, uptime và metrics cần thiết.
+
+**Chưa quyết định:** Identity Provider production; OIDC/OAuth 2.0 vẫn là hướng contract chứ không phải provider đã chọn.
 
 **Không làm.** Không chọn Next/Vinext beta của prototype làm production chỉ vì prototype dùng stack đó.
 
@@ -115,7 +116,7 @@ ASSETCONTROL và repository MREKANBAN hiện tại không nằm làm source subf
 
 ## 6. Backend modular monolith
 
-**Đề xuất mục tiêu.** Mỗi Django module giữ model, service/use case, selector/query, API và test của mình.
+**Đã chốt và đang áp dụng.** Mỗi Django module giữ model, service/use case, selector/query, API và test của mình. Các module hiện có gồm `people_domain`, `leave_domain`, `dashboard_domain`, `feed_domain`, `task_domain` và Phase 3 bổ sung `preferences_domain`, `recruitment_domain`, `documents_domain`, `rewards_domain`; attachment validation/storage là service nhỏ dùng chung trong `config`.
 
 ```text
 backend/
@@ -166,7 +167,7 @@ Mỗi phần prototype phải được phân loại: dùng trực tiếp, dùng 
 |---|---|---|
 | MRERP modular monolith | **Đã chốt** | Không |
 | CRM modular monolith deploy độc lập | **Đề xuất mục tiêu** | ADR trước khi scaffold CRM |
-| Stack mục tiêu | **Đề xuất mục tiêu** | ADR stack/baseline trước scaffold |
+| Stack MRERP Phase 1 | **Đã chốt** | ADR-0003 và ADR-0011 |
 | Database hay schema riêng | **Chưa quyết định** | OD-09 |
 | Identity Provider | **Chưa quyết định** | OD-01 |
 | Service authentication | **Chưa quyết định** | OD-11 |
@@ -178,3 +179,4 @@ Mỗi phần prototype phải được phân loại: dùng trực tiếp, dùng 
 - [Identity và phân quyền](identity-and-authorization.md)
 - [Tích hợp hệ sinh thái](ecosystem-integration.md)
 - [Deployment](../operations/deployment.md)
+- [Dashboard–Feed–Task contract](dashboard-feed-task-contract.md)

@@ -6,7 +6,7 @@
 - Related source of truth: `docs/architecture/identity-and-authorization.md`, `docs/architecture/task-authorization-matrix.md`
 - Related open decision: `OD-04 (một phần)`, `OD-16 (không giải quyết danh mục chính thức)`
 - Supersedes: `Không có`
-- Superseded by: `Không có`
+- Superseded by: `ADR-0011 chỉ đối với baseline tasks.read và phần mở rộng Goal/Recurrence/attachment`
 - Status rationale: `Người dùng trực tiếp chọn từng phương án về cấp bậc, scope, capability, field responsibility và Task completion trong task ngày 28/08/2026.`
 
 ## Context
@@ -59,7 +59,6 @@ Core authorization phải đánh giá capability/scope từ server data. Tên c�
 
 ## Remaining open questions
 
-- Baseline `tasks.read` đầy đủ cho Staff/Captain.
 - Hủy/xóa, reopen, overdue escalation, delegation và comment visibility.
 - OD-04 vẫn mở cho ranh giới cấp bậc ngoài Task.
 - OD-16 vẫn mở cho danh sách organization/capability chính thức.
@@ -78,7 +77,7 @@ Core authorization phải đánh giá capability/scope từ server data. Tên c�
 
 - Cần organization mapping và relationship data chính xác.
 - Self-task có thêm bước xác nhận quản lý.
-- Story read-list chưa Ready cho đến khi baseline `tasks.read` được xác nhận.
+- Baseline đọc được ADR-0011 chốt; các policy Task ngoài phạm vi ADR vẫn cần refinement riêng.
 
 ### Risks and mitigations
 

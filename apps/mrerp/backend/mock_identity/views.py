@@ -30,6 +30,7 @@ def debug_identity_enabled():
 
 def actor_payload(user):
     employee = getattr(user, "employee_profile", None)
+    account_state = getattr(employee, "account_state", None) if employee else None
     payload = {
         "authenticated": user.is_authenticated,
         "username": user.username,
@@ -38,6 +39,8 @@ def actor_payload(user):
         "display_name": (employee.display_name or employee.employee_code) if employee else user.username,
         "rank": employee.rank if employee else None,
         "capabilities": sorted(user.get_all_permissions()),
+        "product_entitlements": ["assetcontrol"] if user.has_perm("people_domain.access_assetcontrol") else [],
+        "must_change_password": bool(account_state and account_state.must_change_password),
     }
     if debug_identity_enabled():
         payload["mock_identity"] = True

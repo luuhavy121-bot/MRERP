@@ -1,0 +1,6 @@
+VIEW_REWARDS = "rewards_domain.view_rewards"
+RECOGNIZE_SCOPED = "rewards_domain.recognize_scoped"
+RECOGNIZE_COMPANY = "rewards_domain.recognize_company"
+GRANT_STARS_SCOPED = "rewards_domain.grant_stars_scoped"
+GRANT_STARS_COMPANY = "rewards_domain.grant_stars_company"
+MODERATE_RECOGNITION = "rewards_domain.moderate_recognition"

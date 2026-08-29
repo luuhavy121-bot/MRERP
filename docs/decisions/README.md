@@ -55,3 +55,7 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 - [ADR-0007: Tài khoản Employee tùy chọn và mã nhân sự linh hoạt](0007-optional-employee-account-and-flexible-code.md) — `Accepted`.
 - [ADR-0008: CEO có toàn quyền trong People/HR Phase 1](0008-ceo-people-full-access.md) — `Accepted`.
 - [ADR-0009: Cơ cấu MRE phẳng theo Team](0009-flat-team-organization-for-mre.md) — `Accepted`.
+- [ADR-0010: People account và employment lifecycle](0010-people-account-and-employment-lifecycle.md) — `Accepted`; IdP production vẫn chưa quyết định.
+- [ADR-0011: Tổng quan, Bảng tin và Công việc operational baseline](0011-dashboard-feed-task-operational-baseline.md) — `Accepted`; implementation vẫn chờ nghiệm thu và OD-14 vẫn mở.
+- [ADR-0012: Nền Leave và Attendance đơn giản cho Phase 2](0012-phase-2-leave-attendance-foundation.md) — `Accepted`; OD-13 vẫn mở cho payroll và policy chi tiết.
+- [ADR-0013: Phase 3 — Văn hóa và vận hành nhân sự](0013-phase-3-culture-operations-baseline.md) — `Accepted`; redemption/catalog approval và object storage production vẫn mở.

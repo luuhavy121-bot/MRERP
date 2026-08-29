@@ -1,0 +1,5 @@
+VIEW_DOCUMENTS = "documents_domain.view_documents"
+VIEW_COMPANY_DOCUMENTS = "documents_domain.view_company_documents"
+UPLOAD_DOCUMENTS = "documents_domain.upload_documents"
+VIEW_HR_CONFIDENTIAL = "documents_domain.view_hr_confidential_documents"
+MANAGE_ALL_DOCUMENTS = "documents_domain.manage_all_documents"

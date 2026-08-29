@@ -1,0 +1,1 @@
+MANAGE_OWN_PREFERENCES = "preferences_domain.manage_own_preferences"

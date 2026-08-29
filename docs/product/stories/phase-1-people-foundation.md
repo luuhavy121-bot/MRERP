@@ -1,6 +1,6 @@
 # Phase 1 — People/HR Foundation stories
 
-Tài liệu này chi tiết hóa EPIC-02 trong [Product backlog](../backlog.md). Đây là gói refinement; không phải yêu cầu scaffold hoặc hiện thực production.
+Tài liệu này chi tiết hóa EPIC-02 trong [Product backlog](../backlog.md) và theo dõi phạm vi implementation. Người sở hữu sản phẩm đã nghiệm thu People/HR Foundation ngày 29/08/2026; trạng thái `Accepted` chỉ áp dụng cho phạm vi slice này.
 
 ## 1. Outcome và phạm vi nhỏ nhất
 
@@ -37,7 +37,7 @@ Identity context giả lập
 
 **Là một** backend MRERP, **tôi muốn** nhận identity context giả lập theo contract được duyệt **để** kiểm account, employment, capability và scope mà chưa chọn IdP thật.
 
-Trạng thái: `Ready` — ADR-0004 đã được chấp nhận.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-01 — Đọc hồ sơ của chính mình
 
@@ -50,7 +50,7 @@ Acceptance criteria dự thảo:
 - Payload chỉ chứa field được phép; field nhạy cảm không xuất hiện.
 - UI có loading, empty, forbidden và error state.
 
-Trạng thái: `Ready`.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-02 — Xem danh sách nhân sự cơ bản
 
@@ -63,7 +63,7 @@ Acceptance criteria dự thảo:
 - Response dùng UUID ổn định, không dùng email/mã nhân viên làm khóa liên kết.
 - API không trả field ngoài projection `basic` đã duyệt.
 
-Trạng thái: `Ready` — Staff cùng Team; Leader toàn công ty; projection cơ bản.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-03 — Xem hồ sơ nhân sự cơ bản
 
@@ -75,7 +75,7 @@ Acceptance criteria dự thảo:
 - UUID không tồn tại và UUID ngoài scope không làm rò rỉ dữ liệu trái phép.
 - Team và Leader được đọc từ dữ liệu server.
 
-Trạng thái: `Ready`.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-04 — Tạo Employee
 
@@ -88,11 +88,11 @@ Acceptance criteria dự thảo:
 - Mã nhân sự nhập tự do, không rỗng và không trùng không phân biệt hoa/thường; tài khoản/mật khẩu thuộc luồng Identity provisioning.
 - Employee nhận UUID do server tạo; `identity_subject` có thể để trống trước khi mapping.
 - Dữ liệu đầu vào được validate; password không được lưu trong Employee, audit hoặc log.
-- Khi checkbox bật, UI chỉ báo thành công khi account và Employee đã được tạo/liên kết. Khi tắt, username/password không bắt buộc và Employee có account mapping rỗng.
+- Khi checkbox bật, UI chỉ báo thành công khi account và Employee đã được tạo/liên kết; server sinh mật khẩu tạm và trả một lần. Khi tắt, username không bắt buộc và Employee có account mapping rỗng.
 - Nếu một bước thất bại, request thất bại và không tạo Employee.
 - Tạo account tại IdP và Employee phải có failure/compensation behavior được ADR chấp nhận.
 
-Trạng thái: `Ready` — ADR-0004 và ADR-0007 đã được chấp nhận.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-05 — Cập nhật hồ sơ và employment status
 
@@ -102,12 +102,12 @@ Acceptance criteria dự thảo:
 
 - Field-level authorization được kiểm ở server.
 - Leader được phép thực hiện transition `Thử việc → Chính thức`; transition khác không được suy ra.
-- Server ghi actor, effective time và before/after status; reason/ghi chú có bắt buộc hay không vẫn chưa quyết định.
-- Leader ngoài scope không được phép xác nhận; scope Leader vẫn cần người dùng chốt.
+- Server ghi actor, effective time và before/after status; ghi chú là bắt buộc.
+- Leader ngoài Team mình lãnh đạo không được phép xác nhận.
 - Không xóa cứng Employee khi nghỉ việc.
 - Mọi thay đổi quan trọng có before/after audit được tối thiểu hóa.
 
-Trạng thái: `Ready` — Leader cùng Team, hiệu lực ngay và note bắt buộc.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-06 — Quản lý Team
 
@@ -120,7 +120,7 @@ Acceptance criteria dự thảo:
 - Không cho archive đơn vị khi còn quan hệ hiệu lực nếu chưa có phương án chuyển.
 - Mọi thay đổi có audit.
 
-Trạng thái: `Ready` — Leader quản lý organization; fixture chỉ dùng dữ liệu giả.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-07 — Gán Employee vào Team và gán Leader
 
@@ -133,7 +133,7 @@ Acceptance criteria dự thảo:
 - Không cho quan hệ mồ côi hoặc vòng tham chiếu không hợp lệ theo data contract.
 - Thay đổi scope có audit và test cache invalidation/fail-closed phù hợp.
 
-Trạng thái: `Ready` — một Team/Employee và nhiều Leader/Team.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ### P1-PPL-08 — Audit và bằng chứng authorization
 
@@ -145,7 +145,7 @@ Acceptance criteria dự thảo:
 - Denied event quan trọng có correlation identifier; không ghi token hoặc payload nhạy cảm.
 - Automated tests bao phủ allowed, thiếu capability, ngoài scope, field absence và account/employment không hợp lệ.
 
-Trạng thái: `Ready`.
+Trạng thái: `Accepted` — nghiệm thu ngày 29/08/2026.
 
 ## 4. Definition of Ready của slice
 

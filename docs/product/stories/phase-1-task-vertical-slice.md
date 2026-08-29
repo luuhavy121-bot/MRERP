@@ -1,150 +1,78 @@
-# Phase 1 — Task vertical slice stories
+# Phase 1 — Task, Goal và Recurrence stories
 
-Tài liệu này chi tiết hóa EPIC-03 trong [Product backlog](../backlog.md). Nó không định nghĩa API URL, database schema hoặc frontend stack.
+Tài liệu này chi tiết hóa EPIC-03 theo [ADR-0002](../../decisions/0002-task-authorization-baseline.md) và [ADR-0011](../../decisions/0011-dashboard-feed-task-operational-baseline.md).
 
-## 1. Outcome của slice
+## Outcome
 
-**Đề xuất mục tiêu.** Chứng minh một luồng Task nhỏ chạy xuyên:
+Task, Goal, Recurrence và attachment chạy xuyên UI → API → PostgreSQL → authorization → audit → worker → automated test. Implementation hiện `In progress / Chờ nghiệm thu`.
 
-```text
-Identity context giả lập
-    → account/employment gate
-    → UI tạo và giao Task
-    → API kiểm capability/scope/object/field
-    → PostgreSQL lưu Task
-    → audit hành động
-    → UI đọc trạng thái mới
-    → test allowed và denied
-```
+## Stories
 
-## 2. Ngoài phạm vi slice đầu tiên
+### P1-TASK-01 — Xem Task đúng scope
 
-**Không làm trong slice đầu:**
+- Staff/HR thấy Task mình tạo hoặc được giao.
+- Leader thêm Task Team đang lãnh đạo; CEO company scope.
+- Account/employment không hợp lệ, thiếu capability và record ngoài scope bị từ chối.
 
-- Xóa/hủy Task.
-- Recurring Task, dependency, checklist và attachment.
-- Notification đa kênh.
-- Calendar/Kanban production hoàn chỉnh.
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+### P1-TASK-02 — Tạo và giao Task
+
+- Staff/HR chỉ tự giao; Leader giao trong Team; CEO giao toàn công ty nhưng không self-task.
+- Server sở hữu creator, Team, audit actor và initial state.
+- Definition fields và progress có field/object rule riêng.
+
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+### P1-TASK-03 — Submit, accept và rework
+
+- Assignee cập nhật progress và submit từ `Đang thực hiện/Yêu cầu làm lại`.
+- Actor có `tasks.accept` đúng scope accept hoặc rework; rework cần ghi chú.
+- Self-task không được tự accept theo ADR-0002.
+
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+### P1-TASK-04 — Goal theo timebox
+
+- Leader quản lý Goal Team; CEO quản lý Goal company và mọi Team.
+- Nhân sự đọc Goal company và Team hiện tại.
+- Progress là trung bình Task liên kết; completed là 100, không có Task là 0.
+
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+### P1-TASK-05 — Recurring Task
+
+- Daily/weekly/monthly có interval, start, deadline offset, end date tùy chọn.
+- Worker backfill đủ kỳ, unique theo series + scheduled time và clamp ngày cuối tháng.
+- Pause/resume/stop chỉ ảnh hưởng kỳ tương lai.
+
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+### P1-TASK-06 — Attachment có ACL
+
+- Brief do creator/manager đúng scope quản lý; evidence do assignee quản lý.
+- Tối đa 5 file/Task, 10 MB/file; download luôn kiểm Task ACL.
+- File không tự sao chép sang occurrence tiếp theo; soft-delete purge sau 30 ngày.
+
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+### P1-TASK-07 — Audit, notification và test
+
+- Tạo/sửa/transition/Goal/recurrence/file có audit before/after tối thiểu.
+- Assignment, review, deadline và Goal change tạo notification trong app đúng recipient.
+- Test bao phủ allowed, thiếu capability, ngoài scope, object/field rule, invalid employment, idempotency và protected download.
+
+Trạng thái: `In progress / Chờ nghiệm thu`.
+
+## Ngoài phạm vi
+
+- Task cancel/delete, dependency, checklist, comment/mention và Kanban production.
+- Notification ngoài app.
 - CRM, ASSETCONTROL hoặc MREKANBAN integration.
-- Chọn Identity Provider thật.
-- Tự chốt cơ cấu MRE chính thức.
+- Object storage production và Identity Provider production.
 
-## 3. Story prerequisites
+## Tài liệu liên quan
 
-### P1-PLAT-01 — Identity context giả lập
-
-**Là một** backend MRERP, **tôi muốn** nhận identity context giả lập theo contract được duyệt **để** kiểm thử account, employment, capability và scope mà chưa chọn IdP.
-
-Trạng thái: `Blocked` — cần ADR Identity contract.
-
-### P1-PEOPLE-01 — Organization fixture được kiểm soát
-
-**Là một** policy engine, **tôi muốn** có Employee, Team và quan hệ quản lý tối thiểu **để** đánh giá scope của Task.
-
-Trạng thái: `Refining` — fixture phải được ghi là test data, không trở thành cơ cấu MRE chính thức.
-
-## 4. Story nghiệp vụ Task
-
-### P1-TASK-01 — Xem Task trong scope
-
-**Là một** nhân sự đang hoạt động, **tôi muốn** xem Task thuộc scope của mình **để** biết việc cần thực hiện hoặc quản lý.
-
-Acceptance criteria dự thảo:
-
-- Server lấy actor và scope từ identity context đã xác thực.
-- Không tin `employee_uuid`, `team_uuid` hoặc capability do client tự gửi.
-- Record ngoài scope không xuất hiện trong kết quả.
-- Account khóa hoặc employment không hợp lệ bị từ chối.
-
-Trạng thái: `Refining` — baseline `tasks.read` cho Staff/Captain chưa được xác nhận riêng; chưa đạt `Ready`.
-
-### P1-TASK-02 — Tạo Task
-
-**Là một** nhân sự có `tasks.create`, **tôi muốn** tạo Task **để** ghi nhận một công việc có người tạo, người nhận, deadline và trạng thái.
-
-Acceptance criteria:
-
-- Nhân sự đang hoạt động nhận `tasks.create` qua gói capability cơ bản của MRE.
-- Backend từ chối khi thiếu capability hoặc employment không hợp lệ.
-- Task có UUID và audit actor do server xác định.
-- Tạo Task không tự cấp quyền đọc record ngoài scope.
-
-Trạng thái: `Refining`.
-
-### P1-TASK-03 — Giao Task đúng scope
-
-**Là một** người có `tasks.assign`, **tôi muốn** giao Task trong scope được phép **để** phân công công việc mà không vượt ranh giới quản lý.
-
-Acceptance criteria:
-
-- Staff/Captain chỉ giao cho chính mình.
-- Leader giao cho thành viên team mình phụ trách.
-- Manager tương lai giao trong phòng ban phụ trách; Phase 1 ban đầu không có user Manager.
-- CEO có company scope nhưng vẫn phải có action capability.
-- Giao ngoài scope bị từ chối và được test.
-
-Trạng thái: `Refining`.
-
-### P1-TASK-04 — Cập nhật theo trách nhiệm
-
-**Là một** người tham gia Task, **tôi muốn** chỉ sửa phần thuộc trách nhiệm của mình **để** dữ liệu không bị thay đổi trái phép.
-
-Acceptance criteria:
-
-- Người tạo sửa tiêu đề, mô tả, deadline và người nhận trong scope.
-- Người nhận sửa trạng thái thực hiện, tiến độ, bình luận và bằng chứng hoàn thành.
-- Người có `tasks.manage` quản lý Task trong scope tương ứng.
-- Server áp dụng field policy; payload từ client không thể mở rộng quyền.
-
-Trạng thái: `Refining`.
-
-### P1-TASK-05 — Gửi hoàn thành và xác nhận
-
-**Là một** người nhận Task, **tôi muốn** gửi Task sang `Chờ xác nhận` **để** người giao kiểm tra kết quả.
-
-**Là một** người tạo hoặc người có `tasks.accept`, **tôi muốn** chọn `Đã hoàn thành` hoặc `Yêu cầu làm lại` **để** kết thúc hoặc tiếp tục công việc.
-
-Acceptance criteria:
-
-- Người nhận không đóng trực tiếp Task do người khác tạo.
-- Người tạo hoặc `tasks.accept` trong scope được xác nhận hoặc yêu cầu làm lại.
-- Mỗi state transition ghi audit actor, thời điểm, trạng thái trước và sau.
-- UI có thể dùng status dropdown nhưng backend mới quyết định transition có hợp lệ hay không.
-
-Trạng thái: `Refining`.
-
-### P1-TASK-06 — Task tự giao
-
-**Là một** nhân sự tự giao Task, **tôi muốn** có người quản lý xác nhận **để** tránh tự tạo và tự công nhận kết quả.
-
-Acceptance criteria:
-
-- Staff/Captain tự giao → Leader có `tasks.accept` và team scope xác nhận.
-- Leader tự giao → CEO có `tasks.accept` và company scope xác nhận.
-- CEO không tạo Task tự giao trong workflow cần xác nhận.
-- Người tạo/người nhận không được tự xác nhận Task này.
-
-Trạng thái: `Refining`.
-
-### P1-TASK-07 — Audit và bằng chứng từ chối
-
-**Là một** người vận hành, **tôi muốn** hành động nhạy cảm và lần từ chối quan trọng có bằng chứng **để** điều tra lỗi quyền và thay đổi Task.
-
-Acceptance criteria:
-
-- Tạo, giao, thay đổi field nhạy cảm, submit, accept và request-rework có audit.
-- Test bao phủ allowed, thiếu capability, ngoài scope, object state, field denial và employment không hợp lệ.
-- Audit không lưu secret hoặc payload nhạy cảm không cần thiết.
-
-Trạng thái: `Refining`.
-
-## 5. Điều kiện chuyển story sang Ready
-
-Áp dụng [Definition of Ready](../../testing/definition-of-ready.md). Toàn bộ story hiện chưa được đánh dấu `Ready` vì còn thiếu stack ADR, mock Identity contract và API/data contract tối thiểu.
-
-## 6. Tài liệu liên quan
-
-- [Ma trận quyền Task](../../architecture/task-authorization-matrix.md)
-- [Acceptance scenarios](../../testing/phase-1-task-acceptance.md)
-- [ADR-0002](../../decisions/0002-task-authorization-baseline.md)
-- [Data ownership](../../architecture/data-ownership.md)
+- [Contract ba module](../../architecture/dashboard-feed-task-contract.md)
+- [Ma trận Task](../../architecture/task-authorization-matrix.md)
+- [Acceptance](../../testing/dashboard-feed-task-acceptance.md)

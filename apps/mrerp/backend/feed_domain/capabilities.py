@@ -1,0 +1,7 @@
+VIEW_FEED = "feed_domain.view_post"
+CREATE_POST = "feed_domain.add_post"
+COMMENT = "feed_domain.add_comment"
+REACT = "feed_domain.add_postreaction"
+SHARE = "feed_domain.share_post"
+MODERATE = "feed_domain.moderate_post"
+PUBLISH_OFFICIAL = "feed_domain.publish_official_post"

@@ -13,7 +13,9 @@ Repository đã có bản chạy local của People/HR Foundation trong Phase 1.
 
 **Đề xuất mục tiêu:** thực hiện đăng nhập chung bằng OIDC/OAuth 2.0. Identity Provider và chi tiết session vẫn chưa quyết định.
 
-**Đã có ở local:** đăng nhập mock bằng session cookie; ba view People gồm Danh bạ, Sơ đồ tổ chức và Team; HR quick-create có lựa chọn tạo account; Leader/CEO quản lý Team và membership. View Team dùng split view, cho đổi mã/tên và chỉ archive Team sau khi đã chuyển hết nhân sự, gỡ toàn bộ Leader. Sơ đồ tổ chức theo cấu trúc phẳng `CEO → Team → Employee`.
+**Đã có ở local:** đăng nhập mock bằng session cookie; People/Team/hồ sơ/account; Leave/Attendance baseline; Tổng quan general/private; Bảng tin audience company/Team/Employee; Task/Goal/recurrence; Phase 3 Recruitment, Documents, Recognition/Stars và Personal Settings. Protected file luôn tải qua API có ACL. Các phần chưa được người sở hữu sản phẩm chấp nhận vẫn `Implementation hoàn tất / Chờ nghiệm thu`.
+
+Thanh trên cùng luôn hiển thị trung tâm thông báo cá nhân và menu **Cài đặt**. Người dùng có thể xem số thông báo chưa đọc từ mọi tab, đổi nền sáng/tối trên thiết bị hiện tại hoặc đăng xuất. Preference theme được lưu cục bộ; không chứa credential và không thay đổi capability.
 
 Trong môi trường development/test, thanh trên cùng có bộ chọn **Xem theo vai trò** để đổi giữa các persona demo đã seed: CEO toàn quyền People, HR People, Leader Team Alpha, Staff Team Alpha và Staff Team Beta. Thao tác này tạo lại session ở backend và vì vậy dùng đúng capability, scope và field policy của persona được chọn; đây không phải cách frontend giả quyền. Danh sách persona là allow-list phía server, không nhận username tùy ý. Bộ chọn và endpoint tương ứng không khả dụng ngoài development/test. Captain và Manager chưa xuất hiện vì dự án chưa chốt capability/người dùng demo cho hai vai trò này.
 
@@ -26,7 +28,7 @@ Mục **Tiến độ** trong thanh điều hướng là bề mặt quản trị 
 1. Backend: tạo Python 3.12 virtual environment, cài `apps/mrerp/backend/requirements.txt`, migrate và chạy server cổng 8000.
 2. Seed tài khoản giả bằng lệnh `python manage.py seed_demo --password <mật-khẩu-local>`; không commit mật khẩu. Sau khi đăng nhập một tài khoản demo, có thể dùng **Xem theo vai trò** để kiểm tra nhanh các scope đã duyệt.
 3. Frontend: cài đúng dependency từ lockfile bằng `npm ci`, sau đó `npm run dev`; Vite chạy cổng 4173 và proxy `/api` tới backend.
-4. Có thể dùng `docker compose up --build` sau khi cấp `POSTGRES_PASSWORD` và `MRERP_SECRET_KEY` trong môi trường local.
+4. Có thể dùng `docker compose up --build` sau khi cấp `POSTGRES_PASSWORD` và `MRERP_SECRET_KEY` trong môi trường local. Compose chạy PostgreSQL, backend, frontend, Redis, Celery worker, Celery Beat và persistent media volume.
 
 Chi tiết câu lệnh nằm tại README của [backend](../apps/mrerp/backend/README.md) và [frontend](../apps/mrerp/frontend/README.md).
 
@@ -40,6 +42,8 @@ Các runbook cần được tạo trước khi mở production:
 - ASSETCONTROL emergency access sau khi policy được duyệt.
 - CRM worker overload/queue backlog.
 - Dashboard snapshot stale hoặc sync thất bại.
+- Redis/worker gián đoạn: request Feed/Task vẫn hoạt động; kiểm queue/worker và xác nhận recurrence backfill sau khi phục hồi.
+- Media volume đầy, file bị thiếu, Candidate anonymization hoặc Documents retention purge lỗi.
 - Secret rotation và service credential rotation.
 - Điều tra audit và sự cố lộ dữ liệu.
 
@@ -55,7 +59,7 @@ Không được tạo runbook break-glass có thể thực thi trước khi OD-0
 
 **Đề xuất mục tiêu bắt buộc.** Backup phải nằm ngoài VPS và phải diễn tập restore. Chỉ có snapshot hoặc file backup chưa chứng minh hệ thống phục hồi được.
 
-**Chưa quyết định.** Công cụ, retention, RPO và RTO.
+**Đã chốt cục bộ:** local-media Feed/Task/Documents/Recruitment nằm trong persistent volume và phải vào backup; notification/file soft-delete giữ 30 ngày; ứng viên bị từ chối được ẩn danh sau sáu tháng. **Chưa quyết định:** công cụ backup, retention backup, RPO/RTO và object storage production.
 
 ## Quan sát hệ thống
 

@@ -43,6 +43,7 @@ PRIVATE_KEY_RE = re.compile(r"-----BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY-----")
 PRIVATE_SUFFIXES = {".key", ".pem", ".p12", ".pfx", ".jks", ".keystore"}
 BACKUP_SUFFIXES = {".pgdump", ".dump", ".bak", ".backup"}
 IGNORED_DIRECTORY_NAMES = {
+    ".agents",
     ".git",
     ".venv",
     "node_modules",

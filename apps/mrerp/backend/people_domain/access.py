@@ -8,9 +8,15 @@ def get_actor_employee(user) -> Employee:
     if not user.is_authenticated or not user.is_active:
         raise PermissionDenied("Tài khoản không hợp lệ.")
     try:
-        return user.employee_profile
+        employee = user.employee_profile
     except Employee.DoesNotExist as exc:
         raise PermissionDenied("Tài khoản chưa được liên kết với nhân sự.") from exc
+    if employee.employment_status not in {
+        Employee.EmploymentStatus.PROBATION,
+        Employee.EmploymentStatus.OFFICIAL,
+    }:
+        raise PermissionDenied("Trạng thái công việc không hợp lệ.")
+    return employee
 
 
 def visible_employee_queryset(user):

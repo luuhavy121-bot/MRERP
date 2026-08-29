@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: MRERP API
   version: 1.0.0
-  description: Phase 1 People/HR Foundation contract
+  description: MRERP modular-monolith API contract
 paths:
   /api/schema/:
     get:
@@ -226,9 +226,95 @@ paths:
               schema:
                 $ref: '#/components/schemas/SessionResponse'
           description: ''
-  /api/v1/people/employees/:
+  /api/v1/dashboard/:
     get:
-      operationId: api_v1_people_employees_list
+      operationId: api_v1_dashboard_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/dashboard/notifications/{notification_uuid}/read/:
+    post:
+      operationId: api_v1_dashboard_notifications_read_create
+      parameters:
+      - in: path
+        name: notification_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/dashboard/notifications/read-all/:
+    post:
+      operationId: api_v1_dashboard_notifications_read_all_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/documents/audience-options/:
+    get:
+      operationId: api_v1_documents_audience_options_retrieve
+      description: Scope audience choices so the UI cannot suggest invalid targets.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAudienceOptions'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/documents/documents/:
+    get:
+      operationId: api_v1_documents_documents_list
       parameters:
       - name: page
         required: false
@@ -245,7 +331,972 @@ paths:
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/PaginatedDocumentList'
+          description: ''
+    post:
+      operationId: api_v1_documents_documents_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentMultipartCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DocumentMultipartCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentMultipartCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/documents/documents/{uuid}/:
+    get:
+      operationId: api_v1_documents_documents_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this document.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /api/v1/documents/documents/{uuid}/archive/:
+    post:
+      operationId: api_v1_documents_documents_archive_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this document.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/documents/documents/{uuid}/restore/:
+    post:
+      operationId: api_v1_documents_documents_restore_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this document.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/documents/documents/{uuid}/versions/:
+    post:
+      operationId: api_v1_documents_documents_versions_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this document.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentVersionMultipart'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DocumentVersionMultipart'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentVersionMultipart'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentVersion'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/documents/files/{file_uuid}/download/:
+    get:
+      operationId: api_v1_documents_files_download_retrieve
+      parameters:
+      - in: path
+        name: file_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/attachments/{attachment_uuid}/download/:
+    get:
+      operationId: api_v1_feed_attachments_download_retrieve
+      parameters:
+      - in: path
+        name: attachment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: Protected attachment
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/audience-options/:
+    get:
+      operationId: api_v1_feed_audience_options_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/comments/{comment_uuid}/:
+    delete:
+      operationId: api_v1_feed_comments_destroy
+      parameters:
+      - in: path
+        name: comment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/comments/{comment_uuid}/reaction/:
+    put:
+      operationId: api_v1_feed_comments_reaction_update
+      parameters:
+      - in: path
+        name: comment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reaction'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+    delete:
+      operationId: api_v1_feed_comments_reaction_destroy
+      parameters:
+      - in: path
+        name: comment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/posts/:
+    get:
+      operationId: api_v1_feed_posts_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostList'
+          description: ''
+    post:
+      operationId: api_v1_feed_posts_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/posts/{uuid}/:
+    get:
+      operationId: api_v1_feed_posts_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this post.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+          description: ''
+    delete:
+      operationId: api_v1_feed_posts_destroy
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this post.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/feed/posts/{uuid}/comments/:
+    post:
+      operationId: api_v1_feed_posts_comments_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this post.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/posts/{uuid}/reaction/:
+    put:
+      operationId: api_v1_feed_posts_reaction_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this post.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reaction'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reaction'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+    delete:
+      operationId: api_v1_feed_posts_reaction_destroy
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this post.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reaction'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/feed/posts/{uuid}/share/:
+    post:
+      operationId: api_v1_feed_posts_share_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this post.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Share'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Share'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Share'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/attendance/:
+    get:
+      operationId: api_v1_leave_attendance_list
+      parameters:
+      - in: query
+        name: month
+        schema:
+          type: string
+        description: Tháng định dạng YYYY-MM.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceRow'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/attendance/adjust/:
+    post:
+      operationId: api_v1_leave_attendance_adjust_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceAdjustment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttendanceAdjustment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttendanceAdjustment'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRow'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/requests/:
+    get:
+      operationId: api_v1_leave_requests_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLeaveRequestList'
+          description: ''
+    post:
+      operationId: api_v1_leave_requests_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequestCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequestCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequestCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/requests/{uuid}/:
+    get:
+      operationId: api_v1_leave_requests_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this leave request.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    patch:
+      operationId: api_v1_leave_requests_partial_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this leave request.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequestUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequestUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequestUpdate'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/requests/{uuid}/review/:
+    post:
+      operationId: api_v1_leave_requests_review_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this leave request.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveReview'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/access/:
+    get:
+      operationId: api_v1_people_access_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessAccount'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/access/bundle/:
+    put:
+      operationId: api_v1_people_access_bundle_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccessUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccessUpdate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/audit/:
+    get:
+      operationId: api_v1_people_audit_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditEventList'
+          description: ''
+  /api/v1/people/employees/:
+    get:
+      operationId: api_v1_people_employees_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Tìm theo mã, tên hiển thị hoặc vị trí.
+      - in: query
+        name: team
+        schema:
+          type: string
+          format: uuid
+        description: Lọc theo Team trong scope của actor.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/PaginatedEmployeeBasicList'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
           description: ''
     post:
       operationId: api_v1_people_employees_create
@@ -255,13 +1306,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/EmployeeCreate'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/EmployeeCreate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/EmployeeCreate'
         required: true
       security:
       - cookieAuth: []
@@ -270,7 +1321,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeBasic'
+                $ref: '#/components/schemas/EmployeeCreateResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
           description: ''
   /api/v1/people/employees/{uuid}/:
     get:
@@ -294,6 +1357,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmployeeBasic'
           description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
     patch:
       operationId: api_v1_people_employees_partial_update
       parameters:
@@ -310,13 +1385,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedEmployeeBasic'
+              $ref: '#/components/schemas/PatchedEmployeeUpdate'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedEmployeeBasic'
+              $ref: '#/components/schemas/PatchedEmployeeUpdate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedEmployeeBasic'
+              $ref: '#/components/schemas/PatchedEmployeeUpdate'
       security:
       - cookieAuth: []
       responses:
@@ -324,7 +1399,253 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeBasic'
+                $ref: '#/components/schemas/EmployeeHR'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/{uuid}/account/lock/:
+    post:
+      operationId: api_v1_people_employees_account_lock_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this employee.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCommandResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/{uuid}/account/provision/:
+    post:
+      operationId: api_v1_people_employees_account_provision_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this employee.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountProvision'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountProvision'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountProvision'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCommandResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/{uuid}/account/reset-password/:
+    post:
+      operationId: api_v1_people_employees_account_reset_password_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this employee.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCommandResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/{uuid}/account/unlock/:
+    post:
+      operationId: api_v1_people_employees_account_unlock_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this employee.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCommandResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/{uuid}/employment/:
+    post:
+      operationId: api_v1_people_employees_employment_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this employee.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmploymentCommand'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmploymentCommand'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmploymentCommand'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeHR'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/{uuid}/history/:
+    get:
+      operationId: api_v1_people_employees_history_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this employee.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeHistory'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
           description: ''
   /api/v1/people/employees/{uuid}/membership/:
     put:
@@ -343,13 +1664,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/Membership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/Membership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/Membership'
         required: true
       security:
       - cookieAuth: []
@@ -358,7 +1679,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeBasic'
+                $ref: '#/components/schemas/EmployeeLeader'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
           description: ''
   /api/v1/people/employees/{uuid}/promote/:
     post:
@@ -377,13 +1716,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/Promotion'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/Promotion'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/EmployeeBasic'
+              $ref: '#/components/schemas/Promotion'
         required: true
       security:
       - cookieAuth: []
@@ -392,7 +1731,78 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeBasic'
+                $ref: '#/components/schemas/EmployeeLeader'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/export-csv/:
+    get:
+      operationId: api_v1_people_employees_export_csv_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/import-csv/:
+    post:
+      operationId: api_v1_people_employees_import_csv_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResult'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
           description: ''
   /api/v1/people/employees/me/:
     get:
@@ -406,7 +1816,89 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeBasic'
+                $ref: '#/components/schemas/EmployeeSelf'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+    patch:
+      operationId: api_v1_people_employees_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeSelfUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeSelfUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeSelfUpdate'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeSelf'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/people/employees/me/change-password/:
+    post:
+      operationId: api_v1_people_employees_me_change_password_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
           description: ''
   /api/v1/people/teams/:
     get:
@@ -671,8 +2163,1782 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/recruitment/applications/:
+    get:
+      operationId: api_v1_recruitment_applications_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApplicationList'
+          description: ''
+    post:
+      operationId: api_v1_recruitment_applications_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/applications/{uuid}/:
+    get:
+      operationId: api_v1_recruitment_applications_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this application.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+  /api/v1/recruitment/applications/{uuid}/attachments/:
+    post:
+      operationId: api_v1_recruitment_applications_attachments_create
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this application.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateAttachmentUpload'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CandidateAttachmentUpload'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CandidateAttachmentUpload'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCandidateAttachmentList'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/applications/{uuid}/convert-to-employee/:
+    post:
+      operationId: api_v1_recruitment_applications_convert_to_employee_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this application.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateConvert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CandidateConvert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CandidateConvert'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateConvertResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/applications/{uuid}/transition/:
+    post:
+      operationId: api_v1_recruitment_applications_transition_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this application.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationTransition'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApplicationTransition'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ApplicationTransition'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/attachments/{attachment_uuid}/download/:
+    get:
+      operationId: api_v1_recruitment_attachments_download_retrieve
+      parameters:
+      - in: path
+        name: attachment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/openings/:
+    get:
+      operationId: api_v1_recruitment_openings_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOpeningList'
+          description: ''
+  /api/v1/recruitment/options/:
+    get:
+      operationId: api_v1_recruitment_options_retrieve
+      description: Return only teams the current actor may use in a hiring request.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecruitmentOptions'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/requests/:
+    get:
+      operationId: api_v1_recruitment_requests_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHiringRequestList'
+          description: ''
+    post:
+      operationId: api_v1_recruitment_requests_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HiringRequestCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HiringRequestCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HiringRequestCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HiringRequest'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/recruitment/requests/{uuid}/:
+    get:
+      operationId: api_v1_recruitment_requests_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this hiring request.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HiringRequest'
+          description: ''
+  /api/v1/recruitment/requests/{uuid}/review/:
+    post:
+      operationId: api_v1_recruitment_requests_review_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this hiring request.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HiringRequestReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HiringRequestReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HiringRequestReview'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HiringRequest'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/audience-options/:
+    get:
+      operationId: api_v1_rewards_audience_options_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RewardAudienceMember'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/leaderboard/:
+    get:
+      operationId: api_v1_rewards_leaderboard_list
+      parameters:
+      - in: query
+        name: period
+        schema:
+          type: string
+          enum:
+          - month
+          - quarter
+          - year
+          default: month
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaderboardRow'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/recognitions/:
+    get:
+      operationId: api_v1_rewards_recognitions_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRecognitionList'
+          description: ''
+    post:
+      operationId: api_v1_rewards_recognitions_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecognitionCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecognitionCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecognitionCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recognition'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/stars/grant/:
+    post:
+      operationId: api_v1_rewards_stars_grant_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StarEntryCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StarEntryCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StarEntryCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StarEntry'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/stars/me/:
+    get:
+      operationId: api_v1_rewards_stars_me_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/settings/me/:
+    get:
+      operationId: api_v1_settings_me_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+    patch:
+      operationId: api_v1_settings_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPreferenceUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPreferenceUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPreferenceUpdate'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/attachments/{attachment_uuid}/:
+    delete:
+      operationId: api_v1_tasks_attachments_destroy
+      parameters:
+      - in: path
+        name: attachment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/attachments/{attachment_uuid}/download/:
+    get:
+      operationId: api_v1_tasks_attachments_download_retrieve
+      parameters:
+      - in: path
+        name: attachment_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: Protected task attachment
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/goals/:
+    get:
+      operationId: api_v1_tasks_goals_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGoalList'
+          description: ''
+    post:
+      operationId: api_v1_tasks_goals_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GoalCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GoalCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/goals/{uuid}/:
+    get:
+      operationId: api_v1_tasks_goals_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this goal.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+    patch:
+      operationId: api_v1_tasks_goals_partial_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this goal.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGoalUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGoalUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGoalUpdate'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/recurrences/:
+    get:
+      operationId: api_v1_tasks_recurrences_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRecurrenceList'
+          description: ''
+    post:
+      operationId: api_v1_tasks_recurrences_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurrenceCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecurrenceCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecurrenceCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recurrence'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/recurrences/{uuid}/:
+    get:
+      operationId: api_v1_tasks_recurrences_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recurrence.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recurrence'
+          description: ''
+  /api/v1/tasks/recurrences/{uuid}/pause/:
+    post:
+      operationId: api_v1_tasks_recurrences_pause_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recurrence.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recurrence'
+          description: ''
+  /api/v1/tasks/recurrences/{uuid}/resume/:
+    post:
+      operationId: api_v1_tasks_recurrences_resume_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recurrence.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recurrence'
+          description: ''
+  /api/v1/tasks/recurrences/{uuid}/stop/:
+    post:
+      operationId: api_v1_tasks_recurrences_stop_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recurrence.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recurrence'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recurrence'
+          description: ''
+  /api/v1/tasks/tasks/:
+    get:
+      operationId: api_v1_tasks_tasks_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTaskList'
+          description: ''
+    post:
+      operationId: api_v1_tasks_tasks_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/tasks/{uuid}/:
+    get:
+      operationId: api_v1_tasks_tasks_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this task.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+    patch:
+      operationId: api_v1_tasks_tasks_partial_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this task.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTaskUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTaskUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTaskUpdate'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/tasks/{uuid}/attachments/:
+    post:
+      operationId: api_v1_tasks_tasks_attachments_create
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this task.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttachmentUpload'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttachmentUpload'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTaskAttachmentList'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/tasks/tasks/{uuid}/transition/:
+    post:
+      operationId: api_v1_tasks_tasks_transition_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this task.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transition'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Transition'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Transition'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
 components:
   schemas:
+    AccessAccount:
+      type: object
+      properties:
+        employee_uuid:
+          type: string
+          format: uuid
+        employee_code:
+          type: string
+        display_name:
+          type: string
+        team_name:
+          type: string
+          nullable: true
+        username:
+          type: string
+          nullable: true
+        account_active:
+          type: boolean
+        groups:
+          type: array
+          items:
+            type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+      required:
+      - account_active
+      - capabilities
+      - display_name
+      - employee_code
+      - employee_uuid
+      - groups
+      - team_name
+      - username
+    AccessUpdate:
+      type: object
+      properties:
+        employee_uuid:
+          type: string
+          format: uuid
+        bundle:
+          $ref: '#/components/schemas/BundleEnum'
+      required:
+      - bundle
+      - employee_uuid
+    AccountCommandResponse:
+      type: object
+      properties:
+        employee:
+          $ref: '#/components/schemas/EmployeeHR'
+        temporary_password:
+          type: string
+      required:
+      - employee
+    AccountProvision:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 150
+      required:
+      - username
+    ActionEnum:
+      enum:
+      - submit
+      - accept
+      - rework
+      type: string
+      description: |-
+        * `submit` - submit
+        * `accept` - accept
+        * `rework` - rework
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        correlation_id:
+          type: string
+          format: uuid
+        errors:
+          type: object
+          additionalProperties: {}
+      required:
+      - code
+      - correlation_id
+      - detail
+    Application:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        candidate_name:
+          type: string
+          readOnly: true
+        candidate_email:
+          type: string
+          readOnly: true
+        candidate_phone:
+          type: string
+          readOnly: true
+        candidate_source:
+          type: string
+          readOnly: true
+        opening:
+          type: string
+          format: uuid
+          readOnly: true
+        opening_title:
+          type: string
+          readOnly: true
+        team_uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        team_name:
+          type: string
+          readOnly: true
+        stage:
+          allOf:
+          - $ref: '#/components/schemas/StageEnum'
+          readOnly: true
+        stage_label:
+          type: string
+          readOnly: true
+        converted_employee_uuid:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        version:
+          type: integer
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateAttachment'
+          readOnly: true
+        transitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationTransitionProjection'
+          readOnly: true
+        can_manage:
+          type: boolean
+          readOnly: true
+        can_convert:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachments
+      - can_convert
+      - can_manage
+      - candidate_email
+      - candidate_name
+      - candidate_phone
+      - candidate_source
+      - converted_employee_uuid
+      - created_at
+      - opening
+      - opening_title
+      - stage
+      - stage_label
+      - team_name
+      - team_uuid
+      - transitions
+      - updated_at
+      - uuid
+      - version
+    ApplicationCreate:
+      type: object
+      properties:
+        opening_uuid:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+          maxLength: 160
+          minLength: 1
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          maxLength: 32
+        source:
+          type: string
+          maxLength: 120
+      required:
+      - full_name
+      - opening_uuid
+    ApplicationTransition:
+      type: object
+      properties:
+        stage:
+          $ref: '#/components/schemas/StageEnum'
+        note:
+          type: string
+          maxLength: 500
+      required:
+      - stage
+    ApplicationTransitionProjection:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        from_stage:
+          type: string
+        to_stage:
+          type: string
+        to_label:
+          type: string
+        note:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - from_stage
+      - note
+      - to_label
+      - to_stage
+      - uuid
+    AttachmentUpload:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/TaskAttachmentKindEnum'
+      required:
+      - kind
+    AttendanceAdjustment:
+      type: object
+      properties:
+        employee_uuid:
+          type: string
+          format: uuid
+        month:
+          type: string
+          pattern: ^\d{4}-\d{2}$
+        days:
+          type: integer
+          maximum: 31
+          minimum: -31
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+      required:
+      - days
+      - employee_uuid
+      - month
+      - reason
+    AttendanceRow:
+      type: object
+      properties:
+        employee_uuid:
+          type: string
+          format: uuid
+        employee_code:
+          type: string
+        display_name:
+          type: string
+        team_name:
+          type: string
+          nullable: true
+        month:
+          type: string
+        scheduled_workdays:
+          type: integer
+        public_holiday_days:
+          type: integer
+        approved_leave_days:
+          type: integer
+        adjustment_days:
+          type: integer
+        adjustment_reason:
+          type: string
+        projected_workdays:
+          type: integer
+      required:
+      - adjustment_days
+      - adjustment_reason
+      - approved_leave_days
+      - display_name
+      - employee_code
+      - employee_uuid
+      - month
+      - projected_workdays
+      - public_holiday_days
+      - scheduled_workdays
+      - team_name
+    AuditEvent:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        actor_name:
+          type: string
+          nullable: true
+          readOnly: true
+        action:
+          type: string
+          maxLength: 80
+        target_type:
+          type: string
+          maxLength: 80
+        target_uuid:
+          type: string
+          maxLength: 64
+        changes: {}
+        correlation_id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - action
+      - actor_name
+      - correlation_id
+      - created_at
+      - target_type
+      - uuid
+    Balance:
+      type: object
+      properties:
+        balance:
+          type: integer
+        ledger:
+          type: array
+          items:
+            $ref: '#/components/schemas/StarEntry'
+      required:
+      - balance
+      - ledger
+    BundleEnum:
+      enum:
+      - staff
+      - leader
+      - hr
+      - ceo
+      type: string
+      description: |-
+        * `staff` - staff
+        * `leader` - leader
+        * `hr` - hr
+        * `ceo` - ceo
+    CandidateAttachment:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        original_name:
+          type: string
+          readOnly: true
+        content_type:
+          type: string
+          readOnly: true
+        size:
+          type: integer
+          readOnly: true
+        download_url:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content_type
+      - created_at
+      - download_url
+      - original_name
+      - size
+      - uuid
+    CandidateAttachmentUpload:
+      type: object
+      properties:
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 5
+          minItems: 1
+      required:
+      - attachments
+    CandidateConvert:
+      type: object
+      properties:
+        employee_code:
+          type: string
+          maxLength: 64
+          minLength: 1
+        create_account:
+          type: boolean
+          default: false
+        username:
+          type: string
+          maxLength: 150
+      required:
+      - employee_code
+    CandidateConvertResponse:
+      type: object
+      properties:
+        employee:
+          $ref: '#/components/schemas/EmployeeHR'
+        temporary_password:
+          type: string
+          nullable: true
+      required:
+      - employee
+    ChangePassword:
+      type: object
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+        new_password:
+          type: string
+          writeOnly: true
+      required:
+      - current_password
+      - new_password
+    CommandEnum:
+      enum:
+      - pause
+      - terminate
+      - reactivate
+      type: string
+      description: |-
+        * `pause` - pause
+        * `terminate` - terminate
+        * `reactivate` - reactivate
+    Comment:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        author_name:
+          type: string
+          readOnly: true
+        author_code:
+          type: string
+          readOnly: true
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+        content:
+          type: string
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+        deletion_mode:
+          type: string
+          maxLength: 16
+        reaction_summary:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        replies:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        can_delete:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author_code
+      - author_name
+      - can_delete
+      - content
+      - created_at
+      - reaction_summary
+      - replies
+      - uuid
+    CommentCreate:
+      type: object
+      properties:
+        content:
+          type: string
+          maxLength: 4000
+          minLength: 1
+        parent_uuid:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - content
+    Dashboard:
+      type: object
+      properties:
+        general:
+          type: object
+          additionalProperties: {}
+        private:
+          type: object
+          additionalProperties: {}
+      required:
+      - general
+      - private
     DebugPersona:
       type: object
       properties:
@@ -690,6 +3956,278 @@ components:
           type: string
       required:
       - username
+    DecisionEnum:
+      enum:
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `approved` - approved
+        * `rejected` - rejected
+    Document:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        category:
+          type: string
+          readOnly: true
+        owner:
+          type: string
+          format: uuid
+          readOnly: true
+        owner_name:
+          type: string
+          readOnly: true
+        scope:
+          allOf:
+          - $ref: '#/components/schemas/DocumentScopeEnum'
+          readOnly: true
+        scope_label:
+          type: string
+          readOnly: true
+        audience_teams:
+          type: array
+          items:
+            type: string
+            format: uuid
+          readOnly: true
+        audience_team_names:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        audience_employees:
+          type: array
+          items:
+            type: string
+            format: uuid
+          readOnly: true
+        audience_employee_names:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentVersion'
+          readOnly: true
+        can_manage:
+          type: boolean
+          readOnly: true
+        is_archived:
+          type: boolean
+          readOnly: true
+        archived_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - archived_at
+      - audience_employee_names
+      - audience_employees
+      - audience_team_names
+      - audience_teams
+      - can_manage
+      - category
+      - created_at
+      - description
+      - is_archived
+      - owner
+      - owner_name
+      - scope
+      - scope_label
+      - title
+      - updated_at
+      - uuid
+      - versions
+    DocumentAudienceEmployee:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        employee_code:
+          type: string
+        display_name:
+          type: string
+        team_name:
+          type: string
+          nullable: true
+      required:
+      - display_name
+      - employee_code
+      - team_name
+      - uuid
+    DocumentAudienceOptions:
+      type: object
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentAudienceTeam'
+        employees:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentAudienceEmployee'
+      required:
+      - employees
+      - teams
+    DocumentAudienceTeam:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+      required:
+      - code
+      - name
+      - uuid
+    DocumentFile:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        original_name:
+          type: string
+          readOnly: true
+        content_type:
+          type: string
+          readOnly: true
+        size:
+          type: integer
+          readOnly: true
+        download_url:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content_type
+      - created_at
+      - download_url
+      - original_name
+      - size
+      - uuid
+    DocumentMultipartCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+          maxLength: 5000
+        category:
+          type: string
+          maxLength: 80
+        scope:
+          $ref: '#/components/schemas/DocumentScopeEnum'
+        team_uuids:
+          type: string
+          description: JSON array UUID; dùng [] khi không áp dụng.
+        employee_uuids:
+          type: string
+          description: JSON array UUID; dùng [] khi không áp dụng.
+        note:
+          type: string
+          maxLength: 500
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 10
+          minItems: 1
+      required:
+      - attachments
+      - scope
+      - title
+    DocumentScopeEnum:
+      enum:
+      - company
+      - teams
+      - employees
+      - hr_confidential
+      type: string
+      description: |-
+        * `company` - Toàn công ty
+        * `teams` - Team
+        * `employees` - Nhân sự cụ thể
+        * `hr_confidential` - HR confidential
+    DocumentVersion:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        number:
+          type: integer
+          readOnly: true
+        note:
+          type: string
+          readOnly: true
+        uploaded_by_name:
+          type: string
+          readOnly: true
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentFile'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - files
+      - note
+      - number
+      - uploaded_by_name
+      - uuid
+    DocumentVersionMultipart:
+      type: object
+      properties:
+        note:
+          type: string
+          maxLength: 500
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 10
+          minItems: 1
+      required:
+      - attachments
     EmployeeBasic:
       type: object
       properties:
@@ -717,6 +4255,840 @@ components:
       - employee_code
       - team_name
       - uuid
+    EmployeeCreate:
+      type: object
+      properties:
+        employee_code:
+          type: string
+          maxLength: 64
+        create_account:
+          type: boolean
+          default: true
+        username:
+          type: string
+          maxLength: 150
+      required:
+      - employee_code
+    EmployeeCreateResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_code:
+          type: string
+          maxLength: 64
+        display_name:
+          type: string
+          maxLength: 160
+        job_title:
+          type: string
+          maxLength: 120
+        team:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          readOnly: true
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        employment_status_label:
+          type: string
+          readOnly: true
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+        can_promote:
+          type: boolean
+          readOnly: true
+        has_account:
+          type: boolean
+          nullable: true
+          readOnly: true
+        account_active:
+          type: boolean
+          nullable: true
+          readOnly: true
+        can_reset_password:
+          type: boolean
+          readOnly: true
+        can_manage_account:
+          type: boolean
+          readOnly: true
+        can_change_employment:
+          type: boolean
+          readOnly: true
+        can_provision_account:
+          type: boolean
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+          readOnly: true
+        national_id:
+          type: string
+          nullable: true
+          maxLength: 32
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        address:
+          type: string
+        version:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        temporary_password:
+          type: string
+      required:
+      - account_active
+      - can_change_employment
+      - can_manage_account
+      - can_promote
+      - can_provision_account
+      - can_reset_password
+      - created_at
+      - employee_code
+      - employment_status_label
+      - has_account
+      - team_name
+      - updated_at
+      - username
+      - uuid
+    EmployeeHR:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_code:
+          type: string
+          maxLength: 64
+        display_name:
+          type: string
+          maxLength: 160
+        job_title:
+          type: string
+          maxLength: 120
+        team:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          readOnly: true
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        employment_status_label:
+          type: string
+          readOnly: true
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+        can_promote:
+          type: boolean
+          readOnly: true
+        has_account:
+          type: boolean
+          nullable: true
+          readOnly: true
+        account_active:
+          type: boolean
+          nullable: true
+          readOnly: true
+        can_reset_password:
+          type: boolean
+          readOnly: true
+        can_manage_account:
+          type: boolean
+          readOnly: true
+        can_change_employment:
+          type: boolean
+          readOnly: true
+        can_provision_account:
+          type: boolean
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+          readOnly: true
+        national_id:
+          type: string
+          nullable: true
+          maxLength: 32
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        address:
+          type: string
+        version:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - account_active
+      - can_change_employment
+      - can_manage_account
+      - can_promote
+      - can_provision_account
+      - can_reset_password
+      - created_at
+      - employee_code
+      - employment_status_label
+      - has_account
+      - team_name
+      - updated_at
+      - username
+      - uuid
+    EmployeeHistory:
+      type: object
+      properties:
+        employment:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmploymentHistory'
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/MembershipHistory'
+      required:
+      - employment
+      - membership
+    EmployeeLeader:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_code:
+          type: string
+          maxLength: 64
+        display_name:
+          type: string
+          maxLength: 160
+        job_title:
+          type: string
+          maxLength: 120
+        team:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          readOnly: true
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        employment_status_label:
+          type: string
+          readOnly: true
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+        can_promote:
+          type: boolean
+          readOnly: true
+        has_account:
+          type: boolean
+          nullable: true
+          readOnly: true
+        account_active:
+          type: boolean
+          nullable: true
+          readOnly: true
+        can_reset_password:
+          type: boolean
+          readOnly: true
+        can_manage_account:
+          type: boolean
+          readOnly: true
+        can_change_employment:
+          type: boolean
+          readOnly: true
+        can_provision_account:
+          type: boolean
+          readOnly: true
+      required:
+      - account_active
+      - can_change_employment
+      - can_manage_account
+      - can_promote
+      - can_provision_account
+      - can_reset_password
+      - employee_code
+      - employment_status_label
+      - has_account
+      - team_name
+      - uuid
+    EmployeeSelf:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_code:
+          type: string
+          maxLength: 64
+        display_name:
+          type: string
+          maxLength: 160
+        job_title:
+          type: string
+          maxLength: 120
+        team:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          readOnly: true
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        employment_status_label:
+          type: string
+          readOnly: true
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+        can_promote:
+          type: boolean
+          readOnly: true
+        has_account:
+          type: boolean
+          nullable: true
+          readOnly: true
+        account_active:
+          type: boolean
+          nullable: true
+          readOnly: true
+        can_reset_password:
+          type: boolean
+          readOnly: true
+        can_manage_account:
+          type: boolean
+          readOnly: true
+        can_change_employment:
+          type: boolean
+          readOnly: true
+        can_provision_account:
+          type: boolean
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+          readOnly: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        address:
+          type: string
+        version:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        must_change_password:
+          type: boolean
+          readOnly: true
+      required:
+      - account_active
+      - can_change_employment
+      - can_manage_account
+      - can_promote
+      - can_provision_account
+      - can_reset_password
+      - created_at
+      - employee_code
+      - employment_status_label
+      - has_account
+      - must_change_password
+      - team_name
+      - updated_at
+      - username
+      - uuid
+    EmploymentCommand:
+      type: object
+      properties:
+        command:
+          $ref: '#/components/schemas/CommandEnum'
+        note:
+          type: string
+          maxLength: 2000
+          minLength: 1
+      required:
+      - command
+      - note
+    EmploymentHistory:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        from_status:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        from_label:
+          type: string
+          readOnly: true
+        to_status:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        to_label:
+          type: string
+          readOnly: true
+        note:
+          type: string
+        actor_name:
+          type: string
+          readOnly: true
+        effective_at:
+          type: string
+          format: date-time
+      required:
+      - actor_name
+      - effective_at
+      - from_label
+      - from_status
+      - note
+      - to_label
+      - to_status
+      - uuid
+    EmploymentStatusEnum:
+      enum:
+      - probation
+      - official
+      - paused
+      - terminated
+      type: string
+      description: |-
+        * `probation` - Thử việc
+        * `official` - Chính thức
+        * `paused` - Tạm nghỉ
+        * `terminated` - Nghỉ việc
+    EntryTypeEnum:
+      enum:
+      - grant
+      - adjustment
+      type: string
+      description: |-
+        * `grant` - Cấp sao
+        * `adjustment` - Điều chỉnh
+    FeedReactionKindEnum:
+      enum:
+      - like
+      - love
+      - celebrate
+      - support
+      - insightful
+      type: string
+      description: |-
+        * `like` - Like
+        * `love` - Love
+        * `celebrate` - Celebrate
+        * `support` - Support
+        * `insightful` - Insightful
+    FrequencyEnum:
+      enum:
+      - daily
+      - weekly
+      - monthly
+      type: string
+      description: |-
+        * `daily` - Hằng ngày
+        * `weekly` - Hằng tuần
+        * `monthly` - Hằng tháng
+    Goal:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+        scope:
+          $ref: '#/components/schemas/GoalScopeEnum'
+        team:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          readOnly: true
+          nullable: true
+        period:
+          $ref: '#/components/schemas/PeriodEnum'
+        starts_on:
+          type: string
+          format: date
+        ends_on:
+          type: string
+          format: date
+        created_by_name:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+        progress:
+          type: integer
+          readOnly: true
+        task_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - created_by_name
+      - ends_on
+      - period
+      - progress
+      - scope
+      - starts_on
+      - task_count
+      - team_name
+      - title
+      - updated_at
+      - uuid
+    GoalCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 1
+        description:
+          type: string
+          maxLength: 12000
+        scope:
+          $ref: '#/components/schemas/GoalScopeEnum'
+        team_uuid:
+          type: string
+          format: uuid
+          nullable: true
+        period:
+          $ref: '#/components/schemas/PeriodEnum'
+        starts_on:
+          type: string
+          format: date
+        ends_on:
+          type: string
+          format: date
+      required:
+      - ends_on
+      - period
+      - scope
+      - starts_on
+      - title
+    GoalScopeEnum:
+      enum:
+      - team
+      - company
+      type: string
+      description: |-
+        * `team` - Team
+        * `company` - Công ty
+    HiringRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        team:
+          type: string
+          format: uuid
+          readOnly: true
+        team_name:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        headcount:
+          type: integer
+          readOnly: true
+        justification:
+          type: string
+          readOnly: true
+        requester_name:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/HiringRequestStatusEnum'
+          readOnly: true
+        status_label:
+          type: string
+          readOnly: true
+        review_note:
+          type: string
+          readOnly: true
+        reviewed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        opening_uuid:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - headcount
+      - justification
+      - opening_uuid
+      - requester_name
+      - review_note
+      - reviewed_at
+      - status
+      - status_label
+      - team
+      - team_name
+      - title
+      - updated_at
+      - uuid
+    HiringRequestCreate:
+      type: object
+      properties:
+        team_uuid:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 160
+          minLength: 1
+        headcount:
+          type: integer
+          maximum: 100
+          minimum: 1
+        justification:
+          type: string
+          maxLength: 3000
+          minLength: 1
+      required:
+      - headcount
+      - justification
+      - team_uuid
+      - title
+    HiringRequestReview:
+      type: object
+      properties:
+        decision:
+          $ref: '#/components/schemas/DecisionEnum'
+        note:
+          type: string
+          maxLength: 500
+      required:
+      - decision
+    HiringRequestStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      - closed
+      type: string
+      description: |-
+        * `pending` - Chờ duyệt
+        * `approved` - Đã duyệt
+        * `rejected` - Từ chối
+        * `closed` - Đã đóng
+    ImportResult:
+      type: object
+      properties:
+        created:
+          type: integer
+      required:
+      - created
+    LeaderboardRow:
+      type: object
+      properties:
+        rank:
+          type: integer
+        employee_uuid:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        employee_code:
+          type: string
+        team_name:
+          type: string
+          nullable: true
+        stars:
+          type: integer
+      required:
+      - display_name
+      - employee_code
+      - employee_uuid
+      - rank
+      - stars
+      - team_name
+    LeaveRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        requester_code:
+          type: string
+          readOnly: true
+        requester_name:
+          type: string
+          readOnly: true
+        team_name:
+          type: string
+          readOnly: true
+          nullable: true
+        start_date:
+          type: string
+          format: date
+          readOnly: true
+        end_date:
+          type: string
+          format: date
+          readOnly: true
+        reason:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/LeaveRequestStatusEnum'
+          readOnly: true
+        status_label:
+          type: string
+          readOnly: true
+        reviewer_name:
+          type: string
+          readOnly: true
+          nullable: true
+        review_note:
+          type: string
+          readOnly: true
+        reviewed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        version:
+          type: integer
+          readOnly: true
+        can_review:
+          type: boolean
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - can_edit
+      - can_review
+      - created_at
+      - end_date
+      - reason
+      - requester_code
+      - requester_name
+      - review_note
+      - reviewed_at
+      - reviewer_name
+      - start_date
+      - status
+      - status_label
+      - team_name
+      - updated_at
+      - uuid
+      - version
+    LeaveRequestCreate:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        reason:
+          type: string
+          maxLength: 2000
+          minLength: 1
+      required:
+      - end_date
+      - reason
+      - start_date
+    LeaveRequestStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `pending` - Chờ duyệt
+        * `approved` - Đã duyệt
+        * `rejected` - Từ chối
+    LeaveReview:
+      type: object
+      properties:
+        decision:
+          $ref: '#/components/schemas/DecisionEnum'
+        note:
+          type: string
+          maxLength: 2000
+      required:
+      - decision
     LoginRequest:
       type: object
       properties:
@@ -728,6 +5100,191 @@ components:
       required:
       - password
       - username
+    Membership:
+      type: object
+      properties:
+        team_uuid:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - team_uuid
+    MembershipHistory:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        from_team:
+          type: string
+          format: uuid
+          nullable: true
+        from_team_name:
+          type: string
+          readOnly: true
+          nullable: true
+        to_team:
+          type: string
+          format: uuid
+          nullable: true
+        to_team_name:
+          type: string
+          readOnly: true
+          nullable: true
+        actor_name:
+          type: string
+          readOnly: true
+        effective_at:
+          type: string
+          format: date-time
+      required:
+      - actor_name
+      - effective_at
+      - from_team_name
+      - to_team_name
+      - uuid
+    Opening:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        hiring_request:
+          type: string
+          format: uuid
+          readOnly: true
+        team:
+          type: string
+          format: uuid
+          readOnly: true
+        team_name:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OpeningStatusEnum'
+          readOnly: true
+        status_label:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - hiring_request
+      - status
+      - status_label
+      - team
+      - team_name
+      - title
+      - uuid
+    OpeningStatusEnum:
+      enum:
+      - open
+      - closed
+      type: string
+      description: |-
+        * `open` - Đang tuyển
+        * `closed` - Đã đóng
+    PaginatedApplicationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+    PaginatedAuditEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+    PaginatedCandidateAttachmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateAttachment'
+    PaginatedDocumentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
     PaginatedEmployeeBasicList:
       type: object
       required:
@@ -751,6 +5308,213 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EmployeeBasic'
+    PaginatedGoalList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Goal'
+    PaginatedHiringRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/HiringRequest'
+    PaginatedLeaveRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveRequest'
+    PaginatedOpeningList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opening'
+    PaginatedPostList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    PaginatedRecognitionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recognition'
+    PaginatedRecurrenceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recurrence'
+    PaginatedTaskAttachmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskAttachment'
+    PaginatedTaskList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
     PaginatedTeamList:
       type: object
       required:
@@ -774,29 +5538,105 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
-    PatchedEmployeeBasic:
+    PatchedEmployeeSelfUpdate:
       type: object
       properties:
-        uuid:
-          type: string
-          format: uuid
-          readOnly: true
-        employee_code:
-          type: string
-          maxLength: 64
         display_name:
           type: string
           maxLength: 160
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        address:
+          type: string
+        expected_version:
+          type: integer
+          minimum: 1
+          writeOnly: true
+    PatchedEmployeeUpdate:
+      type: object
+      properties:
+        display_name:
+          type: string
+          maxLength: 160
+        national_id:
+          type: string
+          nullable: true
+          maxLength: 32
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        address:
+          type: string
         job_title:
           type: string
           maxLength: 120
-        team:
+        expected_version:
+          type: integer
+          minimum: 1
+          writeOnly: true
+    PatchedGoalUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 1
+        description:
+          type: string
+          maxLength: 12000
+        period:
+          $ref: '#/components/schemas/PeriodEnum'
+        starts_on:
+          type: string
+          format: date
+        ends_on:
+          type: string
+          format: date
+    PatchedLeaveRequestUpdate:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        reason:
+          type: string
+          maxLength: 2000
+          minLength: 1
+        expected_version:
+          type: integer
+          minimum: 1
+    PatchedPreferenceUpdate:
+      type: object
+      properties:
+        social_notifications_enabled:
+          type: boolean
+    PatchedTaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 1
+        description:
+          type: string
+          maxLength: 12000
+        due_at:
+          type: string
+          format: date-time
+        progress:
+          type: integer
+          maximum: 100
+          minimum: 0
+        goal_uuid:
           type: string
           format: uuid
           nullable: true
-        team_name:
-          type: string
-          readOnly: true
     PatchedTeam:
       type: object
       properties:
@@ -824,6 +5664,426 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PeriodEnum:
+      enum:
+      - day
+      - week
+      - month
+      - quarter
+      type: string
+      description: |-
+        * `day` - Ngày
+        * `week` - Tuần
+        * `month` - Tháng
+        * `quarter` - Quý
+    Post:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        author:
+          type: string
+          format: uuid
+        author_name:
+          type: string
+          readOnly: true
+        author_code:
+          type: string
+          readOnly: true
+        content:
+          type: string
+        company_scope:
+          type: boolean
+        audience_employees:
+          type: array
+          items:
+            type: string
+            format: uuid
+        audience_employee_names:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        audience_teams:
+          type: array
+          items:
+            type: string
+            format: uuid
+        audience_team_names:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        is_official:
+          type: boolean
+        shared_post:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        comments:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        reaction_summary:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+        deletion_mode:
+          type: string
+          maxLength: 16
+        can_delete:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachments
+      - audience_employee_names
+      - audience_team_names
+      - author
+      - author_code
+      - author_name
+      - can_delete
+      - comments
+      - created_at
+      - reaction_summary
+      - shared_post
+      - uuid
+    PostCreate:
+      type: object
+      properties:
+        content:
+          type: string
+          maxLength: 12000
+        company_scope:
+          type: boolean
+          default: false
+        employee_uuids: {}
+        team_uuids: {}
+        is_official:
+          type: boolean
+          default: false
+    Preference:
+      type: object
+      properties:
+        social_notifications_enabled:
+          type: boolean
+        mandatory_notifications:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        account_active:
+          type: boolean
+          readOnly: true
+        employment_status:
+          type: string
+          readOnly: true
+        employment_status_label:
+          type: string
+          readOnly: true
+        must_change_password:
+          type: boolean
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - account_active
+      - employment_status
+      - employment_status_label
+      - mandatory_notifications
+      - must_change_password
+      - updated_at
+    Promotion:
+      type: object
+      properties:
+        note:
+          type: string
+          maxLength: 1000
+          minLength: 1
+      required:
+      - note
+    RankEnum:
+      enum:
+      - staff
+      - captain
+      - leader
+      - manager
+      - ceo
+      type: string
+      description: |-
+        * `staff` - Staff
+        * `captain` - Captain
+        * `leader` - Leader
+        * `manager` - Manager
+        * `ceo` - CEO
+    Reaction:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/FeedReactionKindEnum'
+      required:
+      - kind
+    Recognition:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        sender:
+          type: string
+          format: uuid
+          readOnly: true
+        sender_name:
+          type: string
+          readOnly: true
+        sender_code:
+          type: string
+          readOnly: true
+        recipients:
+          type: array
+          items:
+            type: string
+            format: uuid
+          readOnly: true
+        recipient_names:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        category:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - created_at
+      - message
+      - recipient_names
+      - recipients
+      - sender
+      - sender_code
+      - sender_name
+      - uuid
+    RecognitionCreate:
+      type: object
+      properties:
+        recipient_uuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 20
+          minItems: 1
+        category:
+          type: string
+          maxLength: 80
+          minLength: 1
+        message:
+          type: string
+          maxLength: 3000
+          minLength: 1
+      required:
+      - category
+      - message
+      - recipient_uuids
+    RecruitmentOptionTeam:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+      required:
+      - code
+      - name
+      - uuid
+    RecruitmentOptions:
+      type: object
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecruitmentOptionTeam'
+      required:
+      - teams
+    Recurrence:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+        creator_name:
+          type: string
+          readOnly: true
+        assignee:
+          type: string
+          format: uuid
+        assignee_name:
+          type: string
+          readOnly: true
+        team:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+          readOnly: true
+        goal:
+          type: string
+          format: uuid
+          nullable: true
+        frequency:
+          $ref: '#/components/schemas/FrequencyEnum'
+        frequency_label:
+          type: string
+          readOnly: true
+        interval:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        start_at:
+          type: string
+          format: date-time
+        next_occurrence_at:
+          type: string
+          format: date-time
+        deadline_offset_minutes:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/RecurrenceStatusEnum'
+        status_label:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - assignee
+      - assignee_name
+      - created_at
+      - creator_name
+      - frequency
+      - frequency_label
+      - next_occurrence_at
+      - start_at
+      - status_label
+      - team
+      - team_name
+      - title
+      - uuid
+    RecurrenceCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 1
+        description:
+          type: string
+          maxLength: 12000
+        assignee_uuid:
+          type: string
+          format: uuid
+        goal_uuid:
+          type: string
+          format: uuid
+          nullable: true
+        frequency:
+          $ref: '#/components/schemas/FrequencyEnum'
+        interval:
+          type: integer
+          maximum: 365
+          minimum: 1
+        start_at:
+          type: string
+          format: date-time
+        deadline_offset_minutes:
+          type: integer
+          maximum: 525600
+          minimum: 1
+        end_date:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - assignee_uuid
+      - deadline_offset_minutes
+      - frequency
+      - interval
+      - start_at
+      - title
+    RecurrenceStatusEnum:
+      enum:
+      - active
+      - paused
+      - stopped
+      type: string
+      description: |-
+        * `active` - Đang chạy
+        * `paused` - Tạm dừng
+        * `stopped` - Đã dừng
+    RewardAudienceMember:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        employee_code:
+          type: string
+        display_name:
+          type: string
+        team_name:
+          type: string
+          nullable: true
+      required:
+      - display_name
+      - employee_code
+      - team_name
+      - uuid
     SessionResponse:
       type: object
       properties:
@@ -847,6 +6107,10 @@ components:
           type: array
           items:
             type: string
+        product_entitlements:
+          type: array
+          items:
+            type: string
         csrf_token:
           type: string
         mock_identity:
@@ -857,6 +6121,300 @@ components:
             $ref: '#/components/schemas/DebugPersona'
       required:
       - authenticated
+    Share:
+      type: object
+      properties:
+        content:
+          type: string
+          maxLength: 12000
+        company_scope:
+          type: boolean
+          default: false
+        employee_uuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        team_uuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    StageEnum:
+      enum:
+      - new
+      - screening
+      - interview
+      - offer
+      - hired
+      - rejected
+      type: string
+      description: |-
+        * `new` - Mới
+        * `screening` - Sàng lọc
+        * `interview` - Phỏng vấn
+        * `offer` - Đề nghị
+        * `hired` - Đã tuyển
+        * `rejected` - Từ chối
+    StarEntry:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_name:
+          type: string
+          readOnly: true
+        amount:
+          type: integer
+          readOnly: true
+        entry_type:
+          allOf:
+          - $ref: '#/components/schemas/EntryTypeEnum'
+          readOnly: true
+        entry_type_label:
+          type: string
+          readOnly: true
+        reason:
+          type: string
+          readOnly: true
+        actor_name:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - actor_name
+      - amount
+      - created_at
+      - employee
+      - employee_name
+      - entry_type
+      - entry_type_label
+      - reason
+      - uuid
+    StarEntryCreate:
+      type: object
+      properties:
+        employee_uuid:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          maximum: 1000000
+          minimum: -1000000
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+        idempotency_key:
+          type: string
+          maxLength: 120
+      required:
+      - amount
+      - employee_uuid
+      - reason
+    Task:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+        creator:
+          type: string
+          format: uuid
+        creator_name:
+          type: string
+          readOnly: true
+        assignee:
+          type: string
+          format: uuid
+        assignee_name:
+          type: string
+          readOnly: true
+        assignee_code:
+          type: string
+          readOnly: true
+        team:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+          readOnly: true
+        goal:
+          type: string
+          format: uuid
+          nullable: true
+        goal_title:
+          type: string
+          readOnly: true
+          nullable: true
+        due_at:
+          type: string
+          format: date-time
+        progress:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        status:
+          $ref: '#/components/schemas/TaskStatusEnum'
+        status_label:
+          type: string
+          readOnly: true
+        review_note:
+          type: string
+        recurrence:
+          type: string
+          format: uuid
+          nullable: true
+        scheduled_for:
+          type: string
+          format: date-time
+          nullable: true
+        version:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        attachments:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        can_submit:
+          type: boolean
+          readOnly: true
+        can_review:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - assignee
+      - assignee_code
+      - assignee_name
+      - attachments
+      - can_review
+      - can_submit
+      - created_at
+      - creator
+      - creator_name
+      - due_at
+      - goal_title
+      - status_label
+      - team
+      - team_name
+      - title
+      - updated_at
+      - uuid
+    TaskAttachment:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        kind:
+          $ref: '#/components/schemas/TaskAttachmentKindEnum'
+        original_name:
+          type: string
+          maxLength: 240
+        content_type:
+          type: string
+          maxLength: 160
+        size:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        uploaded_by_name:
+          type: string
+          readOnly: true
+        download_url:
+          type: string
+          readOnly: true
+        can_delete:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - can_delete
+      - content_type
+      - created_at
+      - download_url
+      - kind
+      - original_name
+      - size
+      - uploaded_by_name
+      - uuid
+    TaskAttachmentKindEnum:
+      enum:
+      - brief
+      - evidence
+      type: string
+      description: |-
+        * `brief` - Yêu cầu
+        * `evidence` - Kết quả
+    TaskCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 1
+        description:
+          type: string
+          maxLength: 12000
+        assignee_uuid:
+          type: string
+          format: uuid
+        due_at:
+          type: string
+          format: date-time
+        goal_uuid:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - assignee_uuid
+      - due_at
+      - title
+    TaskStatusEnum:
+      enum:
+      - in_progress
+      - pending_review
+      - completed
+      - rework
+      type: string
+      description: |-
+        * `in_progress` - Đang thực hiện
+        * `pending_review` - Chờ xác nhận
+        * `completed` - Đã hoàn thành
+        * `rework` - Yêu cầu làm lại
     Team:
       type: object
       properties:
@@ -892,6 +6450,16 @@ components:
       - name
       - updated_at
       - uuid
+    Transition:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionEnum'
+        note:
+          type: string
+          maxLength: 4000
+      required:
+      - action
   securitySchemes:
     cookieAuth:
       type: apiKey

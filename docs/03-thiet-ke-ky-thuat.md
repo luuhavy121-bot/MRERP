@@ -63,7 +63,11 @@ Chi tiết: [Deployment và vận hành](operations/deployment.md).
 
 ## Stack mục tiêu
 
-**Đã chốt cho Phase 1 theo ADR-0003.** React/TypeScript/Vite cho frontend; Python 3.12, Django 5.2 và DRF cho backend; PostgreSQL 16; OpenAPI và Docker Compose. Celery/Redis chỉ được thêm khi có use case background job được duyệt; reverse proxy và HTTPS production vẫn theo kế hoạch deployment.
+**Đã chốt cho Phase 1 theo ADR-0003 và ADR-0011.** React/TypeScript/Vite cho frontend; Python 3.12, Django 5.2 và DRF cho backend; PostgreSQL 16; OpenAPI và Docker Compose. Celery/Redis đã được thêm cho recurring Task, deadline notification và retention; không dùng result backend. Reverse proxy và HTTPS production vẫn theo kế hoạch deployment.
+
+Contract mới: [Dashboard–Feed–Task](architecture/dashboard-feed-task-contract.md).
+
+**Đã chốt cục bộ qua ADR-0013.** Phase 3 thêm bốn module trong MRERP modular monolith: `preferences_domain`, `recruitment_domain`, `documents_domain` và `rewards_domain`. File vẫn qua protected download và local-media persistent volume; API không trả storage path. Chi tiết tại [contract Phase 3](architecture/phase-3-contract.md) và [ma trận quyền Phase 3](architecture/phase-3-authorization-matrix.md).
 
 Chi tiết và giới hạn prototype: [Kiến trúc kỹ thuật](architecture/technical-architecture.md).
 

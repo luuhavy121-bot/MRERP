@@ -4,7 +4,7 @@ Tài liệu này là contract nội bộ của slice People/HR Phase 1. [Data ow
 
 ## 1. Ranh giới dữ liệu
 
-**Đã chốt.** MRERP sở hữu Employee, Team, employment status và organization mapping. Cơ cấu MRE hiện là `CEO → Team → Employee`, không có tầng Department. Identity Provider production sở hữu credential, login, subject và phiên. Adapter mock development/test dùng Django auth để mô phỏng boundary này trong cùng deployable; password chỉ được hash bởi auth subsystem, không là field Employee và không xuất hiện trong audit/response.
+**Đã chốt.** MRERP sở hữu Employee, Team, employment status và organization mapping. Cơ cấu MRE hiện là `CEO → Team → Employee`, không có tầng Department. Identity Provider production sở hữu credential, login, subject và phiên. Adapter mock development/test dùng Django auth để mô phỏng boundary này trong cùng deployable; password chỉ được hash bởi auth subsystem, không là field Employee và không xuất hiện trong audit. Mật khẩu tạm chỉ được trả một lần ngay sau provision/reset.
 
 ## 2. Field catalog
 
@@ -30,7 +30,7 @@ Staff nhận `basic` trong cùng Team; Leader nhận `basic` toàn công ty. Pro
 
 ### 2.3 Input của form thêm nhân sự
 
-**Đã chốt về yêu cầu nghiệp vụ:** form luôn nhận mã nhân sự và có checkbox chọn tạo tài khoản. Username/password chỉ bắt buộc khi checkbox bật. HR chỉ được tạo với trạng thái `Thử việc`.
+**Đã chốt về yêu cầu nghiệp vụ:** form luôn nhận mã nhân sự và có checkbox chọn tạo tài khoản. Username chỉ bắt buộc khi checkbox bật; server sinh mật khẩu tạm và trả đúng một lần. HR chỉ được tạo với trạng thái `Thử việc`.
 
 **Đã chốt về outcome:** nếu checkbox bật, một lần bấm Lưu phải tạo/liên kết được cả account Identity lẫn Employee trước khi trả thành công. Nếu checkbox tắt, chỉ tạo Employee và để account mapping rỗng.
 
@@ -44,7 +44,7 @@ Staff nhận `basic` trong cùng Team; Leader nhận `basic` toàn công ty. Pro
 | Mật khẩu khởi tạo | Identity Provider/auth subsystem | Ownership **Đã chốt**; không lưu trong Employee/log/audit/response; không bắt buộc đổi lần đầu trong mock slice |
 | Trạng thái công việc | MRERP `Employee`/history | Initial value `Thử việc` **Đã chốt** cho HR create flow |
 
-Form UI không làm thay đổi ownership: password không trở thành field của `Employee` chỉ vì được nhập trên màn hình MRERP.
+Form UI không làm thay đổi ownership: password không trở thành field của `Employee`; UI không nhận mật khẩu do HR tự đặt cho account mới.
 
 ### 2.4 Field bị loại khỏi slice
 
@@ -67,7 +67,7 @@ Loại khỏi slice không có nghĩa các field này được chấp nhận cho
 - Nếu tương lai MRE phát sinh tầng tổ chức khác Team thì phải mở decision/ADR mới; không tái kích hoạt Department âm thầm.
 - Retention/anonymization sau khi employment kết thúc.
 
-**Đã chốt cho slice:** một Employee thuộc tối đa một Team tại một thời điểm; một Team có thể có nhiều Leader; chỉ có `Thử việc` và `Chính thức`; promotion hiệu lực ngay và note bắt buộc.
+**Đã chốt:** một Employee thuộc tối đa một Team tại một thời điểm; một Team có thể có nhiều Leader. ADR-0010 mở rộng trạng thái bằng `Tạm nghỉ` và `Nghỉ việc`; promotion `Thử việc → Chính thức` vẫn do Leader cùng Team thực hiện, còn HR/CEO quản lý pause/terminate/reactivate.
 
 ## 4. Invariant dự thảo
 
@@ -97,12 +97,20 @@ Prefix đã dùng: `/api/v1`. OpenAPI version-control tại `apps/mrerp/backend/
 | `POST /people/teams/{uuid}/archive/` | Archive Team sau khi đã chuyển hết nhân sự và gỡ Leader | **Đã chốt/đã hiện thực** |
 | `GET/POST /people/teams/{uuid}/leaders/` | Đọc/thêm Leader–Team | **Đã chốt/đã hiện thực** |
 | `DELETE /people/teams/{uuid}/leaders/{employee_uuid}/` | Gỡ Leader–Team | **Đã chốt/đã hiện thực** |
+| `PATCH /people/employees/me/` | Self-edit tên hiển thị, ngày sinh, địa chỉ | **Đã chốt qua ADR-0010** |
+| `POST /people/employees/me/change-password/` | Actor đổi mật khẩu của chính mình qua Identity adapter | **Đã chốt cho mock; production IdP Chưa quyết định** |
+| `POST /people/employees/{uuid}/account/{command}/` | Provision, lock, unlock hoặc reset password theo quyền | **Đã chốt cho mock; production IdP Chưa quyết định** |
+| `POST /people/employees/{uuid}/employment/` | Pause, terminate hoặc reactivate có audit/history | **Đã chốt qua ADR-0010** |
+| `GET /people/employees/{uuid}/history/` | Membership/employment history được phép | **Đã chốt qua ADR-0010** |
+| `POST/GET /people/employees/import-csv|export-csv/` | CSV không password | **Đã chốt qua ADR-0010** |
+| `GET/PUT /people/access/` | CEO xem/gán access bundle allow-list | **Đã chốt qua ADR-0010** |
+| `GET /people/audit/` | CEO/HR đọc projection audit được phép | **Đã chốt qua ADR-0010** |
 
-Contract chung được đề xuất:
+Contract chung **Đã chốt và đã hiện thực cho slice**:
 
 - JSON UTF-8; UUID trong path/body khi tham chiếu entity.
 - Page-number pagination, mặc định 20 bản ghi/trang.
-- Error envelope có machine-readable code và correlation ID; không lộ lý do authorization nhạy cảm.
+- Error envelope có `code`, `detail`, `correlation_id`; validation có thể bổ sung `errors`, và response mang `X-Correlation-ID`. Server tự tạo correlation ID và không lộ lý do authorization nhạy cảm.
 - `PATCH` chỉ nhận allow-list field; server từ chối hoặc bỏ field hệ thống theo contract đã duyệt.
 - Response projection được quyết định ở server; client không thể yêu cầu field nhạy cảm tùy ý.
 - OpenAPI là contract được version-control nếu ADR stack được chấp nhận.

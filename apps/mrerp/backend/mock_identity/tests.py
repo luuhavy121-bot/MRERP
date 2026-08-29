@@ -28,6 +28,7 @@ class MockIdentityTests(APITestCase):
         session_response = self.client.get("/api/v1/auth/session/")
         self.assertTrue(session_response.data["authenticated"])
         self.assertEqual(session_response.data["username"], "hr.demo")
+        self.assertNotIn("assetcontrol", session_response.data["product_entitlements"])
         logout_response = self.client.post("/api/v1/auth/logout/")
         self.assertEqual(logout_response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -45,6 +46,7 @@ class MockIdentityTests(APITestCase):
         response = self.client.post("/api/v1/auth/debug/switch/", {"username": "leader.demo"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["employee_code"], "LDR01")
+        self.assertIn("assetcontrol", response.data["product_entitlements"])
         session = self.client.get("/api/v1/auth/session/")
         self.assertEqual(session.data["username"], "leader.demo")
 

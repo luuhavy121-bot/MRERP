@@ -34,9 +34,13 @@ Tài liệu này là source of truth chịu trách nhiệm chính cho miền ngh
 
 People/HR Foundation Phase 1 được refinement tại [People stories](stories/phase-1-people-foundation.md). Field, workflow và quyền chi tiết vẫn giữ đúng trạng thái trong [People data contract](../architecture/people-data-contract.md) và [People authorization matrix](../architecture/people-authorization-matrix.md).
 
+**Đã chốt ngày 29/08/2026 cho phạm vi Leave/Attendance hiện tại:** nhân sự gửi đơn nghỉ trên app; đơn là ticket để Leader của Team duyệt; HR xem bảng công nhân sự. Chi tiết và các giới hạn chưa quyết định nằm tại [Yêu cầu Leave/Attendance](leave-attendance-requirements.md).
+
+**Đã chốt theo ADR-0011:** Tổng quan, Bảng tin, Task/Goal/Recurrence và attachment áp dụng [yêu cầu ba module](dashboard-feed-task-requirements.md). Implementation chờ nghiệm thu; không tự mở các workflow bị ghi `Không làm`.
+
 **Đã chốt cho People slice đầu tiên:**
 
-- Form thêm nhân sự yêu cầu mã nhân sự và cho HR chọn có tạo tài khoản đăng nhập hay không. Tài khoản/mật khẩu chỉ bắt buộc khi checkbox tạo tài khoản được bật.
+- Form thêm nhân sự yêu cầu mã nhân sự và cho HR chọn có tạo tài khoản đăng nhập hay không. Username chỉ bắt buộc khi checkbox tạo tài khoản được bật; server sinh mật khẩu tạm và trả đúng một lần.
 - HR được thêm Employee với trạng thái ban đầu là `Thử việc`; server không cho HR dùng luồng này để tạo thẳng trạng thái `Chính thức`.
 - Khi có chọn tạo tài khoản, account và Employee phải được tạo/liên kết trong cùng một thao tác nghiệp vụ; nếu một bước lỗi thì không tạo Employee. Khi không chọn, chỉ Employee được tạo và account có thể cấp sau.
 - Mã nhân sự được nhập tự do, không rỗng và không trùng không phân biệt hoa/thường.
@@ -44,9 +48,11 @@ People/HR Foundation Phase 1 được refinement tại [People stories](stories/
 
 **Đã chốt về ranh giới:** mật khẩu là credential do Identity Provider sở hữu; MRERP không được lưu mật khẩu trong Employee, database, audit hoặc log.
 
-**Chưa quyết định:** workflow cấp account production về sau cho Employee chưa có account.
+**Đã chốt cục bộ qua ADR-0010:** HR/CEO quản lý account và employment toàn công ty; Leader reset mật khẩu trong Team lãnh đạo; Staff tự sửa allow-list trong `Hồ sơ của tôi`. `Tạm nghỉ` khóa account nhưng giữ bundle; `Nghỉ việc` khóa account và thu hồi bundle; `Kích hoạt lại` khôi phục trạng thái/bundle đã lưu. Admin access bundle của People chỉ dành cho CEO.
 
-**Đề xuất mục tiêu.** Recruitment có thể nằm dưới navigation Nhân sự nhưng nên là code module riêng.
+**Chưa quyết định:** Identity Provider và workflow provisioning/deprovisioning production; chính sách này không được suy ra từ mock adapter development/test.
+
+**Đã chốt cục bộ qua ADR-0013.** Recruitment nằm dưới navigation Nhân sự nhưng là code module riêng; workflow, scope và retention baseline nằm tại [Yêu cầu Phase 3](phase-3-requirements.md).
 
 ## 3. Dashboard và khả năng chịu lỗi
 
@@ -80,7 +86,7 @@ MREKANBAN hiện tại chỉ tham chiếu Task và có thể sở hữu bố c�
 
 **Đã chốt trong phạm vi Task Phase 1.** Capability, scope, trách nhiệm theo field, luồng gửi xác nhận và quy tắc self-task được ghi tại [ADR-0002](../decisions/0002-task-authorization-baseline.md) và [ma trận phân quyền Task](../architecture/task-authorization-matrix.md).
 
-**Chưa quyết định.** Quyền đọc Task nền của Staff/Captain, hủy/xóa Task và các workflow nâng cao chưa thuộc vertical slice đầu tiên.
+**Đã chốt qua ADR-0011.** Staff/HR đọc Task mình tạo hoặc được giao; Leader thêm Team lãnh đạo; CEO company scope. **Không làm trong phạm vi hiện tại:** hủy/xóa/reopen Task và workflow nâng cao chưa được yêu cầu.
 
 **Chưa quyết định.** Retire MREKANBAN hay giữ làm client/view chuyên sâu dài hạn.
 
@@ -88,7 +94,9 @@ MREKANBAN hiện tại chỉ tham chiếu Task và có thể sở hữu bố c�
 
 **Đã chốt về ownership.** MRERP Rewards sở hữu recognition, sao và đổi thưởng. CRM chỉ phát sự kiện thành tích; không tự cộng sao.
 
-**Chưa quyết định.** Công thức cộng sao, reward policy, người quản trị Rewards và catalog chính thức.
+**Đã chốt cục bộ qua ADR-0013.** Recognition không tự cộng sao; Leader cấp sao trong Team lãnh đạo, HR/CEO có company scope; ledger append-only, sao không hết hạn trong baseline và leaderboard tháng/quý/năm không lộ giao dịch người khác.
+
+**Chưa quyết định.** Người quản trị reward catalog/duyệt đổi thưởng và policy hold/trừ/hoàn sao khi redemption.
 
 ## 7. Yêu cầu authorization cho nghiệp vụ
 
@@ -103,7 +111,7 @@ Không tin `role`, `team_id`, `owner_id`, `price_access` hoặc capability do cl
 ## 9. Policy nghiệp vụ chưa chốt
 
 - Công thức lương.
-- Chính sách chấm công và phép.
+- Chính sách chấm công và phép ngoài baseline tạm thời tại [Yêu cầu Leave/Attendance](leave-attendance-requirements.md).
 - Quy trình/phạm vi phê duyệt chi tiết.
 - Chính sách đổi thưởng.
 - Field matrix CRM.
@@ -116,6 +124,7 @@ Không tin `role`, `team_id`, `owner_id`, `price_access` hoặc capability do cl
 - [Identity và phân quyền](../architecture/identity-and-authorization.md)
 - [Product backlog](backlog.md)
 - [Task stories Phase 1](stories/phase-1-task-vertical-slice.md)
+- [Dashboard, Feed và Task requirements](dashboard-feed-task-requirements.md)
 - [People stories Phase 1](stories/phase-1-people-foundation.md)
 - [Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md)
 - [Open decisions](../decisions/open-decisions.md)

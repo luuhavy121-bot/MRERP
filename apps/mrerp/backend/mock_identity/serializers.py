@@ -23,6 +23,7 @@ class SessionResponseSerializer(serializers.Serializer):
     display_name = serializers.CharField(required=False)
     rank = serializers.CharField(required=False, allow_null=True)
     capabilities = serializers.ListField(child=serializers.CharField(), required=False)
+    product_entitlements = serializers.ListField(child=serializers.CharField(), required=False)
     csrf_token = serializers.CharField(required=False)
     mock_identity = serializers.BooleanField(required=False)
     debug_personas = DebugPersonaSerializer(many=True, required=False)

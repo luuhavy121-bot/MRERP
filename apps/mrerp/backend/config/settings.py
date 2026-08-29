@@ -16,7 +16,14 @@ if APP_ENV == "production" and SECRET_KEY == "unsafe-development-key-change-me":
     raise ImproperlyConfigured("MRERP_SECRET_KEY is required in production.")
 
 ALLOWED_HOSTS = [host for host in os.getenv("MRERP_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host]
-CSRF_TRUSTED_ORIGINS = [origin for origin in os.getenv("MRERP_CSRF_TRUSTED_ORIGINS", "http://localhost:4173").split(",") if origin]
+CSRF_TRUSTED_ORIGINS = [
+    origin
+    for origin in os.getenv(
+        "MRERP_CSRF_TRUSTED_ORIGINS",
+        "http://localhost:4173,http://127.0.0.1:4173",
+    ).split(",")
+    if origin
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -28,11 +35,20 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "people_domain.apps.PeopleDomainConfig",
+    "leave_domain.apps.LeaveDomainConfig",
+    "dashboard_domain.apps.DashboardDomainConfig",
+    "feed_domain.apps.FeedDomainConfig",
+    "task_domain.apps.TaskDomainConfig",
+    "preferences_domain.apps.PreferencesDomainConfig",
+    "recruitment_domain.apps.RecruitmentDomainConfig",
+    "documents_domain.apps.DocumentsDomainConfig",
+    "rewards_domain.apps.RewardsDomainConfig",
     "mock_identity.apps.MockIdentityConfig",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "config.middleware.CorrelationIdMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -81,7 +97,35 @@ TIME_ZONE = "Asia/Bangkok"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "static/"
+MEDIA_ROOT = Path(os.getenv("MRERP_MEDIA_ROOT", BASE_DIR / "media"))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CELERY_BROKER_URL = os.getenv("MRERP_REDIS_URL", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = None
+CELERY_TASK_IGNORE_RESULT = True
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULE = {
+    "task-recurrence-every-minute": {
+        "task": "task_domain.process_recurrences",
+        "schedule": 60.0,
+    },
+    "dashboard-deadline-notifications": {
+        "task": "dashboard_domain.emit_deadline_notifications",
+        "schedule": 900.0,
+    },
+    "retention-purge-daily": {
+        "task": "dashboard_domain.purge_expired_data",
+        "schedule": 86400.0,
+    },
+    "phase-3-retention-daily": {
+        "task": "recruitment_domain.anonymize_expired_candidates",
+        "schedule": 86400.0,
+    },
+    "documents-retention-daily": {
+        "task": "documents_domain.purge_expired_documents",
+        "schedule": 86400.0,
+    },
+}
 
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
@@ -95,9 +139,18 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "EXCEPTION_HANDLER": "config.exceptions.api_exception_handler",
 }
 SPECTACULAR_SETTINGS = {
     "TITLE": "MRERP API",
-    "DESCRIPTION": "Phase 1 People/HR Foundation contract",
+    "DESCRIPTION": "MRERP modular-monolith API contract",
     "VERSION": "1.0.0",
+    "ENUM_NAME_OVERRIDES": {
+        "EmploymentStatusEnum": "people_domain.choices.EMPLOYMENT_STATUS_CHOICES",
+        "NotificationKindEnum": "dashboard_domain.models.NOTIFICATION_KIND_CHOICES",
+        "FeedReactionKindEnum": "feed_domain.models.ReactionKind.choices",
+        "TaskAttachmentKindEnum": "task_domain.models.TASK_ATTACHMENT_KIND_CHOICES",
+        "GoalScopeEnum": "task_domain.models.GOAL_SCOPE_CHOICES",
+        "DocumentScopeEnum": "documents_domain.models.DOCUMENT_SCOPE_CHOICES",
+    },
 }

@@ -6,11 +6,11 @@ Repository GitHub: [luuhavy121-bot/MRERP](https://github.com/luuhavy121-bot/MRER
 
 ## Trạng thái hiện tại
 
-Repository đang ở **Phase 1 — vertical slice nền tảng**.
+Repository đang ưu tiên **Phase 3 — Văn hóa và vận hành nhân sự** theo ADR-0013; Phase 1–2 chưa nghiệm thu vẫn giữ trạng thái riêng và không được tự coi là hoàn thành.
 
 Phase 0 đã qua cổng duyệt. Slice People/HR Foundation đầu tiên hiện có React/Vite frontend, Django/DRF API, migration, authorization fail-closed, audit và automated tests. App có màn hình Tiến độ quản trị tạm thời, tự ẩn khi tổng tiến độ đạt 100%; phần trăm không thay thế bằng chứng nghiệm thu. Local development dùng SQLite mặc định hoặc PostgreSQL 16 qua Docker Compose. Mock Identity chỉ dành cho development/test và tự từ chối khởi động ở production; Identity Provider production vẫn **Chưa quyết định**.
 
-Các story People/HR trong slice đã được duyệt `Ready` và đang được hiện thực. Task vẫn ở backlog, chưa thuộc slice đang triển khai. Trạng thái chi tiết nằm trong [Product backlog](docs/product/backlog.md) và [People readiness register](docs/testing/phase-1-people-readiness.md).
+People/HR Foundation đã được người sở hữu sản phẩm nghiệm thu `Accepted` ngày 29/08/2026. People account/employment lifecycle và gói Tổng quan–Bảng tin–Công việc vẫn `In progress / Chờ nghiệm thu`. Leave/Attendance Phase 2 đang mở rộng theo [ADR-0012](docs/decisions/0012-phase-2-leave-attendance-foundation.md) với edit pending, holiday calendar Việt Nam và HR adjustment; máy chấm công/payroll vẫn ngoài phạm vi.
 
 ## Thứ tự đọc bắt buộc
 

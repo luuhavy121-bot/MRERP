@@ -31,6 +31,10 @@ Tài liệu này giúp người sở hữu sản phẩm hiểu hệ thống cầ
 
 People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu hình MRE dùng cơ cấu phẳng `CEO → Team → Employee`; slice gồm Employee, Team, employment status, Leader–Team, list/detail, authorization, audit và test. Không có tầng Phòng ban trong cơ cấu hiện tại.
 
+**Đã chốt ngày 29/08/2026.** Leave/Attendance baseline gồm nhân sự gửi đơn, Leader duyệt theo Team và HR xem bảng công; công thức lương chưa thuộc phạm vi. Sau đó Task được mở lại cùng Tổng quan và Bảng tin theo [yêu cầu ba module](product/dashboard-feed-task-requirements.md).
+
+**Đã chốt cục bộ cho Phase 3.** Recruitment gồm request một cấp, pipeline và chuyển ứng viên đã tuyển thành Employee `Thử việc`; Documents có audience/ACL/version/retention; Recognition tách khỏi Star ledger; người dùng chỉ được tắt notification xã hội. Contract chi tiết nằm tại [Yêu cầu Phase 3](product/phase-3-requirements.md). Reward catalog/redemption và object storage production vẫn **Chưa quyết định**.
+
 ## CRM
 
 **Đã chốt về nguyên tắc.** Sales, Marketing/Ads và Kế toán có thể cùng dùng CRM nhưng không mặc nhiên nhận cùng payload. Server CRM phải áp dụng capability, scope và field policy.
@@ -43,7 +47,7 @@ People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu h
 
 **Đã chốt trong phạm vi Task Phase 1.** Captain có permission nền như Staff; Leader có Team scope; ban đầu không có user Manager; CEO có company scope nhưng hành động vẫn cần capability. Scope Manager tương lai phải thiết kế lại vì MRE không có tầng Department. Luồng chi tiết nằm tại [ma trận phân quyền Task](architecture/task-authorization-matrix.md).
 
-**Chưa quyết định.** Quyền đọc Task nền của Staff/Captain và policy hủy/xóa Task.
+**Đã chốt qua ADR-0011.** Staff/HR đọc Task mình tạo hoặc được giao; Leader thêm Team đang lãnh đạo; CEO company scope. **Không làm trong phạm vi hiện tại:** hủy/xóa Task.
 
 **Chưa quyết định.** MREKANBAN sẽ được retire hay tiếp tục làm client/view chuyên sâu.
 
@@ -66,5 +70,6 @@ People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu h
 - [Yêu cầu nghiệp vụ chi tiết](product/business-requirements.md)
 - [Identity và phân quyền](architecture/identity-and-authorization.md)
 - [Open decisions](decisions/open-decisions.md)
+- [Yêu cầu Phase 3](product/phase-3-requirements.md)
 
 Tiếp theo: [03 — Thiết kế kỹ thuật](03-thiet-ke-ky-thuat.md).

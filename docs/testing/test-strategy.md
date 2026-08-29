@@ -81,7 +81,12 @@ git diff --check
 python apps/mrerp/backend/manage.py test people_domain mock_identity
 npm --prefix apps/mrerp/frontend run lint
 npm --prefix apps/mrerp/frontend run build
+npm --prefix apps/mrerp/frontend run e2e
 ```
+
+People hiện có 42 backend tests và hai Playwright E2E trọng yếu. Các E2E chứng minh Foundation cùng account/employment lifecycle xuyên UI/API/database; chúng không thay thế authorization tests chi tiết ở backend.
+
+Leave/Attendance có backend và Playwright evidence cho Staff tạo/sửa đơn → Leader duyệt → HR thấy/điều chỉnh công dự kiến có loại ngày lễ. Dashboard/Feed/Task bổ sung test audience, scope, state, recurrence và protected download. Bộ local hiện có 87 backend tests và 6 luồng Playwright E2E; số chính thức vẫn phải lấy từ lần CI gần nhất.
 
 Workflow `.github/workflows/repository-quality.yml` chạy checker khi push vào `main`, khi có pull request và khi được kích hoạt thủ công.
 
@@ -90,7 +95,9 @@ Workflow `.github/workflows/repository-quality.yml` chạy checker khi push vào
 - [Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md)
 - [Definition of Ready](definition-of-ready.md)
 - [Task acceptance scenarios Phase 1](phase-1-task-acceptance.md)
+- [Dashboard, Feed và Task acceptance](dashboard-feed-task-acceptance.md)
 - [People acceptance scenarios Phase 1](phase-1-people-acceptance.md)
 - [People readiness register](phase-1-people-readiness.md)
+- [People account/lifecycle acceptance](people-account-lifecycle-acceptance.md)
 - [Identity và phân quyền](../architecture/identity-and-authorization.md)
 - [Deployment](../operations/deployment.md)

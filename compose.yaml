@@ -21,17 +21,69 @@ services:
       MRERP_ENV: development
       MRERP_MOCK_IDENTITY: "true"
       MRERP_SECRET_KEY: ${MRERP_SECRET_KEY:?Set MRERP_SECRET_KEY in your local environment}
+      MRERP_ALLOWED_HOSTS: localhost,127.0.0.1,backend
       MRERP_DB_ENGINE: postgres
       POSTGRES_DB: ${POSTGRES_DB:-mrerp}
       POSTGRES_USER: ${POSTGRES_USER:-mrerp}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: db
+      MRERP_REDIS_URL: redis://redis:6379/0
+      MRERP_MEDIA_ROOT: /app/media
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - mrerp_media_data:/app/media
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - mrerp_redis_data:/data
+
+  worker:
+    build: ./apps/mrerp/backend
+    command: celery -A config worker --loglevel=INFO
+    environment: &backend_environment
+      MRERP_ENV: development
+      MRERP_MOCK_IDENTITY: "true"
+      MRERP_SECRET_KEY: ${MRERP_SECRET_KEY:?Set MRERP_SECRET_KEY in your local environment}
+      MRERP_DB_ENGINE: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-mrerp}
+      POSTGRES_USER: ${POSTGRES_USER:-mrerp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db
+      MRERP_REDIS_URL: redis://redis:6379/0
+      MRERP_MEDIA_ROOT: /app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - mrerp_media_data:/app/media
+
+  beat:
+    build: ./apps/mrerp/backend
+    command: celery -A config beat --loglevel=INFO
+    environment: *backend_environment
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - mrerp_media_data:/app/media
 
   frontend:
     build: ./apps/mrerp/frontend
@@ -45,3 +97,5 @@ services:
 
 volumes:
   mrerp_postgres_data:
+  mrerp_redis_data:
+  mrerp_media_data:

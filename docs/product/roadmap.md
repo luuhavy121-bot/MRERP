@@ -22,9 +22,9 @@ Roadmap này là **Đề xuất mục tiêu**. Mỗi phase cần được xác n
 - MRERP shell và Dashboard tối thiểu.
 - Một luồng Task end-to-end: UI → API → database → authorization → audit → test.
 
-**Thứ tự đề xuất hiện tại:** People/HR Foundation là slice nghiệp vụ đầu tiên; Task chỉ bắt đầu sau khi organization/Identity foundation cần thiết đã sẵn sàng. Thứ tự này không thay đổi data ownership của Task.
+**Thứ tự đã thực hiện:** People/HR Foundation là slice đầu; sau baseline Leave/Attendance, Task được mở lại cùng Tổng quan và Bảng tin khi organization/Identity foundation đã sẵn sàng.
 
-**Trạng thái hiện tại:** People/HR Foundation đã có UI → API → database → authorization → audit → automated tests và đang ở bước kiểm chứng/nghiệm thu local. Các phần còn lại của Phase 1 chưa bắt đầu.
+**Trạng thái hiện tại:** People/HR Foundation được nghiệm thu `Accepted` ngày 29/08/2026. People account/employment lifecycle, Leave/Attendance và Tổng quan–Bảng tin–Công việc đã được hiện thực, đang `In progress / Chờ nghiệm thu`.
 
 ## Phase 2 — Nghiệp vụ nội bộ thiết yếu
 
@@ -33,12 +33,16 @@ Roadmap này là **Đề xuất mục tiêu**. Mỗi phase cần được xác n
 - Task/List/Kanban cơ bản.
 - Dashboard snapshot/fallback.
 
+**Trạng thái hiện tại:** `In progress` cho foundation Leave/Attendance theo ADR-0012. Phạm vi hiện tại chỉ gồm edit đơn pending, Leader duyệt một cấp, holiday calendar và HR adjustment; Approval tổng quát, máy chấm công, Kanban và Dashboard snapshot chưa được mở.
+
 ## Phase 3 — Văn hóa và vận hành nhân sự
 
 - Recognition, sao và đổi thưởng.
 - Recruitment.
 - Documents.
 - Personal Settings.
+
+**Trạng thái hiện tại:** `Implementation hoàn tất / Chờ nghiệm thu` theo ADR-0013. Phase 3 được ưu tiên trước phần còn lại của Phase 2. Baseline đã có Personal Settings, Recruitment, Documents, Recognition, Star ledger/balance/leaderboard xuyên UI/API/database; reward catalog và redemption vẫn **Chưa quyết định**.
 
 ## Phase 4 — Tích hợp product hiện hữu
 
@@ -68,10 +72,10 @@ Trước khi bắt đầu code Phase 1 cần tối thiểu:
 
 Backlog dùng [Definition of Ready](../testing/definition-of-ready.md) làm cổng đưa story vào triển khai; không dùng phần trăm prototype để chứng minh production đã hoàn thành.
 
-## Nội dung chưa thuộc slice People hiện tại
+## Nội dung chưa thuộc các phần People hiện tại
 
 - Không chọn Identity Provider production.
-- Không mở Payroll, Attendance/Leave, Recruitment, Rewards hoặc Documents.
+- Không mở Payroll hoặc integration CRM/ASSETCONTROL. Recruitment, Documents và Recognition/Stars chỉ mở trong baseline ADR-0013; redemption/catalog vẫn chưa mở.
 - Không tích hợp CRM/ASSETCONTROL.
 - Không tự chốt policy nghiệp vụ ngoài ADR đã Accepted.
 

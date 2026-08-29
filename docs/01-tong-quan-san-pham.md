@@ -14,6 +14,8 @@ Một hệ sinh thái thống nhất không có nghĩa gom mọi code và databa
 
 Có tài khoản MRERP không tự động cấp quyền vào CRM, ASSETCONTROL, Kanban nâng cao hoặc Admin Panel.
 
+**Đã chốt trong phạm vi hiện tại.** Sau đăng nhập, người dùng bắt đầu ở Tổng quan, có Bảng tin theo audience và Công việc/Goal theo đúng capability/scope. Implementation của ba phần này đang `In progress / Chờ nghiệm thu`.
+
 ## Các product trong hệ sinh thái
 
 | Thành phần | Vai trò ngắn gọn | Trạng thái |
@@ -42,6 +44,7 @@ Có tài khoản MRERP không tự động cấp quyền vào CRM, ASSETCONTROL,
 
 - [Tổng quan sản phẩm và product boundary](product/product-overview.md)
 - [Data ownership](architecture/data-ownership.md)
+- [Yêu cầu Tổng quan, Bảng tin và Công việc](product/dashboard-feed-task-requirements.md)
 - [Thuật ngữ](glossary.md)
 - [Open decisions](decisions/open-decisions.md)
 

@@ -1,12 +1,12 @@
 # Phase 1 — People/HR acceptance scenarios
 
-Tài liệu này chuyển gói refinement People/HR thành scenario có thể kiểm thử. Scenario có nhãn `Blocked` không được tự động hóa thành policy tùy ý trước khi quyết định tương ứng được chấp nhận.
+Tài liệu này chuyển gói refinement People/HR thành scenario có thể kiểm thử. People/HR Foundation đã được người sở hữu sản phẩm nghiệm thu `Accepted` ngày 29/08/2026; acceptance không mở rộng sang các nghiệp vụ People ngoài slice.
 
 ## 1. Trạng thái
 
 - **Đã chốt:** ownership, UUID ổn định, sáu lớp authorization, fail-closed và test tối thiểu.
 - **Đề xuất mục tiêu:** Given/When/Then ở unit/API/integration/E2E phù hợp.
-- **Chưa quyết định:** actor/scope, field projection, employment workflow và API payload cuối cùng.
+- **Đã chốt cho slice:** actor/scope, projection `basic`/`hr_detail`, promotion `Thử việc → Chính thức` và API People v1.
 
 ## 2. Identity và account gate
 
@@ -36,7 +36,7 @@ Tài liệu này chuyển gói refinement People/HR thành scenario có thể ki
 - When đọc list/detail Employee trong scope.
 - Then chỉ record và projection được phép xuất hiện.
 
-Trạng thái: `Blocked` — chờ read matrix và field projection.
+Trạng thái: `Accepted` — có API tests và đã nghiệm thu sản phẩm.
 
 ### PEOPLE-READ-002 — Đọc ngoài scope
 
@@ -62,7 +62,7 @@ Trạng thái: `Blocked` — chờ read matrix và field projection.
 
 - Given actor là HR có capability được duyệt.
 - When gửi mã nhân sự hợp lệ và chọn có hoặc không tạo account.
-- Then server tạo Employee `Thử việc`; nếu checkbox bật thì account cũng phải được tạo/liên kết, nếu tắt thì mapping được phép rỗng; audit không chứa password.
+- Then server tạo Employee `Thử việc`; nếu checkbox bật thì account cũng được tạo/liên kết và mật khẩu tạm chỉ trả một lần, nếu tắt thì mapping được phép rỗng; audit không chứa password.
 
 Trạng thái: `Ready` — contract được ADR-0007 chấp nhận.
 
@@ -106,7 +106,7 @@ Trạng thái: `Ready` cho mock Identity — account tạo dở được cleanup
 - When chuyển `Thử việc → Chính thức`.
 - Then current status và history/audit nhất quán.
 
-Trạng thái: `Blocked` — actor/transition đã chốt; chờ Leader scope và contract.
+Trạng thái: `Accepted` — Leader cùng Team, note bắt buộc và đã nghiệm thu sản phẩm.
 
 ### PEOPLE-EMP-002 — Transition hoặc actor không hợp lệ
 
@@ -120,7 +120,7 @@ Trạng thái: `Blocked` — actor/transition đã chốt; chờ Leader scope v�
 - When chuyển target sang `Chính thức`.
 - Then server từ chối và không thay đổi status/history.
 
-Trạng thái: `Blocked` — cần chốt Leader scope trước khi xác định fixture expected.
+Trạng thái: `Accepted` — fixture kiểm Leader ngoài Team bị từ chối và đã nghiệm thu sản phẩm.
 
 ### PEOPLE-EMP-003 — Không xóa cứng khi nghỉ việc
 

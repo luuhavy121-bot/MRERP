@@ -51,6 +51,15 @@ jobs:
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
 
     env:
       MRERP_DB_ENGINE: postgres
@@ -61,6 +70,7 @@ jobs:
       POSTGRES_USER: mrerp
       POSTGRES_PASSWORD: ci-only-password
       POSTGRES_HOST: 127.0.0.1
+      MRERP_REDIS_URL: redis://127.0.0.1:6379/0
 
     steps:
       - name: Check out repository
@@ -80,10 +90,19 @@ jobs:
         run: |
           python apps/mrerp/backend/manage.py makemigrations --check --dry-run
           python apps/mrerp/backend/manage.py migrate --noinput
+          python apps/mrerp/backend/manage.py migrate task_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate feed_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate dashboard_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate rewards_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate documents_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate recruitment_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate preferences_domain zero --noinput
+          python apps/mrerp/backend/manage.py migrate --noinput
           python apps/mrerp/backend/manage.py spectacular --validate --file apps/mrerp/backend/openapi.yaml
+          celery -A config --workdir apps/mrerp/backend report
 
       - name: Run backend tests
-        run: python apps/mrerp/backend/manage.py test people_domain mock_identity
+        run: python apps/mrerp/backend/manage.py test people_domain mock_identity leave_domain dashboard_domain feed_domain task_domain preferences_domain recruitment_domain documents_domain rewards_domain
 
   frontend:
     name: Frontend lint and build
@@ -109,3 +128,87 @@ jobs:
 
       - name: Build frontend
         run: npm --prefix apps/mrerp/frontend run build
+
+  application-e2e:
+    name: Application E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: mrerp_e2e
+          POSTGRES_USER: mrerp
+          POSTGRES_PASSWORD: e2e-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mrerp -d mrerp_e2e"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      MRERP_DB_ENGINE: postgres
+      MRERP_ENV: test
+      MRERP_MOCK_IDENTITY: "true"
+      MRERP_SECRET_KEY: e2e-only-secret-key
+      MRERP_CSRF_TRUSTED_ORIGINS: http://127.0.0.1:4173
+      POSTGRES_DB: mrerp_e2e
+      POSTGRES_USER: mrerp
+      POSTGRES_PASSWORD: e2e-only-password
+      POSTGRES_HOST: 127.0.0.1
+      MRERP_REDIS_URL: redis://127.0.0.1:6379/0
+      E2E_DEMO_PASSWORD: Playwright-Only-1234!
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: apps/mrerp/backend/requirements.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/mrerp/frontend/package-lock.json
+
+      - name: Install application and browser dependencies
+        run: |
+          pip install -r apps/mrerp/backend/requirements.txt
+          npm ci --prefix apps/mrerp/frontend
+          npm exec --prefix apps/mrerp/frontend playwright -- install --with-deps chromium
+
+      - name: Prepare deterministic People data
+        run: |
+          python apps/mrerp/backend/manage.py migrate --noinput
+          python apps/mrerp/backend/manage.py seed_demo --password "$E2E_DEMO_PASSWORD"
+
+      - name: Start MRERP and run application E2E
+        run: |
+          python apps/mrerp/backend/manage.py runserver 127.0.0.1:8000 > backend-e2e.log 2>&1 &
+          celery -A config --workdir apps/mrerp/backend worker --loglevel=INFO > worker-e2e.log 2>&1 &
+          celery -A config --workdir apps/mrerp/backend beat --loglevel=INFO > beat-e2e.log 2>&1 &
+          npm --prefix apps/mrerp/frontend run dev -- --host 127.0.0.1 > frontend-e2e.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
+          npm --prefix apps/mrerp/frontend run e2e

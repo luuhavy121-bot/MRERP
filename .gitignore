@@ -44,6 +44,8 @@ htmlcov/
 # Django and Celery runtime data
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
+*.sqlite3-journal
 local_settings.py
 media/
 staticfiles/
@@ -71,6 +73,7 @@ coverage/
 playwright-report/
 test-results/
 blob-report/
+test-media-*/
 
 # Logs, caches and temporary files
 *.log
@@ -100,6 +103,12 @@ backups/
 .idea/
 .vscode/
 *.code-workspace
+
+# Local AI/design tooling and generated visual review artifacts
+.agents/
+.codex/
+.impeccable/
+.github/hooks/
 
 # Operating-system files
 .DS_Store

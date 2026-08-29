@@ -64,6 +64,8 @@ Thêm test object state/ownership khi endpoint có object rule.
 
 **Đã chốt.** Hiện chỉ CEO và Leader được cấp quyền truy cập ASSETCONTROL. Product vẫn phải kiểm tra authorization tại server; tên cấp bậc không phải lý do để bỏ qua account/employment, action, scope, object hoặc field check.
 
+MRERP chỉ hiển thị lối chuyển sang ASSETCONTROL khi session có product entitlement `assetcontrol` do backend cấp qua capability `people_domain.access_assetcontrol`. Đây chỉ là điều kiện hiển thị/điều hướng; ASSETCONTROL vẫn phải tự xác thực và kiểm tra quyền ở server của product đích.
+
 **Chưa quyết định.** Có mở cho đối tượng khác hay không và theo capability/policy nào (OD-18).
 
 ## 8. IdP outage và break-glass
