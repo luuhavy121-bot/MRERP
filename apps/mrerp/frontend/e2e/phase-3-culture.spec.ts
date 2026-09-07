@@ -43,7 +43,9 @@ test('Leader phát hành tài liệu Team và Staff trong Team đọc được',
   const marker = Date.now().toString()
   const title = `Hướng dẫn Alpha ${marker}`
   await login(page, 'leader.demo')
-  await expect(page.getByRole('link', { name: 'Mở ASSETCONTROL trong tab mới' })).toBeVisible()
+  const assetControlLink = page.getByRole('link', { name: 'Mở ASSETCONTROL trong tab mới' })
+  await expect(assetControlLink).toBeVisible()
+  await expect(assetControlLink).toHaveAttribute('href', 'https://www.mrecomapp.click/')
   await page.getByRole('button', { name: 'Tài liệu', exact: true }).click()
   await page.getByRole('button', { name: 'Tạo tài liệu' }).click()
   const composer = page.locator('.document-composer')

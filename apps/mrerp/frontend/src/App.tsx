@@ -54,7 +54,7 @@ function Workspace({ session, theme, onThemeChange, onLogout, onSwitchSession }:
         <a className="product-switcher__item product-switcher__item--external" href="https://trello.mrecomapp.click/mrekanban/" target="_blank" rel="noopener noreferrer" aria-label="Mở MREKANBAN trong tab mới">
           <span className="product-switcher__label">MREKANBAN</span><span className="product-switcher__short" aria-hidden="true">KB</span><AppIcon name="external" size={14}/>
         </a>
-        {session.product_entitlements?.includes('assetcontrol') && <a className="product-switcher__item product-switcher__item--external" href="https://mrecomapp.click/" target="_blank" rel="noopener noreferrer" aria-label="Mở ASSETCONTROL trong tab mới">
+        {session.product_entitlements?.includes('assetcontrol') && <a className="product-switcher__item product-switcher__item--external" href="https://www.mrecomapp.click/" target="_blank" rel="noopener noreferrer" aria-label="Mở ASSETCONTROL trong tab mới">
           <span className="product-switcher__label">ASSETCONTROL</span><span className="product-switcher__short" aria-hidden="true">AC</span><AppIcon name="external" size={14}/>
         </a>}
       </nav>
