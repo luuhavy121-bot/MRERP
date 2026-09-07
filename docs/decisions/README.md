@@ -59,3 +59,6 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 - [ADR-0011: Tổng quan, Bảng tin và Công việc operational baseline](0011-dashboard-feed-task-operational-baseline.md) — `Accepted`; implementation vẫn chờ nghiệm thu và OD-14 vẫn mở.
 - [ADR-0012: Nền Leave và Attendance đơn giản cho Phase 2](0012-phase-2-leave-attendance-foundation.md) — `Accepted`; OD-13 vẫn mở cho payroll và policy chi tiết.
 - [ADR-0013: Phase 3 — Văn hóa và vận hành nhân sự](0013-phase-3-culture-operations-baseline.md) — `Accepted`; redemption/catalog approval và object storage production vẫn mở.
+- [ADR-0014: Mục tiêu tích hợp MKTLogin với ASSETCONTROL](0014-mktlogin-assetcontrol-integration-goal.md) — `Accepted`; contract API/security/permission/failure vẫn mở ở OD-27.
+- [ADR-0015: Workspace MKTLogin riêng theo Team](0015-mktlogin-workspace-per-team.md) — `Accepted`; chỉ chốt yêu cầu workspace riêng, contract và quyền API vẫn mở ở OD-27.
+- [ADR-0016: Tích hợp MKTLogin trên máy công ty](0016-mktlogin-company-device-integration-proposal.md) — `Proposed`; bản vẽ/kiến trúc để duyệt, chưa code; contract và policy bàn giao/thu hồi vẫn mở ở OD-27/OD-28.

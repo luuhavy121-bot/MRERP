@@ -36,7 +36,7 @@ Visual prototype không tự chuyển story sang `In progress` hoặc `Accepted`
 | EPIC-05 | Attendance/Leave và Approval theo từng loại | Phase 1–2 | `In progress` — edit pending, Leader duyệt một cấp, holiday calendar, HR xem/điều chỉnh |
 | EPIC-06 | Recognition và Stars | Phase 3 | `Implementation hoàn tất — Chờ nghiệm thu`; redemption/catalog vẫn `Blocked` |
 | EPIC-07 | Recruitment, Documents và Personal Settings | Phase 3 | `Implementation hoàn tất — Chờ nghiệm thu` theo ADR-0013 |
-| EPIC-08 | ASSETCONTROL và MREKANBAN transition | Phase 4 | `Idea` — cần audit product hiện hữu |
+| EPIC-08 | ASSETCONTROL–MKTLogin resource linkage và MREKANBAN transition | Phase 4 | `Refining` — mục tiêu MKTLogin đã chốt; contract bị chặn bởi OD-27 |
 | EPIC-09 | MRECRM tối thiểu, worker, field policy và reporting read model | Phase 5 | `Idea` — cần ADR trước scaffold |
 
 ## 4. Phase 1 đang refinement
@@ -68,6 +68,18 @@ Story chi tiết: [Phase 1 — Task vertical slice](stories/phase-1-task-vertica
 ### EPIC-04 — Shell và Dashboard tối thiểu
 
 **Đã chốt trong phạm vi hiện tại.** Shell mở Tổng quan mặc định; Dashboard chỉ dùng dữ liệu MRERP và Bảng tin có audience company/Team/Employee. Snapshot CRM/ASSETCONTROL chưa thuộc phạm vi.
+
+### EPIC-08 — ASSETCONTROL–MKTLogin và MREKANBAN transition
+
+**Đã chốt qua ADR-0014.** Chỉ MKTLogin thuộc phạm vi; không clone đầy đủ sản phẩm. Outcome cuối là resource ASSETCONTROL liên kết kiểm chứng được với resource thật trong MKTLogin qua API.
+
+**Chưa quyết định:** mapping resource, API authentication, đồng bộ/lifecycle command, permission, reconciliation và failure contract theo OD-27. MREKANBAN vẫn giữ câu hỏi dài hạn riêng ở OD-08.
+
+**Bước refinement hiện tại:** đã nhận OpenAPI và ảnh tài liệu trong ứng dụng; người dùng xác nhận mỗi máy cài MKTLogin riêng, phân quyền theo Team. Các Team sẽ có workspace riêng theo ADR-0015. Tiếp tục kiểm kê workspace và làm rõ định danh/liên kết, phạm vi quyền API, kết nối nhiều máy, loại resource ưu tiên và môi trường thử theo [danh sách kiểm kê API MKTLogin](../architecture/ecosystem-integration.md#51-thông-tin-api-cần-người-sở-hữu-sản-phẩm-cung-cấp). Đề xuất bản đầu chỉ đọc và xác minh liên kết; phạm vi cụ thể chưa được duyệt. Các API cấp/bàn giao/thu hồi chưa có trong tài liệu được cung cấp, chưa đưa vào implementation.
+
+**Thiết kế để duyệt, chưa Ready:** [phương án máy công ty](../architecture/mktlogin-company-device-proposal.md) / ADR-0016 **Proposed**, gồm khảo sát chỉ đọc một Team/Gmail Resource/profile, liên kết/cấp phát có bằng chứng rồi pilot. Theo dõi thu hồi là bước sau, tách Grant, quyền MKTLogin, máy/phiên và dịch vụ ngoài; cần policy OD-28. Không suy ra quyền hoặc tự thu hồi theo cây cha/con đang được khai báo thủ công.
+
+**Bổ sung bản 02:** workflow MRERP → MKTLogin không nhập lại credential và chặn quyền dùng khi nghỉ việc là phương án nội bộ, chưa được MKT xác nhận. Giữ tài khoản/profile/tài nguyên công ty. Cần Employee–quyền sử dụng và nơi thực thi ở MKTLogin hoặc máy công ty trước khi đưa phần này sang Ready; chỉ khóa MRERP hoặc kiểm kê API đọc chưa đáp ứng workflow.
 
 ## 5. Cách tính tiến độ backlog
 

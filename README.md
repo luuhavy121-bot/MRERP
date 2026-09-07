@@ -6,7 +6,9 @@ Repository GitHub: [luuhavy121-bot/MRERP](https://github.com/luuhavy121-bot/MRER
 
 ## Trạng thái hiện tại
 
-Repository đang ưu tiên **Phase 3 — Văn hóa và vận hành nhân sự** theo ADR-0013; Phase 1–2 chưa nghiệm thu vẫn giữ trạng thái riêng và không được tự coi là hoàn thành.
+Phase 3 — Văn hóa và vận hành nhân sự đã được hiện thực theo ADR-0013 và đang chờ nghiệm thu; Phase 1–2 chưa nghiệm thu vẫn giữ trạng thái riêng và không được tự coi là hoàn thành.
+
+**Mục tiêu tích hợp tiếp theo đã chốt qua ADR-0014:** công ty sử dụng MKTLogin, không đưa MKT City vào phạm vi; không xây lại đầy đủ MKTLogin. Đích cuối là mỗi tài nguyên MKTLogin được quản lý trong ASSETCONTROL có liên kết kiểm chứng được với tài nguyên thật bên MKTLogin qua API. Contract API, xác thực service, đồng bộ và thu hồi vẫn phải được refinement trước khi code.
 
 Phase 0 đã qua cổng duyệt. Slice People/HR Foundation đầu tiên hiện có React/Vite frontend, Django/DRF API, migration, authorization fail-closed, audit và automated tests. App có màn hình Tiến độ quản trị tạm thời, tự ẩn khi tổng tiến độ đạt 100%; phần trăm không thay thế bằng chứng nghiệm thu. Local development dùng SQLite mặc định hoặc PostgreSQL 16 qua Docker Compose. Mock Identity chỉ dành cho development/test và tự từ chối khởi động ở production; Identity Provider production vẫn **Chưa quyết định**.
 

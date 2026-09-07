@@ -16,6 +16,7 @@ Tài liệu này là source of truth cho baseline quản lý config/secret trong
 - Password, access token, refresh token, OTP hoặc API key thật.
 - Private key, keystore và signing secret.
 - Credential database, channel/shop hoặc service account.
+- API credential của MKTLogin.
 - Nội dung ASSETCONTROL Vault.
 - Database dump, backup hoặc dữ liệu production.
 - File `.env` dùng cục bộ hoặc production.

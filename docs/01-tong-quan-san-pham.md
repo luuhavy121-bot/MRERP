@@ -23,6 +23,7 @@ Có tài khoản MRERP không tự động cấp quyền vào CRM, ASSETCONTROL,
 | MRERP Core | Cổng chung; sở hữu nhân sự, cơ cấu tổ chức, Task và nghiệp vụ nội bộ | **Đã chốt** |
 | MRECRM | Vận hành Customer, Order, Product, Channel, đối soát và báo cáo CRM | Ranh giới **Đã chốt**; kiến trúc mục tiêu cần ADR |
 | ASSETCONTROL | Quản lý Resource, Grant, Vault và audit tài nguyên; repo/deployment riêng | Ranh giới **Đã chốt** |
+| MKTLogin | Công cụ bên ngoài để nhân sự vận hành các tài khoản Marketing; không được clone vào MRERP | Vai trò và đích tích hợp **Đã chốt**; contract **Chưa quyết định** |
 | MREKANBAN | Dùng Task MRERP cho board/view chuyên sâu trong giai đoạn chuyển tiếp | Hướng chuyển tiếp **Đã chốt**; tương lai **Chưa quyết định** |
 | Identity | Credential, đăng nhập và SSO dùng chung | Ownership **Đã chốt**; provider **Chưa quyết định** |
 
@@ -31,6 +32,12 @@ Có tài khoản MRERP không tự động cấp quyền vào CRM, ASSETCONTROL,
 **Đã chốt.** Hiện chỉ CEO và Leader được cấp quyền truy cập ASSETCONTROL.
 
 **Chưa quyết định.** Có mở cho đối tượng khác hay không và theo capability/policy nào.
+
+## MKTLogin trong hệ sinh thái
+
+**Đã chốt.** Công ty dùng MKTLogin và không cần đưa MKT City vào phạm vi dự án hiện tại. MRERP/ASSETCONTROL không xây lại đầy đủ MKTLogin. Mục tiêu cuối là tài nguyên ghi trong ASSETCONTROL liên kết được với tài nguyên thật trong MKTLogin qua API, thay vì chỉ là một bản ghi thủ công hoặc một đường link.
+
+**Chưa quyết định.** Loại tài nguyên MKTLogin cần liên kết, API authentication, chiều đồng bộ, quyền thao tác từ ASSETCONTROL và hành vi khi MKTLogin lỗi.
 
 ## Năm nguyên tắc cần nhớ
 

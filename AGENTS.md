@@ -4,7 +4,7 @@
 
 Repository này dành cho hệ sinh thái MRERP mới. MRERP Core và MRECRM dự kiến nằm trong cùng monorepo nhưng là các deployable có ranh giới riêng. ASSETCONTROL và repository MREKANBAN hiện tại không được sao chép vào repository này ở Phase 0.
 
-Phase 0 đã hoàn tất. People/HR Foundation của Phase 1 đã được nghiệm thu; các phần mở rộng Phase 1 và Phase 2 giữ trạng thái riêng theo source of truth. Theo yêu cầu mới nhất, repository đang ưu tiên Phase 3 theo ADR-0013: Personal Settings, Recruitment, Documents, Recognition và Star ledger/leaderboard. Không mở rộng sang Payroll, máy chấm công, reward redemption/catalog chưa chốt, CRM hoặc ASSETCONTROL nếu chưa có yêu cầu mới.
+Phase 0 đã hoàn tất. People/HR Foundation của Phase 1 đã được nghiệm thu; các phần mở rộng Phase 1 và Phase 2 giữ trạng thái riêng theo source of truth. Phase 3 đã được hiện thực theo ADR-0013 và đang chờ nghiệm thu. Theo yêu cầu mới nhất, mục tiêu tích hợp tiếp theo là liên kết tài nguyên ASSETCONTROL với MKTLogin qua API theo ADR-0014. Công ty chỉ dùng MKTLogin trong phạm vi này; không đưa MKT City vào dự án và không xây lại đầy đủ MKTLogin. Không mở rộng sang Payroll, máy chấm công, reward redemption/catalog chưa chốt hoặc CRM nếu chưa có yêu cầu mới.
 
 ## 2. Thứ tự bắt buộc trước khi làm việc
 
@@ -52,6 +52,8 @@ Chỉ viện dẫn “xác nhận trực tiếp mới nhất” khi xác nhận 
 - Identity Provider sở hữu credential, quy trình đăng nhập, subject và phiên SSO. Identity Provider cụ thể chưa được chọn.
 - MRECRM sở hữu Customer, Order, Product, Channel, connector, FFM, đối soát và báo cáo CRM.
 - ASSETCONTROL sở hữu Resource, Grant, Vault và audit tài nguyên; không gửi secret sang MRERP.
+- MKTLogin là hệ thống bên ngoài vận hành môi trường/tài khoản Marketing. Mục tiêu cuối là tài nguyên được quản lý trong ASSETCONTROL liên kết với tài nguyên thật trong MKTLogin qua API; MRERP không clone MKTLogin và không sở hữu dữ liệu phiên của nó.
+- MKT City không thuộc phạm vi dự án hiện tại.
 - Hiện chỉ CEO và Leader được cấp quyền truy cập ASSETCONTROL. Việc mở cho đối tượng khác chưa được quyết định.
 - MREKANBAN hiện tại chỉ tham chiếu Task MRERP bằng UUID và có thể sở hữu cấu hình view. Việc retire hay tiếp tục làm client/view chuyên sâu dài hạn chưa được quyết định.
 - Không product nào đọc hoặc sửa trực tiếp database của product khác.

@@ -16,6 +16,7 @@ Tài liệu này là source of truth duy nhất cho product sở hữu từng mi
 | Recognition, stars, redemption | MRERP Rewards | CRM phát sự kiện thành tích | **Đã chốt** |
 | Customer, Order, Product, Channel, FFM | MRECRM | MRERP nhận aggregate được phép | **Đã chốt** |
 | Resource, Grant, Vault, asset audit | ASSETCONTROL | MRERP chỉ nhận metadata/notification không chứa secret | **Đã chốt** |
+| Tài nguyên và phiên vận hành thực tế trong MKTLogin | MKTLogin | ASSETCONTROL giữ external ID/link, trạng thái và metadata tối thiểu theo contract; MRERP không nhận secret/session | Ownership và mục tiêu liên kết **Đã chốt qua ADR-0014**; contract **Chưa quyết định** |
 | Tài liệu nội bộ | MRERP Documents + storage được chọn | Product khác nhận link/quyền phù hợp | Ownership **Đã chốt**; storage **Chưa quyết định** |
 
 ## 2. Quy tắc bắt buộc
@@ -60,6 +61,8 @@ Feed/Task/Documents/Recruitment attachment binary hiện lưu trong local-media 
 **Đã chốt.** Password, cookie, token, OTP, key và nội dung Vault không được gửi từ ASSETCONTROL sang MRERP. MRERP chỉ có thể nhận metadata/notification không chứa secret theo quyền.
 
 Không chuyển dữ liệu hoặc secret Nhà ZUZU sang MRE chỉ vì dùng chung codebase.
+
+**Đã chốt qua ADR-0014.** Cookie, phiên đăng nhập, mật khẩu và API credential của MKTLogin không thuộc MRERP. Việc ASSETCONTROL cần giữ secret nào để gọi API phải tuân secret boundary và được chốt trong contract/security design; không được commit vào Git hoặc trả về frontend.
 
 ## 6. Database topology
 

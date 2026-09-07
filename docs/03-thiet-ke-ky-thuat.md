@@ -16,6 +16,8 @@ MRERP Core       MRECRM          ASSETCONTROL
     │
     ▼
 MREKANBAN tham chiếu Task trong giai đoạn chuyển tiếp
+
+ASSETCONTROL ── API ──▶ MKTLogin (hệ thống bên ngoài)
 ```
 
 **Đã chốt.** MRERP, CRM và ASSETCONTROL giữ data ownership riêng. Chạy cùng VPS không cho phép đọc database của nhau.
@@ -52,6 +54,8 @@ Chi tiết: [Identity và phân quyền](architecture/identity-and-authorization
 ## Liên kết product
 
 Hệ sinh thái dùng đúng công cụ theo mục đích: deep link để điều hướng, REST khi cần phản hồi ngay, event/queue cho thông báo bất đồng bộ và snapshot/read model cho Dashboard.
+
+**Đã chốt qua ADR-0014.** MKTLogin giữ chức năng vận hành thực tế của nó; ASSETCONTROL quản lý Resource/Grant/audit và liên kết resource qua API. MKT City không thuộc phạm vi. API authentication, mapping và failure contract chi tiết vẫn **Chưa quyết định**.
 
 Chi tiết: [Tích hợp hệ sinh thái](architecture/ecosystem-integration.md).
 

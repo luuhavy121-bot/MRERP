@@ -42,6 +42,7 @@ Các runbook cần được tạo trước khi mở production:
 - ASSETCONTROL emergency access sau khi policy được duyệt.
 - CRM worker overload/queue backlog.
 - Dashboard snapshot stale hoặc sync thất bại.
+- MKTLogin API gián đoạn, mapping lệch hoặc đối soát thất bại sau khi integration được triển khai.
 - Redis/worker gián đoạn: request Feed/Task vẫn hoạt động; kiểm queue/worker và xác nhận recurrence backfill sau khi phục hồi.
 - Media volume đầy, file bị thiếu, Candidate anonymization hoặc Documents retention purge lỗi.
 - Secret rotation và service credential rotation.
@@ -52,6 +53,8 @@ Các runbook cần được tạo trước khi mở production:
 **Đã chốt.** Dashboard vẫn hiển thị HR, Task và nghiệp vụ nội bộ; vùng dữ liệu CRM/ASSETCONTROL dùng snapshot gần nhất, timestamp và cảnh báo stale.
 
 **Chưa quyết định.** Timeout, retry, stale threshold, SLA và escalation path cụ thể.
+
+Đối với MKTLogin, mục tiêu resource linkage đã chốt nhưng contract vận hành vẫn **Chưa quyết định** theo OD-27. Không được báo “đã đồng bộ” nếu API không xác nhận; runbook cụ thể chỉ được hoàn thiện sau khi API/gói công ty đang dùng được kiểm kê.
 
 Không được tạo runbook break-glass có thể thực thi trước khi OD-03 được người có thẩm quyền quyết định và ADR được chấp nhận.
 

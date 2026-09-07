@@ -26,6 +26,8 @@ Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết địn
 | OD-18 | Có mở quyền ASSETCONTROL cho đối tượng ngoài CEO và Leader hay không, và theo policy nào | Product boundary, authorization |
 | OD-19 | Ranh giới thao tác giữa Admin Panel MRERP và IdP: provisioning, deprovisioning, approval và audit | Identity, Admin Panel, operations |
 | OD-21 | Secret manager, config delivery, certificate automation và rotation cho production | Security, deployment, operations |
+| OD-27 | Contract ASSETCONTROL–MKTLogin: resource mapping, API authentication, permission, sync/reconciliation, failure handling và rollback | Product boundary, data ownership, integration, security, operations, testing |
+| OD-28 | Policy bàn giao máy công ty và xử lý thu hồi: actor, quyền Windows/remote, bằng chứng, tài nguyên dùng chung, ngoại lệ và tiêu chí hoàn tất | Integration, authorization, operations, testing |
 
 ## Chi tiết các nhóm cần duyệt sớm
 
@@ -61,6 +63,20 @@ OD-22 đến OD-26 đã được giải quyết cho phạm vi People/HR Foundati
 
 OD-08 và OD-17 yêu cầu audit code, workflow, dữ liệu và deployment thực tế. Không import hoặc di chuyển dữ liệu chỉ vì codebase có sẵn. OD-18 chỉ được giải quyết bằng policy được người dùng duyệt; hiện không được mở cho đối tượng khác.
 
+**Đã chốt qua [ADR-0014](0014-mktlogin-assetcontrol-integration-goal.md):** công ty dùng MKTLogin, MKT City không thuộc phạm vi hiện tại, không clone đầy đủ MKTLogin và đích cuối là resource ASSETCONTROL liên kết với resource thật trong MKTLogin qua API. OD-27 vẫn mở cho contract/security/permission/failure semantics trước implementation production.
+
+**Bổ sung bằng chứng cho OD-27 ngày 03/09/2026:** đã nhận tài liệu API trong ứng dụng MKTLogin 2.1.3; người dùng xác nhận mỗi máy cài app riêng và phân quyền theo Team. **Đã chốt cục bộ qua [ADR-0015](0015-mktlogin-workspace-per-team.md):** các Team sẽ có workspace riêng. OD-27 vẫn mở cho quy tắc định danh/liên kết Team–workspace cụ thể, quyền API theo tài khoản, định danh giữa nhiều máy và kết nối tới API `localhost:4980` khi máy/ứng dụng bật hoặc tắt. [Kết quả đọc tài liệu](../architecture/ecosystem-integration.md#53-kết-quả-đọc-tài-liệu-mktlogin-được-cung-cấp) chưa chốt kiến trúc kết nối hoặc chứng minh API cấp/thu hồi quyền tồn tại.
+
+**Bằng chứng bổ sung cho OD-27:** nhà cung cấp trả lời qua người dùng rằng gỡ quyền không đóng hồ sơ đang mở; thành viên vẫn dùng được. Khi được hỏi API gỡ quyền/buộc đóng trên máy thành viên, nhà cung cấp trả lời không thực hiện được vì khác máy. [Giới hạn thu hồi](../architecture/ecosystem-integration.md#54-giới-hạn-thu-hồi-được-nhà-cung-cấp-trả-lời) phải được tính vào contract: gỡ quyền không phải bằng chứng chấm dứt phiên. Khả năng mở lại/offline và phạm vi API vẫn chưa kiểm chứng; không hứa remote revoke qua API được hỏi.
+
+**Làm rõ mới nhất từ người dùng:** gói công ty/tài khoản con, MRERP → MKTLogin không nhập lại credential và mất quyền dùng khi nghỉ việc là phương án công ty họp bàn, không phải tính năng MKT xác nhận. Tài khoản/profile/tài nguyên công ty phải được giữ nguyên. [Mục 5.6 tài liệu tích hợp](../architecture/ecosystem-integration.md#56-bổ-sung-từ-người-dùng-gói-công-ty-và-tài-khoản-thành-viên) ghi nguồn và giới hạn. OD-27 bổ sung Employee–quyền sử dụng/thành viên, cơ chế đăng nhập và nơi thực thi chặn. Nếu thực thi tại máy thì cần policy OD-28. Chỉ khóa MRERP, giữ nguyên cả quyền MKTLogin và quyền dùng máy thì chưa đạt; phản hồi trước về profile đang mở vẫn có hiệu lực. ADR-0016 bản 02 giữ Proposed.
+
+### Máy công ty và bằng chứng thu hồi
+
+**OD-28 vẫn Chưa quyết định.** Người dùng muốn giữ MKTLogin trên máy công ty cho khoảng 50–60 nhân sự và tính trước bước thu hồi. Cần chốt ai kiểm soát quyền sử dụng Windows/remote, ai thu và kiểm tra máy, ai xác nhận bằng chứng, thời điểm hiệu lực, trường hợp chưa lấy được máy, tài nguyên dùng chung và người có quyền duyệt ngoại lệ. Sở hữu máy không tự bảo đảm đã ngắt quyền truy cập; bàn giao máy không vô hiệu hóa phiên ở nơi khác hoặc thu lại dữ liệu đã sao chép.
+
+[Bản vẽ và kiến trúc máy công ty](../architecture/mktlogin-company-device-proposal.md) và [ADR-0016](0016-mktlogin-company-device-integration-proposal.md) là **Proposed**, chưa được chấp nhận: kiểm kê API chỉ đọc, liên kết/cấp phát rồi theo dõi từng phần thu hồi. OD-27 giữ contract kỹ thuật; OD-28 giữ policy vận hành/bằng chứng. Không tự mở ASSETCONTROL cho IT/HR/Staff (OD-18), không chọn service authentication (OD-11/OD-21) hoặc codebase ASSETCONTROL MRE (OD-17).
+
 ### Repository baseline
 
 OD-20 đã được giải quyết bằng ADR-0001. Baseline này không lựa chọn Identity Provider, secret manager production hoặc policy nghiệp vụ.
@@ -78,6 +94,7 @@ OD-20 đã được giải quyết bằng ADR-0001. Baseline này không lựa c
 | People account/lifecycle | Policy account, self-service, employment lifecycle và Admin access bundle cục bộ được chấp nhận | [ADR-0010](0010-people-account-and-employment-lifecycle.md) |
 | Dashboard/Feed/Task baseline | Audience, moderation, Task read scope, Goal, recurrence, local-media và retention cục bộ được chấp nhận; OD-14 không đóng | [ADR-0011](0011-dashboard-feed-task-operational-baseline.md) |
 | Phase 3 baseline | Recruitment, Documents, Recognition/Stars và Personal Settings baseline được chấp nhận; redemption/catalog approval và object storage production vẫn mở | [ADR-0013](0013-phase-3-culture-operations-baseline.md) |
+| MKTLogin integration goal | Chỉ tích hợp MKTLogin; không clone; ASSETCONTROL resource phải liên kết resource thật qua API. Contract chi tiết vẫn mở ở OD-27 | [ADR-0014](0014-mktlogin-assetcontrol-integration-goal.md) |
 
 ## Những nội dung không còn mở
 
@@ -91,3 +108,4 @@ Các ràng buộc sau là **Đã chốt**, không được biến thành open de
 - Frontend không phải hàng rào authorization.
 - Dashboard không gọi CRM trực tiếp trong request tải trang.
 - MRERP không được phát triển trong repo/permanent worktree ASSETCONTROL.
+- MKT City không thuộc phạm vi dự án hiện tại và không clone đầy đủ MKTLogin.

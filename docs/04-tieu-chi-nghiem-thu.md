@@ -25,6 +25,7 @@ Một thay đổi **Không đạt** nếu có bất kỳ lỗi nghiêm trọng n
 - Chỉ ẩn nút frontend để bảo vệ dữ liệu.
 - Product đọc hoặc sửa trực tiếp database của product khác.
 - Direct link được coi là tích hợp đầy đủ.
+- Resource ASSETCONTROL chỉ có tên/link thủ công nhưng được tuyên bố đã liên kết MKTLogin mà chưa kiểm chứng qua contract/API.
 - Dashboard gọi CRM đồng bộ trong request tải trang.
 - Tạo nhiều nguồn chuẩn Employee hoặc Task cạnh tranh.
 - Hard-code phòng ban/cấp bậc MRE vào lõi permission.

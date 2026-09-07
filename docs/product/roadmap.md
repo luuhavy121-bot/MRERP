@@ -49,7 +49,16 @@ Roadmap này là **Đề xuất mục tiêu**. Mỗi phase cần được xác n
 - Audit tài khoản và Task hiện tại.
 - Map UUID.
 - ASSETCONTROL OIDC dual-run và rollback.
+- Liên kết resource ASSETCONTROL với resource thật trong MKTLogin qua API; không clone MKTLogin và không đưa MKT City vào scope.
 - MREKANBAN dùng Task contract hoặc migration được duyệt.
+
+**Trạng thái hiện tại:** `Refining`. Mục tiêu MKTLogin đã được chốt qua ADR-0014; contract API, mapping, quyền thao tác, security và failure handling vẫn bị chặn bởi OD-27. Chưa được coi là đã tích hợp chỉ vì có deep link hoặc bản ghi trùng tên.
+
+**Chuẩn bị tiếp theo:** tài liệu API trong ứng dụng đã được cung cấp; yêu cầu workspace riêng theo Team đã chốt qua ADR-0015. Hoàn thiện [thông tin API cần kiểm kê](../architecture/ecosystem-integration.md#51-thông-tin-api-cần-người-sở-hữu-sản-phẩm-cung-cấp) về workspace thực tế, định danh/liên kết, quyền API và kết nối các máy cài MKTLogin riêng, sau đó đối chiếu khả năng thực tế và trình duyệt phạm vi đọc/xác minh liên kết đầu tiên. Cấp phát, bàn giao và thu hồi tự động vẫn chưa được chốt.
+
+**Bản thiết kế đang duyệt:** [máy công ty + API chỉ đọc + cấp phát có bằng chứng](../architecture/mktlogin-company-device-proposal.md), theo ADR-0016 **Proposed**. Đề xuất thử một Team/Gmail Resource/profile trước; quy trình thu hồi ở bước sau phối hợp bàn giao máy và rà soát quyền tại dịch vụ, theo OD-28. Chưa code, chưa chọn agent điều khiển toàn bộ máy hoặc remote desktop; Phase 4 không chuyển Ready/Accepted chỉ vì đã có bản vẽ.
+
+**Cập nhật bản 02:** workflow MRERP → MKTLogin và chặn quyền dùng khi nghỉ việc là phương án họp nội bộ; không phải khả năng nhà cung cấp đã xác nhận. Tài khoản/profile/tài nguyên công ty giữ nguyên. Cần khảo sát nơi thực thi quyền tại MKTLogin hoặc máy công ty, theo OD-27/OD-28. Khảo sát metadata và thực thi quyền là hai phần cần nghiệm thu riêng; không cam kết tự động chặn khi chỉ khóa MRERP.
 
 ## Phase 5 — MRECRM
 
@@ -75,8 +84,8 @@ Backlog dùng [Definition of Ready](../testing/definition-of-ready.md) làm cổ
 ## Nội dung chưa thuộc các phần People hiện tại
 
 - Không chọn Identity Provider production.
-- Không mở Payroll hoặc integration CRM/ASSETCONTROL. Recruitment, Documents và Recognition/Stars chỉ mở trong baseline ADR-0013; redemption/catalog vẫn chưa mở.
-- Không tích hợp CRM/ASSETCONTROL.
+- Không mở Payroll hoặc CRM trong các phần People hiện tại. Recruitment, Documents và Recognition/Stars chỉ mở trong baseline ADR-0013; redemption/catalog vẫn chưa mở.
+- MKTLogin–ASSETCONTROL là workstream Phase 4 riêng; không trộn code integration vào module People/HR.
 - Không tự chốt policy nghiệp vụ ngoài ADR đã Accepted.
 
 ## Tài liệu liên quan

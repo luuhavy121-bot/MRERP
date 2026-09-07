@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1640" viewBox="0 0 1600 1640" role="img" aria-labelledby="title desc">
+  <title id="title">Đề xuất tích hợp hệ sinh thái MRE với MKTLogin trên máy công ty</title>
+  <desc id="desc">Workflow do công ty đề xuất: nhân viên vào MRERP rồi dùng MKTLogin có sẵn trên máy công ty. Khi nghỉ việc, tài khoản và profile giữ nguyên, quyền dùng của nhân viên chấm dứt. Cơ chế chặn tại MKTLogin hoặc máy công ty chưa được xác định; chỉ khóa MRERP chưa đủ. ASSETCONTROL quản lý tài nguyên, cấp phát và bằng chứng. Công cụ đọc API cục bộ được đề xuất để gửi metadata tới ASSETCONTROL; không phải cơ chế chặn ứng dụng.</desc>
+  <defs>
+    <marker id="blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#376ddd"/></marker>
+    <marker id="teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#128174"/></marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #172e42; }
+      .small { font-size: 18px; }
+      .body { font-size: 22px; }
+      .muted { fill: #52677b; }
+      .title { font-size: 27px; font-weight: 700; }
+      .caps { font-size: 17px; font-weight: 700; letter-spacing: 1.4px; }
+      .blue { fill: #2e5bbb; }
+      .green { fill: #096b60; }
+      .amber { fill: #936000; }
+      .dash { fill: none; stroke: #376ddd; stroke-width: 3; stroke-dasharray: 8 7; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1640" fill="#f5f7fa"/>
+  <rect x="0" y="0" width="1600" height="12" fill="#128174"/>
+  <text x="56" y="61" class="caps green">MRE / THIẾT KẾ TÍCH HỢP</text>
+  <text x="56" y="119" font-size="44" font-weight="700">MKTLogin trên máy công ty</text>
+  <text x="56" y="160" font-size="24" class="muted">MRERP là điểm vào · Giữ tài khoản và tài nguyên · Quản lý quyền sử dụng của nhân viên</text>
+  <rect x="1228" y="46" width="316" height="46" rx="23" fill="#fff0d5"/>
+  <text x="1386" y="76" text-anchor="middle" class="caps amber">ĐỀ XUẤT · CHƯA TRIỂN KHAI</text>
+  <text x="1544" y="126" text-anchor="end" class="small muted">03.09.2026 / ADR-0016 Proposed</text>
+
+  <rect x="56" y="186" width="1488" height="132" rx="16" fill="#eaf5f1" stroke="#b8d9d3"/>
+  <text x="80" y="218" class="caps green">WORKFLOW NỘI BỘ MONG MUỐN · CHƯA PHẢI TÍNH NĂNG MKT ĐÃ XÁC NHẬN</text>
+  <rect x="80" y="237" width="168" height="58" rx="10" fill="#fff"/>
+  <text x="164" y="274" text-anchor="middle" class="body">Nhân viên</text>
+  <path d="M250 266 H288" stroke="#128174" stroke-width="2" marker-end="url(#teal)"/>
+  <rect x="290" y="237" width="340" height="58" rx="10" fill="#fff"/>
+  <text x="460" y="261" text-anchor="middle" font-size="22" font-weight="700">MRERP</text>
+  <text x="460" y="284" text-anchor="middle" font-size="18">Đăng nhập và nhận thông tin</text>
+  <path d="M632 266 H672" stroke="#128174" stroke-width="2" marker-end="url(#teal)"/>
+  <rect x="674" y="237" width="470" height="58" rx="10" fill="#fff"/>
+  <text x="909" y="261" text-anchor="middle" font-size="22" font-weight="700">MKTLogin trên máy công ty</text>
+  <text x="909" y="284" text-anchor="middle" font-size="18">Tài khoản công ty cấp quyền sử dụng</text>
+  <path d="M1146 266 H1188" stroke="#128174" stroke-width="2" marker-end="url(#teal)"/>
+  <rect x="1190" y="237" width="330" height="58" rx="10" fill="#fff"/>
+  <text x="1355" y="261" text-anchor="middle" font-size="22" font-weight="700">Workspace / Profile / Gmail</text>
+  <text x="1355" y="284" text-anchor="middle" font-size="18">Giữ tài nguyên khi nhân viên nghỉ</text>
+  <text x="56" y="357" font-size="22" font-weight="600" class="amber">Còn thiếu cơ chế chặn tại MKTLogin hoặc máy công ty. Chỉ khóa MRERP chưa tự chặn phiên MKTLogin.</text>
+
+  <g transform="translate(0 190)">
+  <path d="M56 206 H102" stroke="#128174" stroke-width="3"/>
+  <text x="114" y="212" class="small">Luồng sử dụng</text>
+  <path d="M318 206 H368" class="dash"/>
+  <text x="380" y="212" class="small">Kết nối API đề xuất</text>
+  <rect x="618" y="197" width="19" height="19" rx="4" fill="#ffe4b3"/>
+  <text x="649" y="212" class="small">Thao tác và bằng chứng do người phụ trách xác nhận</text>
+
+  <rect x="56" y="250" width="360" height="330" rx="18" fill="#fff" stroke="#d5dfea" stroke-width="2"/>
+  <rect x="56" y="250" width="360" height="9" rx="4" fill="#376ddd"/>
+  <text x="82" y="300" class="caps blue">NGUỒN CHUẨN NHÂN SỰ</text>
+  <text x="82" y="346" class="title">MRERP</text>
+  <text x="82" y="394" class="body">Employee · Team</text>
+  <text x="82" y="430" class="body">Trạng thái làm việc</text>
+  <text x="82" y="466" class="body">Task nghiệp vụ</text>
+  <path d="M82 493 H390" stroke="#e3e9f0"/>
+  <text x="82" y="530" class="small muted">Gửi nhân sự và thay đổi hiệu lực.</text>
+  <text x="82" y="558" class="small muted">Nhận trạng thái tổng hợp theo quyền.</text>
+
+  <rect x="504" y="250" width="548" height="330" rx="18" fill="#fff" stroke="#b8d9d3" stroke-width="2"/>
+  <rect x="504" y="250" width="548" height="9" rx="4" fill="#128174"/>
+  <text x="532" y="300" class="caps green">CEO / LEADER QUẢN LÝ TÀI NGUYÊN</text>
+  <text x="532" y="346" class="title">ASSETCONTROL</text>
+  <text x="532" y="394" class="body">Resource · Grant · Vault · Audit</text>
+  <text x="532" y="431" class="body">Đề xuất thêm:</text>
+  <text x="552" y="467" class="body">Liên kết Resource ↔ Workspace / Profile</text>
+  <text x="552" y="503" class="body">Bằng chứng cấp phát và xử lý thu hồi</text>
+  <text x="532" y="552" class="small muted">Giữ secret tại đúng hệ thống sở hữu.</text>
+
+  <path d="M418 410 H502" class="dash" marker-start="url(#blue)" marker-end="url(#blue)"/>
+  <text x="460" y="391" text-anchor="middle" class="small blue">API</text>
+
+  <rect x="1126" y="238" width="432" height="588" rx="24" fill="#eaf5f1" stroke="#a4cfc4" stroke-width="2"/>
+  <rect x="1140" y="250" width="404" height="330" rx="18" fill="#fff" stroke="#b8d9d3" stroke-width="2"/>
+  <text x="1166" y="300" class="caps green">MÁY CÔNG TY · 50–60 NHÂN SỰ</text>
+  <text x="1166" y="346" class="title">MKTLogin</text>
+  <text x="1166" y="394" class="body">Workspace riêng theo Team</text>
+  <text x="1166" y="430" class="body">Profile trình duyệt</text>
+  <text x="1166" y="466" class="body">Quyền thực tế trong MKTLogin</text>
+  <path d="M1166 493 H1518" stroke="#e3e9f0"/>
+  <text x="1166" y="530" class="small muted">Nhân viên mở profile và làm việc</text>
+  <text x="1166" y="558" class="small muted">trực tiếp trên máy được giao.</text>
+
+  <rect x="1140" y="630" width="404" height="180" rx="16" fill="#f2f6ff" stroke="#7397e7" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="1166" y="668" font-size="23" font-weight="700" class="blue">Điểm đọc API đề xuất</text>
+  <text x="1166" y="704" font-size="21">Chạy theo yêu cầu trên máy</text>
+  <text x="1166" y="735" font-size="21">có quyền xem workspace.</text>
+  <text x="1166" y="780" class="small muted">Chỉ đọc · Không điều khiển các máy khác</text>
+  <path d="M1440 628 V582" class="dash" marker-end="url(#blue)"/>
+  <rect x="1148" y="586" width="188" height="31" rx="6" fill="#eaf5f1"/>
+  <text x="1156" y="607" font-size="17" class="green">localhost:4980 / cùng máy</text>
+
+  <path d="M1138 720 H786 V582" class="dash" marker-end="url(#blue)"/>
+  <text x="813" y="669" font-size="21" class="blue">Metadata tối thiểu</text>
+  <text x="813" y="699" font-size="19" class="blue">Kết nối gửi đi đã xác thực</text>
+  <text x="786" y="764" font-size="18" class="muted">Đề xuất thử trên máy Leader trước.</text>
+  <text x="786" y="793" font-size="18" class="muted">Phải kiểm chứng phạm vi API.</text>
+
+  <rect x="56" y="622" width="653" height="204" rx="18" fill="#fff" stroke="#d5dfea"/>
+  <text x="82" y="663" font-size="23" font-weight="700">Liên kết cần hiểu đúng</text>
+  <text x="82" y="703" font-size="21">Gmail A → dùng trong Profile P1: người quản lý xác nhận.</text>
+  <text x="82" y="739" font-size="21">API chỉ xác minh P1 tồn tại trong workspace đã chọn.</text>
+  <text x="82" y="775" font-size="21">Cây cha/con hiện là khai báo, không tự suy ra quyền.</text>
+  <text x="82" y="806" class="small muted">Không chứng minh Gmail, Page hoặc dịch vụ đang đăng nhập.</text>
+
+  <rect x="56" y="864" width="1488" height="128" rx="18" fill="#fff" stroke="#b8d9d3" stroke-width="2"/>
+  <text x="82" y="908" class="title">Gmail · Công cụ AI · Facebook / Page / BM / tài khoản quảng cáo</text>
+  <text x="82" y="947" class="body">Nhân viên sử dụng tài khoản và quyền tại từng dịch vụ trong trình duyệt.</text>
+  <text x="82" y="978" class="small muted">Dùng chung email không tạo một quyền truy cập chung; mỗi dịch vụ có phiên và cách thu hồi riêng.</text>
+  <path d="M1546 438 H1578 V926 H1546" fill="none" stroke="#128174" stroke-width="3" marker-end="url(#teal)"/>
+
+  <text x="56" y="1049" font-size="28" font-weight="700">Thu hồi ở bước sau: theo dõi riêng 4 kết quả</text>
+  <text x="1544" y="1048" text-anchor="end" class="small muted">Leader yêu cầu / nghỉ việc có hiệu lực</text>
+  <rect x="56" y="1080" width="354" height="140" rx="16" fill="#fff6e6" stroke="#e9cc97"/>
+  <rect x="434" y="1080" width="354" height="140" rx="16" fill="#fff6e6" stroke="#e9cc97"/>
+  <rect x="812" y="1080" width="354" height="140" rx="16" fill="#fff6e6" stroke="#e9cc97"/>
+  <rect x="1190" y="1080" width="354" height="140" rx="16" fill="#fff6e6" stroke="#e9cc97"/>
+  <text x="80" y="1120" font-size="23" font-weight="700" class="amber">1. Cấp phát nội bộ</text>
+  <text x="80" y="1160" font-size="21">Kết thúc đúng Grant.</text>
+  <text x="80" y="1194" font-size="21">Giữ lịch sử và phạm vi.</text>
+  <text x="458" y="1120" font-size="23" font-weight="700" class="amber">2. Quyền MKTLogin</text>
+  <text x="458" y="1160" font-size="21">Gỡ quyền được hỗ trợ.</text>
+  <text x="458" y="1194" font-size="21">Không tự đóng phiên đang mở.</text>
+  <text x="836" y="1120" font-size="23" font-weight="700" class="amber">3. Máy và phiên làm việc</text>
+  <text x="836" y="1160" font-size="21">Thu máy, xử lý phiên.</text>
+  <text x="836" y="1194" font-size="21">Ngắt quyền dùng / remote.</text>
+  <text x="1214" y="1120" font-size="23" font-weight="700" class="amber">4. Tài khoản dịch vụ</text>
+  <text x="1214" y="1160" font-size="21">Kiểm tra phiên, khôi phục,</text>
+  <text x="1214" y="1194" font-size="21">chuyển tiếp và quyền khác.</text>
+  <rect x="56" y="1236" width="1488" height="64" rx="12" fill="#fff0d5"/>
+  <text x="800" y="1275" text-anchor="middle" font-size="23" font-weight="600" class="amber">Thiếu bằng chứng → giữ “Đang xử lý / Cần can thiệp”. Không tự thu hồi theo toàn cây tài nguyên.</text>
+
+  <text x="56" y="1352" font-size="22" font-weight="600">Lộ trình: Duyệt thiết kế → Thử API chỉ đọc → Liên kết và cấp phát → Pilot → Theo dõi thu hồi</text>
+  <text x="56" y="1394" class="small muted">Identity nội bộ theo ADR riêng · CRM / Kanban giữ ranh giới hiện có · ASSETCONTROL lỗi không chặn nghiệp vụ MRERP</text>
+  <text x="1544" y="1394" text-anchor="end" class="small muted">Bản 02</text>
+  </g>
+</svg>

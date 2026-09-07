@@ -4,7 +4,7 @@ Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/road
 
 ## Trạng thái hiện tại
 
-**Hiện tại: Phase 2 — đang triển khai nền Leave/Attendance đơn giản theo ADR-0012. People/HR Foundation đã được nghiệm thu; các gói Phase 1 khác vẫn giữ trạng thái chờ nghiệm thu riêng.**
+**Hiện tại: Phase 3 đã được hiện thực và đang chờ nghiệm thu; mục tiêu tiếp theo được xác nhận là refinement/tích hợp MKTLogin với ASSETCONTROL trong Phase 4 theo ADR-0014. People/HR Foundation đã được nghiệm thu; các gói Phase 1–2 khác vẫn giữ trạng thái riêng.**
 
 Đã có:
 
@@ -45,7 +45,7 @@ Chưa có:
 2. Phase 1: nền Identity contract, People/HR Foundation, Leave/Attendance baseline và Tổng quan–Bảng tin–Công việc.
 3. Phase 2: policy Leave/Attendance mở rộng, approval, Kanban view và Dashboard snapshot/fallback ngoài dữ liệu nội bộ.
 4. Phase 3: recognition/rewards, recruitment, documents và settings.
-5. Phase 4: tích hợp ASSETCONTROL và MREKANBAN hiện hữu.
+5. Phase 4: tích hợp ASSETCONTROL, liên kết resource ASSETCONTROL với MKTLogin qua API và xử lý MREKANBAN hiện hữu.
 6. Phase 5: CRM tối thiểu, field policy, channel worker, reporting read model và load test.
 
 Toàn bộ roadmap là **Đề xuất mục tiêu**; phạm vi từng phase phải được xác nhận trước khi triển khai.
@@ -65,10 +65,10 @@ Chỉ chuyển phase khi:
 
 ## Bước tiếp theo đề xuất
 
-1. Nghiệm thu Phase 3 baseline đã triển khai: Settings → Recruitment → Documents → Recognition/Stars.
-2. Giữ reward catalog/redemption ngoài implementation tới khi OD-05/OD-13 được duyệt phần còn lại.
-3. Không trộn trạng thái nghiệm thu Phase 1–2 với Phase 3.
-4. Khi quay lại Payroll hoặc máy chấm công, giải quyết phần tương ứng của OD-13 trước.
+1. Duyệt [bản vẽ và kiến trúc MKTLogin trên máy công ty, bản 02](architecture/mktlogin-company-device-proposal.md), ADR-0016 **Proposed**. Workflow MRERP → MKTLogin và mất quyền dùng khi nghỉ việc là phương án nội bộ, chưa được MKT xác nhận; tài khoản/profile/tài nguyên công ty giữ nguyên. Khảo sát nơi thực thi chặn tại MKTLogin hoặc máy công ty; API đọc/khóa MRERP chưa đủ. Vẫn chỉ thiết kế, chưa code; các Team có workspace riêng theo ADR-0015.
+2. Xác định ASSETCONTROL MRE và refinement contract (OD-17/OD-27): thử một Team/Gmail Resource/profile, kiểm chứng ID, scope API, điểm đọc cục bộ, dữ liệu tối thiểu, lỗi và audit theo [danh sách kiểm kê](architecture/ecosystem-integration.md#51-thông-tin-api-cần-người-sở-hữu-sản-phẩm-cung-cấp). Chốt xác thực của slice trước production; bổ sung policy bàn giao máy/thu hồi ở OD-28. Không ghi credential vào tài liệu hoặc Git.
+3. Nghiệm thu Phase 3 baseline đã triển khai độc lập: Settings → Recruitment → Documents → Recognition/Stars.
+4. Giữ MKT City, reward catalog/redemption, Payroll, máy chấm công và CRM ngoài phạm vi hiện tại.
 
 ## Đọc sâu hơn
 

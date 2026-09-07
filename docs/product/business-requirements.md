@@ -104,11 +104,23 @@ MREKANBAN hiện tại chỉ tham chiếu Task và có thể sở hữu bố c�
 
 Không tin `role`, `team_id`, `owner_id`, `price_access` hoặc capability do client gửi.
 
-## 8. Definition of Done
+## 8. Tích hợp MKTLogin
+
+**Đã chốt qua ADR-0014.** Công ty sử dụng MKTLogin, không dùng MKT City trong phạm vi dự án hiện tại và không yêu cầu clone đầy đủ MKTLogin. Đích nghiệp vụ là người quản lý nhìn thấy resource trong ASSETCONTROL và biết resource đó đang liên kết với đối tượng thật nào trong MKTLogin.
+
+Liên kết phải có định danh ổn định, trạng thái kiểm chứng được và audit phù hợp; một URL tự do hoặc tên nhập tay giống nhau không đủ chứng minh hai resource là một.
+
+**Đã chốt qua [ADR-0015](../decisions/0015-mktlogin-workspace-per-team.md):** các Team sẽ có workspace MKTLogin riêng. Đây là yêu cầu tổ chức mục tiêu, chưa xác nhận mọi workspace đã tồn tại; không đồng nghĩa mỗi máy là một workspace hoặc đã có API tự động cấp/thu hồi quyền.
+
+**Yêu cầu người dùng làm rõ ngày 03/09/2026:** đây là phương án công ty họp bàn, chưa được MKT xác nhận khả năng hỗ trợ. Công ty dự kiến mua gói MKTLogin, cấp quyền dùng tài khoản con cho nhân viên; nhân viên vào MRERP nhận thông tin rồi dùng MKTLogin có sẵn mà không tự nhập credential. Mục tiêu khi nghỉ việc là chấm dứt quyền sử dụng của nhân viên, giữ nguyên tài khoản con, Gmail, profile và tài nguyên công ty. Cần thiết kế liên kết Employee–quyền sử dụng và cơ chế thực thi; không dùng xóa tài khoản/profile để thay cho thu hồi. Khả năng API/SSO/kiểm soát máy và hiệu lực với phiên đang mở vẫn chưa chốt tại [tài liệu tích hợp](../architecture/ecosystem-integration.md#56-bổ-sung-từ-người-dùng-gói-công-ty-và-tài-khoản-thành-viên), OD-27/OD-28 và ADR-0016 Proposed.
+
+**Chưa quyết định.** Resource MKTLogin nào nằm trong scope, ai có quyền link/unlink/sync, thao tác nào được gửi qua API, dữ liệu nào được sao chép và hành vi khi API lỗi.
+
+## 9. Definition of Done
 
 Điều kiện đạt/không đạt không được duy trì lặp lại trong tài liệu nghiệp vụ này. Source of truth chịu trách nhiệm chính là [04 — Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md); chiến lược test chi tiết nằm tại [Test strategy](../testing/test-strategy.md).
 
-## 9. Policy nghiệp vụ chưa chốt
+## 10. Policy nghiệp vụ chưa chốt
 
 - Công thức lương.
 - Chính sách chấm công và phép ngoài baseline tạm thời tại [Yêu cầu Leave/Attendance](leave-attendance-requirements.md).
@@ -117,8 +129,9 @@ Không tin `role`, `team_id`, `owner_id`, `price_access` hoặc capability do cl
 - Field matrix CRM.
 - Ranh giới Captain/Leader/Manager ngoài policy Task Phase 1.
 - Danh sách phòng ban, team, cấp bậc và capability chính thức.
+- Contract và policy chi tiết cho liên kết MKTLogin theo OD-27.
 
-## 10. Tài liệu liên quan
+## 11. Tài liệu liên quan
 
 - [Tổng quan sản phẩm](product-overview.md)
 - [Identity và phân quyền](../architecture/identity-and-authorization.md)
@@ -128,3 +141,4 @@ Không tin `role`, `team_id`, `owner_id`, `price_access` hoặc capability do cl
 - [People stories Phase 1](stories/phase-1-people-foundation.md)
 - [Tiêu chí nghiệm thu](../04-tieu-chi-nghiem-thu.md)
 - [Open decisions](../decisions/open-decisions.md)
+- [Tích hợp hệ sinh thái](../architecture/ecosystem-integration.md)

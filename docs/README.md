@@ -40,7 +40,7 @@ Các file `01–06` là bản dẫn đường ngắn gọn. Chúng không sao ch
 | Data/API/authorization contract Leave/Attendance hiện tại | [architecture/leave-attendance-contract.md](architecture/leave-attendance-contract.md) |
 | Data/API/worker/file contract Phase 3 | [architecture/phase-3-contract.md](architecture/phase-3-contract.md) |
 | Ma trận authorization Recruitment, Documents và Rewards | [architecture/phase-3-authorization-matrix.md](architecture/phase-3-authorization-matrix.md) |
-| API, event, snapshot và tích hợp product | [architecture/ecosystem-integration.md](architecture/ecosystem-integration.md) |
+| API, event, snapshot và tích hợp product | [architecture/ecosystem-integration.md](architecture/ecosystem-integration.md); phụ lục **Proposed**: [bản vẽ/kiến trúc MKTLogin trên máy công ty](architecture/mktlogin-company-device-proposal.md) |
 | VPS, database, worker, backup và quan sát | [operations/deployment.md](operations/deployment.md) |
 | Cấu hình và secret ở mức repository | [operations/configuration-and-secrets.md](operations/configuration-and-secrets.md) |
 | Điều kiện đạt/không đạt cấp sản phẩm và phase | [04-tieu-chi-nghiem-thu.md](04-tieu-chi-nghiem-thu.md) |

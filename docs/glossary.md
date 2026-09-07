@@ -22,5 +22,7 @@ Tài liệu này chuẩn hóa cách dùng từ trong repository. Nó không thay
 | Vertical slice | Một luồng nhỏ chạy xuyên UI, API, database, authorization, audit và test |
 | Fail-closed | Khi thiếu thông tin/quyền hoặc có lỗi kiểm tra thì mặc định từ chối |
 | Break-glass | Cơ chế truy cập khẩn cấp có kiểm soát; hiện chưa được quyết định cho ASSETCONTROL |
+| MKTLogin | Hệ thống bên ngoài công ty đang dùng để vận hành nhiều tài khoản Marketing trong các môi trường trình duyệt tách biệt; không phải Identity Provider của MRERP |
+| MKTLogin resource link | Mapping có định danh giữa một Resource trong ASSETCONTROL và đối tượng thật tương ứng trong MKTLogin; không đồng nghĩa sao chép cookie, session hoặc secret sang MRERP |
 
 Tên product chuẩn trong tài liệu là **MRERP Core**, **MRECRM**, **ASSETCONTROL** và **MREKANBAN**. Tên thư mục/domain triển khai chỉ được chốt qua source of truth hoặc ADR tương ứng.

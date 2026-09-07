@@ -11,7 +11,7 @@ Tài liệu này chịu trách nhiệm chính về chiến lược kiểm thử 
 - Unit test cho policy, service/use case và logic thuần.
 - API test cho contract, validation và authorization.
 - Integration test cho database, queue và adapter trong phạm vi kiểm soát.
-- Contract test giữa MRERP, CRM, ASSETCONTROL và MREKANBAN.
+- Contract test giữa MRERP, CRM, ASSETCONTROL và MREKANBAN; adapter ASSETCONTROL–MKTLogin phải có contract test khi OD-27 được duyệt và integration được triển khai.
 - E2E cho các luồng nghiệp vụ quan trọng.
 - Migration/rollback test khi thay đổi dữ liệu hoặc identity mapping.
 - Load/resilience test cho CRM worker, Dashboard snapshot và integration failure.

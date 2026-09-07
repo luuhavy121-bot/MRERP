@@ -35,6 +35,7 @@ Sự thống nhất không có nghĩa gom mọi code, process và database vào 
 - Người dùng chuyển sang product được cấp quyền mà không nhập lại mật khẩu.
 - Employee, Team và employment status có một nguồn chuẩn; MRE hiện không có tầng Phòng ban.
 - Product chuyên biệt vẫn cô lập được dữ liệu, tải và quyền nhạy cảm.
+- Tài nguyên Marketing do công ty quản lý trong ASSETCONTROL có thể liên kết tới tài nguyên thật trong MKTLogin qua API, không chỉ tồn tại như bản ghi thủ công.
 - Kiến trúc đủ đơn giản để một developer cùng AI vận hành.
 - Cấu hình tổ chức được dữ liệu hóa để tái sử dụng platform cho công ty khác.
 
@@ -111,6 +112,16 @@ Các persona hiện được mô tả:
 **Đã chốt về ownership.** MRERP sở hữu hồ sơ nhân sự và trạng thái employment; product đích tự kiểm authorization.
 
 **Chưa quyết định.** Identity Provider cụ thể và hành vi khi IdP suy giảm.
+
+### 5.6 MKTLogin
+
+**Đã chốt qua ADR-0014.** MKTLogin là hệ thống bên ngoài được công ty sử dụng để vận hành các tài khoản Marketing. Hệ sinh thái không clone đầy đủ sản phẩm này. ASSETCONTROL vẫn sở hữu Resource, Grant, Vault và audit; MKTLogin vẫn vận hành tài nguyên thực tế của nó. Mục tiêu cuối là resource trong ASSETCONTROL có định danh/liên kết kiểm chứng được với resource tương ứng trong MKTLogin qua API.
+
+**Không làm.** Không đưa MKT City vào phạm vi hiện tại; không biến MRERP thành nơi lưu cookie, phiên hoặc credential MKTLogin.
+
+**Workflow mục tiêu do công ty đề xuất:** gói công ty/tài khoản con, nhân sự vào MRERP rồi dùng MKTLogin có sẵn mà không tự nhập credential; khi nghỉ việc mất quyền sử dụng nhưng tài khoản/profile/tài nguyên giữ nguyên. Người dùng đã làm rõ đây là ý tưởng nội bộ, chưa phải tính năng MKT xác nhận. [Yêu cầu chi tiết](business-requirements.md#8-tích-hợp-mktlogin) và ADR-0016 vẫn cần chốt nơi thực thi quyền; chưa chọn SSO hoặc coi đã tích hợp.
+
+**Chưa quyết định.** Loại resource cần mapping, API authentication, chiều và tần suất đồng bộ, thao tác lifecycle được phép, reconciliation và failure handling. Các nội dung này thuộc OD-27.
 
 ## 6. Product, module, deployable và microservice
 

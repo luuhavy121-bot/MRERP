@@ -55,7 +55,11 @@ People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu h
 
 **Đã chốt.** Hiện chỉ CEO và Leader được cấp quyền. ASSETCONTROL tự kiểm tra quyền ở server và không gửi nội dung Vault sang MRERP.
 
+**Đã chốt qua ADR-0014.** ASSETCONTROL phải tiến tới quản lý một liên kết thật giữa resource của mình và resource tương ứng trong MKTLogin qua API. Không clone đầy đủ chức năng MKTLogin và không đưa MKT City vào phạm vi hiện tại.
+
 **Chưa quyết định.** Đối tượng khác có được truy cập trong tương lai hay không.
+
+**Chưa quyết định.** Resource nào được liên kết, thao tác nào được gửi sang MKTLogin, cách xác thực API, đồng bộ/đối soát và xử lý lỗi cụ thể.
 
 ## Những policy chưa được phép tự chọn
 
