@@ -117,3 +117,5 @@ Prototype chỉ minh họa giao diện và UX. Không được coi prototype là
 ## Chạy local
 
 Xem [hướng dẫn backend](apps/mrerp/backend/README.md) và [hướng dẫn frontend](apps/mrerp/frontend/README.md). Chế độ nhanh dùng SQLite; Docker Compose dùng PostgreSQL 16. Không dùng mock Identity hoặc credential demo ở production.
+
+Trên Windows, chuẩn bị `.env` từ `.env.example` một lần rồi nhấp đúp `start-mrerp.bat`. Launcher sẽ mở Docker Desktop khi cần, chạy Docker Compose, chờ frontend sẵn sàng và mở `http://localhost:4173/` trong trình duyệt mặc định. `.env` chỉ nằm trên máy local và không được commit.
