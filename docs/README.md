@@ -1,5 +1,7 @@
 # Bộ source of truth MRERP
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](product/hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Thư mục này chuyển context bàn giao MRERP thành các tài liệu có phạm vi rõ ràng. Mỗi khẳng định quan trọng phải giữ một trong ba nhãn: **Đã chốt**, **Đề xuất mục tiêu** hoặc **Chưa quyết định**.
 
 ## Đường đọc chính
@@ -88,3 +90,9 @@ Trước khi commit thay đổi tài liệu:
 - Kiểm tra không có hai tài liệu cùng tự nhận sở hữu một policy/contract.
 - Kiểm tra prototype không bị dùng làm bằng chứng production.
 - Chạy `python scripts/check_docs.py` và `git diff --check`.
+
+## HR mở rộng 01/10/2026
+
+- [Yêu cầu Tuyển dụng/KPI](product/hr-expansion-requirements.md): source of truth nghiệp vụ.
+- [Contract và quyền](architecture/hr-expansion-contract.md): dữ liệu/API/phân quyền.
+- [Nghiệm thu](testing/hr-expansion-acceptance.md): acceptance hai luồng.

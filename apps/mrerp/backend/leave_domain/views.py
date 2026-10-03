@@ -18,6 +18,7 @@ from .serializers import (
     LeaveRequestSerializer,
     LeaveRequestUpdateSerializer,
     LeaveReviewSerializer,
+    LeaveCalendarSerializer,
 )
 from .services import adjust_attendance, attendance_projection, create_leave_request, review_leave_request, update_leave_request
 
@@ -25,6 +26,18 @@ from .services import adjust_attendance, attendance_projection, create_leave_req
 class LeaveRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = LeaveRequest.objects.none()
     serializer_class = LeaveRequestSerializer
+
+    @extend_schema(parameters=[OpenApiParameter("month", OpenApiTypes.STR, required=True)], responses=LeaveCalendarSerializer(many=True))
+    @action(detail=False, methods=["get"])
+    def calendar(self, request):
+        from .services import month_bounds
+        start, end = month_bounds(request.query_params.get("month", ""))
+        rows = self.get_queryset().filter(status="approved", start_date__lte=end, end_date__gte=start)
+        # A dedicated projection deliberately excludes leave reasons and review notes.
+        return Response([{"uuid": str(item.pk), "name": item.requester.display_name,
+            "employee_code": item.requester.employee_code, "team_name": item.requester_team.name if item.requester_team else None,
+            "start_date": item.start_date, "end_date": item.end_date,
+            "start_period": item.start_period, "end_period": item.end_period} for item in rows])
 
     def get_queryset(self):
         require_capability(self.request.user, VIEW_OWN_LEAVE)

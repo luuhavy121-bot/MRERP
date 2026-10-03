@@ -6,7 +6,7 @@
 - Related source of truth: `docs/product/phase-3-requirements.md`
 - Related open decisions: `OD-05, OD-13, OD-14 (chỉ giải quyết một phần; không đóng)`
 - Supersedes: `Không có`
-- Superseded by: `Không có`
+- Superseded by: `ADR-0020 cho catalog/redemption và hạn mức sao; các phần khác giữ phạm vi riêng`
 
 ## Context
 
@@ -27,7 +27,9 @@ Người sở hữu sản phẩm yêu cầu ưu tiên Phase 3 trước phần c�
 - Notification xã hội có thể tắt; notification account, security, Task, Leave và Recruitment liên quan vẫn bắt buộc. Phase 3 chỉ gửi notification trong MRERP.
 - Personal Settings chỉ bổ sung notification preferences và security summary; không xây lại Profile, Account hoặc theme.
 
-## Deliberately unresolved
+## Deliberately unresolved tại thời điểm ADR-0013
+
+Phần catalog/redemption dưới đây đã được giải quyết cục bộ qua [ADR-0020](0020-stars-redemption-and-recognition.md) ngày 02/10/2026. Giữ nội dung này như lịch sử quyết định, không dùng để chặn phạm vi mới.
 
 **Chưa quyết định:**
 

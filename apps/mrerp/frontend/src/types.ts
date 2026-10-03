@@ -119,6 +119,8 @@ export type Page<T> = {
 
 export type LeaveRequest = {
   uuid: string
+  start_period: 'am' | 'pm'
+  end_period: 'am' | 'pm'
   requester_code: string
   requester_name: string
   team_name: string | null
@@ -153,11 +155,11 @@ export type AttendanceRow = {
 
 export type DashboardNotification = {
   uuid: string
-  kind: 'feed' | 'task' | 'goal' | 'leave' | 'account' | 'recruitment' | 'document' | 'recognition'
+  kind: 'feed' | 'task' | 'goal' | 'leave' | 'account' | 'recruitment' | 'performance' | 'document' | 'recognition'
   kind_label: string
   title: string
   body: string
-  target_type: 'post' | 'task' | 'goal' | 'leave' | 'profile' | 'recruitment' | 'document' | 'recognition'
+  target_type: 'post' | 'task' | 'goal' | 'leave' | 'profile' | 'recruitment' | 'document' | 'recognition' | 'performance'
   target_uuid: string | null
   is_read: boolean
   read_at: string | null
@@ -324,14 +326,21 @@ export type PersonalPreferences = {
 }
 
 export type HiringRequest = {
+  location: string
+  employment_type: string
+  description: string
+  requirements: string
+  benefits: string
+  deadline: string | null
   uuid: string
   team: string
   team_name: string
   title: string
   headcount: number
   justification: string
+  utilization_plan: string
   requester_name: string
-  status: 'pending' | 'approved' | 'rejected' | 'closed'
+  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'closed'
   status_label: string
   review_note: string
   reviewed_at: string | null
@@ -341,6 +350,10 @@ export type HiringRequest = {
 }
 
 export type JobOpening = {
+  hiring_request_deadline?: string | null
+  slug: string | null
+  published_at: string | null
+  closed_at: string | null
   uuid: string
   hiring_request: string
   team: string
@@ -370,6 +383,10 @@ export type ApplicationTransition = {
 }
 
 export type RecruitmentApplication = {
+  interview_at?: string | null
+  interviewer_name?: string
+  recruiter_note?: string
+  introduction?: string
   uuid: string
   candidate_name: string
   candidate_email?: string
@@ -379,7 +396,7 @@ export type RecruitmentApplication = {
   opening_title: string
   team_uuid: string
   team_name: string
-  stage: 'new' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected'
+  stage: 'new' | 'screening' | 'interview' | 'hired' | 'rejected'
   stage_label: string
   converted_employee_uuid: string | null
   version: number

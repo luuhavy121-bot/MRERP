@@ -7,7 +7,7 @@ function csrfToken() {
     ?.split('=')[1] ?? ''
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const method = (init.method ?? 'GET').toUpperCase()
   const response = await fetch(path, {
     credentials: 'include',
@@ -24,8 +24,8 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const errorDetails = payload.errors && typeof payload.errors === 'object'
       ? Object.values(payload.errors as Record<string, unknown>).flat(2).join(' ')
       : ''
-    const message = errorDetails || payload.detail || 'Có lỗi xảy ra.'
-    const correlation = payload.correlation_id ? ` (Mã lỗi: ${payload.correlation_id})` : ''
+    const message = errorDetails || payload.detail || 'CÃ³ lá»—i xáº£y ra.'
+    const correlation = payload.correlation_id ? ` (MÃ£ lá»—i: ${payload.correlation_id})` : ''
     throw new Error(`${String(message)}${correlation}`)
   }
   return payload as T
@@ -93,7 +93,7 @@ export const api = {
     const response = await fetch('/api/v1/people/employees/export-csv/', { credentials: 'include' })
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}))
-      throw new Error(payload.detail || 'Không thể xuất danh sách nhân sự.')
+      throw new Error(payload.detail || 'KhÃ´ng thá»ƒ xuáº¥t danh sÃ¡ch nhÃ¢n sá»±.')
     }
     return response.blob()
   },
@@ -114,10 +114,10 @@ export const api = {
   teamLeaders: (teamUuid: string) => request<TeamLeader[]>(`/api/v1/people/teams/${teamUuid}/leaders/`),
   removeLeader: (teamUuid: string, employeeUuid: string) =>
     request<void>(`/api/v1/people/teams/${teamUuid}/leaders/${employeeUuid}/`, { method: 'DELETE' }),
-  leaveRequests: () => request<Page<LeaveRequest>>('/api/v1/leave/requests/'),
-  submitLeave: (payload: { start_date: string; end_date: string; reason: string }) =>
+  leaveRequests: async () => ({ results: await requestAll<LeaveRequest>('/api/v1/leave/requests/') }),
+  submitLeave: (payload: { start_date: string; end_date: string; start_period?: string; end_period?: string; reason: string }) =>
     request<LeaveRequest>('/api/v1/leave/requests/', { method: 'POST', body: JSON.stringify(payload) }),
-  updateLeave: (uuid: string, payload: { start_date: string; end_date: string; reason: string; expected_version: number }) =>
+  updateLeave: (uuid: string, payload: { start_date: string; end_date: string; start_period?: string; end_period?: string; reason: string; expected_version: number }) =>
     request<LeaveRequest>(`/api/v1/leave/requests/${uuid}/`, { method: 'PATCH', body: JSON.stringify(payload) }),
   reviewLeave: (uuid: string, decision: 'approved' | 'rejected', note = '') =>
     request<LeaveRequest>(`/api/v1/leave/requests/${uuid}/review/`, { method: 'POST', body: JSON.stringify({ decision, note }) }),
@@ -166,13 +166,13 @@ export const api = {
     method: 'PATCH', body: JSON.stringify({ social_notifications_enabled }),
   }),
   recruitmentOptions: () => request<{ teams: Phase3AudienceOptions['teams'] }>('/api/v1/recruitment/options/'),
-  recruitmentRequests: () => request<Page<HiringRequest>>('/api/v1/recruitment/requests/'),
-  createRecruitmentRequest: (payload: { team_uuid: string; title: string; headcount: number; justification: string }) =>
+  recruitmentRequests: async () => ({ results: await requestAll<HiringRequest>('/api/v1/recruitment/requests/') }),
+  createRecruitmentRequest: (payload: { team_uuid: string; title: string; headcount: number; justification: string; utilization_plan?: string }) =>
     request<HiringRequest>('/api/v1/recruitment/requests/', { method: 'POST', body: JSON.stringify(payload) }),
   reviewRecruitmentRequest: (uuid: string, decision: 'approved' | 'rejected', note = '') =>
     request<HiringRequest>(`/api/v1/recruitment/requests/${uuid}/review/`, { method: 'POST', body: JSON.stringify({ decision, note }) }),
-  recruitmentOpenings: () => request<Page<JobOpening>>('/api/v1/recruitment/openings/'),
-  recruitmentApplications: () => request<Page<RecruitmentApplication>>('/api/v1/recruitment/applications/'),
+  recruitmentOpenings: async () => ({ results: await requestAll<JobOpening>('/api/v1/recruitment/openings/') }),
+  recruitmentApplications: async () => ({ results: await requestAll<RecruitmentApplication>('/api/v1/recruitment/applications/') }),
   createRecruitmentApplication: (payload: { opening_uuid: string; full_name: string; email: string; phone: string; source: string }) =>
     request<RecruitmentApplication>('/api/v1/recruitment/applications/', { method: 'POST', body: JSON.stringify(payload) }),
   transitionRecruitmentApplication: (uuid: string, stage: RecruitmentApplication['stage'], note = '') =>

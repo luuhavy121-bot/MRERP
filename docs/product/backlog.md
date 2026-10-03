@@ -1,5 +1,7 @@
 # Product backlog MRERP
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Tài liệu này là source of truth cho cấu trúc Epic, trạng thái backlog và phạm vi được refinement. Thứ tự phase vẫn do [Roadmap MRERP](roadmap.md) chịu trách nhiệm chính; yêu cầu nghiệp vụ vẫn thuộc [Yêu cầu nghiệp vụ](business-requirements.md).
 
 ## 1. Chiến lược backlog
@@ -34,7 +36,7 @@ Visual prototype không tự chuyển story sang `In progress` hoặc `Accepted`
 | EPIC-03 | Task, Goal, recurrence và attachment chạy xuyên UI, API, DB, quyền, audit, worker và test | Phase 1 | `In progress — Chờ nghiệm thu` |
 | EPIC-04 | MRERP shell, Dashboard nội bộ và Bảng tin; snapshot/fallback ngoài product để Phase 2 | Phase 1–2 | `In progress — Chờ nghiệm thu` |
 | EPIC-05 | Attendance/Leave và Approval theo từng loại | Phase 1–2 | `In progress` — edit pending, Leader duyệt một cấp, holiday calendar, HR xem/điều chỉnh |
-| EPIC-06 | Recognition và Stars | Phase 3 | `Implementation hoàn tất — Chờ nghiệm thu`; redemption/catalog vẫn `Blocked` |
+| EPIC-06 | Recognition và Stars | Phase 3 | `Implementation hoàn tất — Chờ nghiệm thu`; catalog/redemption mở rộng theo ADR-0020: `Implementation hoàn tất / Chờ nghiệm thu sản phẩm` |
 | EPIC-07 | Recruitment, Documents và Personal Settings | Phase 3 | `Implementation hoàn tất — Chờ nghiệm thu` theo ADR-0013 |
 | EPIC-08 | ASSETCONTROL–MKTLogin resource linkage và MREKANBAN transition | Phase 4 | `Refining` — mục tiêu MKTLogin đã chốt; contract bị chặn bởi OD-27 |
 | EPIC-09 | MRECRM tối thiểu, worker, field policy và reporting read model | Phase 5 | `Idea` — cần ADR trước scaffold |

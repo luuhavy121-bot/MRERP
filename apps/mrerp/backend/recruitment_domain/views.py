@@ -24,6 +24,7 @@ from .serializers import (
     CandidateConvertResponseSerializer,
     CandidateConvertSerializer,
     HiringRequestCreateSerializer,
+    HiringRequestContentSerializer,
     HiringRequestReviewSerializer,
     HiringRequestSerializer,
     OpeningSerializer,
@@ -31,6 +32,8 @@ from .serializers import (
 )
 from .services import (
     add_application_attachments,
+    edit_request,
+    close_opening,
     convert_application,
     create_application,
     create_hiring_request,
@@ -76,6 +79,18 @@ class HiringRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
         hiring_request = create_hiring_request(actor_user=request.user, team=team, **serializer.validated_data)
         return Response(HiringRequestSerializer(hiring_request).data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(request=HiringRequestContentSerializer, responses=HiringRequestSerializer)
+    def partial_update(self, request, pk=None):
+        item = self.get_object()
+        serializer = HiringRequestContentSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        return Response(HiringRequestSerializer(edit_request(request.user, item, serializer.validated_data)).data)
+
+    @extend_schema(request=None, responses=HiringRequestSerializer)
+    @action(detail=True, methods=["post"])
+    def submit(self, request, pk=None):
+        return Response(HiringRequestSerializer(edit_request(request.user, self.get_object(), submit=True)).data)
+
     @extend_schema(request=HiringRequestReviewSerializer, responses={200: HiringRequestSerializer, 400: ApiErrorSerializer, 403: ApiErrorSerializer})
     @action(detail=True, methods=["post"])
     def review(self, request, pk=None):
@@ -96,14 +111,31 @@ class OpeningViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = JobOpening.objects.none()
 
     def get_queryset(self):
+        require_capability(self.request.user, VIEW_SCOPED_RECRUITMENT)
         get_actor_employee(self.request.user)
         request_ids = visible_hiring_requests(self.request.user).values_list("pk", flat=True)
         return JobOpening.objects.filter(hiring_request_id__in=request_ids).select_related("team", "hiring_request")
+
+    @extend_schema(request=None, responses=OpeningSerializer)
+    @action(detail=True, methods=["post"])
+    def close(self, request, pk=None):
+        return Response(OpeningSerializer(close_opening(request.user, self.get_object())).data)
+
+
+from .interviews import InterviewSerializer, update_interview
 
 
 class ApplicationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = ApplicationSerializer
     queryset = Application.objects.none()
+
+    @extend_schema(request=InterviewSerializer, responses=ApplicationSerializer)
+    @action(detail=True, methods=["post"])
+    def interview(self, request, pk=None):
+        serializer = InterviewSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated = update_interview(request.user, self.get_object(), serializer.validated_data)
+        return Response(ApplicationSerializer(updated, context={"request": request}).data)
 
     def get_queryset(self):
         require_capability(self.request.user, VIEW_SCOPED_RECRUITMENT)

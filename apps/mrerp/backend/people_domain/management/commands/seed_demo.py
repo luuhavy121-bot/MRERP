@@ -9,6 +9,8 @@ from preferences_domain.models import NotificationPreference
 
 GROUP_PERMISSIONS = {
     HR_GROUP: [
+        "import_attendance", "view_own_actual_attendance",
+        "view_company_reviews", "reopen_reviews", "view_own_reviews",
         "view_employee", "add_employee", "change_employee", "view_hr_detail",
         "submit_leave_request", "view_own_leave_request", "view_company_attendance", "adjust_company_attendance",
         "change_own_profile", "change_own_password", "provision_employee_account",
@@ -25,6 +27,8 @@ GROUP_PERMISSIONS = {
         "grant_stars_company", "moderate_recognition",
     ],
     LEADER_GROUP: [
+        "view_team_actual_attendance", "view_own_actual_attendance",
+        "manage_team_reviews", "view_own_reviews", "manage_candidates",
         "view_employee",
         "view_company_directory",
         "promote_employee",
@@ -49,6 +53,8 @@ GROUP_PERMISSIONS = {
         "access_assetcontrol",
     ],
     STAFF_GROUP: [
+        "view_own_actual_attendance",
+        "view_own_reviews",
         "view_employee", "submit_leave_request", "view_own_leave_request",
         "change_own_profile", "change_own_password",
         "view_post", "add_post", "add_comment", "add_postreaction", "share_post",
@@ -56,6 +62,8 @@ GROUP_PERMISSIONS = {
         "manage_own_preferences", "view_documents", "view_rewards",
     ],
     CEO_GROUP: [
+        "view_own_actual_attendance",
+        "view_company_reviews", "reopen_reviews", "view_own_reviews",
         "view_employee",
         "view_company_directory",
         "view_hr_detail",
@@ -112,7 +120,7 @@ class Command(BaseCommand):
                 codename__in=codenames,
                 content_type__app_label__in=[
                     "people_domain", "leave_domain", "feed_domain", "task_domain",
-                    "preferences_domain", "recruitment_domain", "documents_domain", "rewards_domain",
+                    "performance_domain", "preferences_domain", "recruitment_domain", "documents_domain", "rewards_domain",
                 ],
             )
             group.permissions.set(permissions)

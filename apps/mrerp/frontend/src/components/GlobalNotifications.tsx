@@ -3,7 +3,7 @@ import { api } from '../api'
 import type { DashboardNotification } from '../types'
 import { AppIcon } from './AppIcon'
 
-type Destination = 'profile' | 'feed' | 'tasks' | 'leave' | 'recruitment' | 'documents' | 'rewards'
+type Destination = 'profile' | 'feed' | 'tasks' | 'leave' | 'recruitment' | 'documents' | 'rewards' | 'performance'
 
 function destinationFor(notification: DashboardNotification): Destination {
   if (notification.target_type === 'post') return 'feed'
@@ -11,7 +11,8 @@ function destinationFor(notification: DashboardNotification): Destination {
   if (notification.target_type === 'leave') return 'leave'
   if (notification.target_type === 'recruitment') return 'recruitment'
   if (notification.target_type === 'document') return 'documents'
-  if (notification.target_type === 'recognition') return 'rewards'
+  if (notification.target_type === 'performance') return 'performance'
+  if (notification.target_type === 'recognition') return 'performance'
   return 'profile'
 }
 

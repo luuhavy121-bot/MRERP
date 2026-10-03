@@ -27,7 +27,7 @@ def visible_applications(user):
         "opening__hiring_request",
         "converted_employee",
     ).prefetch_related("transitions", "attachments")
-    if user.has_perm(VIEW_COMPANY_RECRUITMENT) or user.has_perm(MANAGE_CANDIDATES):
+    if user.has_perm(VIEW_COMPANY_RECRUITMENT):
         return queryset
     return queryset.filter(opening__team_id__in=led_team_ids(actor))
 
@@ -35,3 +35,10 @@ def visible_applications(user):
 def can_view_candidate_files(user, application):
     get_actor_employee(user)
     return user.has_perm(MANAGE_CANDIDATES) and visible_applications(user).filter(pk=application.pk).exists()
+
+
+def require_team_access(user, team_id):
+    from rest_framework.exceptions import PermissionDenied
+    actor = get_actor_employee(user)
+    if not user.has_perm(VIEW_COMPANY_RECRUITMENT) and not TeamLeadership.objects.filter(leader=actor, team_id=team_id).exists():
+        raise PermissionDenied("Bạn không có quyền với Team này.")

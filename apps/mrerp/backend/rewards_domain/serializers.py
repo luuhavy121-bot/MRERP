@@ -44,6 +44,7 @@ class StarEntryCreateSerializer(serializers.Serializer):
 
 
 class BalanceSerializer(serializers.Serializer):
+    held = serializers.IntegerField()
     balance = serializers.IntegerField()
     ledger = StarEntrySerializer(many=True)
 

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](0017-public-recruitment.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Thư mục này lưu các quyết định kiến trúc có ảnh hưởng đáng kể đến product boundary, dữ liệu, security, integration, deployment hoặc vận hành.
 
 ## Khi nào cần ADR
@@ -58,7 +60,17 @@ Một xác nhận trong chat chỉ được dùng khi thực sự xuất hiện 
 - [ADR-0010: People account và employment lifecycle](0010-people-account-and-employment-lifecycle.md) — `Accepted`; IdP production vẫn chưa quyết định.
 - [ADR-0011: Tổng quan, Bảng tin và Công việc operational baseline](0011-dashboard-feed-task-operational-baseline.md) — `Accepted`; implementation vẫn chờ nghiệm thu và OD-14 vẫn mở.
 - [ADR-0012: Nền Leave và Attendance đơn giản cho Phase 2](0012-phase-2-leave-attendance-foundation.md) — `Accepted`; OD-13 vẫn mở cho payroll và policy chi tiết.
-- [ADR-0013: Phase 3 — Văn hóa và vận hành nhân sự](0013-phase-3-culture-operations-baseline.md) — `Accepted`; redemption/catalog approval và object storage production vẫn mở.
+- [ADR-0013: Phase 3 — Văn hóa và vận hành nhân sự](0013-phase-3-culture-operations-baseline.md) — `Accepted`; catalog/redemption được bổ sung tại ADR-0020; object storage production vẫn mở.
 - [ADR-0014: Mục tiêu tích hợp MKTLogin với ASSETCONTROL](0014-mktlogin-assetcontrol-integration-goal.md) — `Accepted`; contract API/security/permission/failure vẫn mở ở OD-27.
 - [ADR-0015: Workspace MKTLogin riêng theo Team](0015-mktlogin-workspace-per-team.md) — `Accepted`; chỉ chốt yêu cầu workspace riêng, contract và quyền API vẫn mở ở OD-27.
 - [ADR-0016: Tích hợp MKTLogin trên máy công ty](0016-mktlogin-company-device-integration-proposal.md) — `Proposed`; bản vẽ/kiến trúc để duyệt, chưa code; contract và policy bàn giao/thu hồi vẫn mở ở OD-27/OD-28.
+
+- [ADR-0017: Tuyển dụng công khai](0017-public-recruitment.md) — Accepted.
+- [ADR-0018: KPI hàng tháng](0018-monthly-performance.md) — Accepted.
+
+- [ADR-0019: Nhập bảng công Excel](0019-attendance-excel-import.md) — Accepted ngày 01/10/2026.
+
+- [ADR-0020: Sao, đổi thưởng và ghi nhận trong đánh giá nhân sự](0020-stars-redemption-and-recognition.md) — Accepted ngày 02/10/2026; ngân sách tiền mặt CEO hoãn.
+
+- [ADR-0021: Hoàn thiện demo HR, nghỉ nửa ngày và thứ Bảy](0021-hr-demo-half-day-and-workflow.md) — Accepted ngày 03/10/2026; demo local 06/10, KPI tự đặt bởi Leader.
+- [ADR-0022: Pipeline tuyển dụng gọn và kế hoạch sử dụng nhân sự](0022-short-recruitment-pipeline.md) — Accepted ngày 03/10/2026; bỏ Đề nghị, giữ duyệt tin.

@@ -1,5 +1,7 @@
 # 02 — Yêu cầu sản phẩm
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](product/hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Tài liệu này giúp người sở hữu sản phẩm hiểu hệ thống cần làm được gì. Chi tiết module và policy nghiệp vụ được quản lý tại [Yêu cầu nghiệp vụ chuyên sâu](product/business-requirements.md); điều kiện đạt/không đạt nằm tại [04 — Tiêu chí nghiệm thu](04-tieu-chi-nghiem-thu.md).
 
 ## Trải nghiệm chung
@@ -33,7 +35,7 @@ People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu h
 
 **Đã chốt ngày 29/08/2026.** Leave/Attendance baseline gồm nhân sự gửi đơn, Leader duyệt theo Team và HR xem bảng công; công thức lương chưa thuộc phạm vi. Sau đó Task được mở lại cùng Tổng quan và Bảng tin theo [yêu cầu ba module](product/dashboard-feed-task-requirements.md).
 
-**Đã chốt cục bộ cho Phase 3.** Recruitment gồm request một cấp, pipeline và chuyển ứng viên đã tuyển thành Employee `Thử việc`; Documents có audience/ACL/version/retention; Recognition tách khỏi Star ledger; người dùng chỉ được tắt notification xã hội. Contract chi tiết nằm tại [Yêu cầu Phase 3](product/phase-3-requirements.md). Reward catalog/redemption và object storage production vẫn **Chưa quyết định**.
+**Đã chốt cục bộ cho Phase 3.** Recruitment gồm request một cấp, pipeline và chuyển ứng viên đã tuyển thành Employee `Thử việc`; Documents có audience/ACL/version/retention; Recognition tách khỏi Star ledger; người dùng chỉ được tắt notification xã hội. Contract chi tiết nằm tại [Yêu cầu Phase 3](product/phase-3-requirements.md). Reward catalog/redemption được chốt qua [ADR-0020](decisions/0020-stars-redemption-and-recognition.md); ngân sách tiền mặt CEO hoãn và object storage production vẫn **Chưa quyết định**.
 
 ## CRM
 
@@ -64,9 +66,9 @@ People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu h
 ## Những policy chưa được phép tự chọn
 
 - Ranh giới Captain/Leader/Manager ngoài policy Task Phase 1.
-- Người được vào Admin Panel và quản trị Rewards.
+- Người được vào Admin Panel ngoài phạm vi đã duyệt; quản trị Rewards theo ADR-0020.
 - Field matrix CRM.
-- Công thức lương, chấm công, phép và đổi thưởng.
+- Công thức lương, chấm công, phép và reward policy ngoài ADR-0020.
 - Cơ cấu/capability chính thức của MRE.
 
 ## Đọc sâu hơn
@@ -77,3 +79,5 @@ People/HR Foundation là slice nghiệp vụ đầu tiên của Phase 1. Cấu h
 - [Yêu cầu Phase 3](product/phase-3-requirements.md)
 
 Tiếp theo: [03 — Thiết kế kỹ thuật](03-thiet-ke-ky-thuat.md).
+
+Nhập bảng chấm công Excel được **Đã chốt** riêng qua [yêu cầu Leave/Attendance](product/leave-attendance-requirements.md#6-nhập-bảng-công-hr-từ-excel); chưa kết nối thiết bị.

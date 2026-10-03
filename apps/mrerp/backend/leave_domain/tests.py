@@ -155,7 +155,8 @@ class LeaveAttendanceApiTests(APITestCase):
         created = self.create_request()
         self.authenticate(self.leader)
         url = f"/api/v1/leave/requests/{created.data['uuid']}/review/"
-        self.assertEqual(self.client.post(url, {"decision": "rejected"}, format="json").status_code, 200)
+        self.assertEqual(self.client.post(url, {"decision": "rejected"}, format="json").status_code, 400)
+        self.assertEqual(self.client.post(url, {"decision": "rejected", "note": "Không thể bố trí"}, format="json").status_code, 200)
         self.assertEqual(self.client.post(url, {"decision": "approved"}, format="json").status_code, 400)
 
     def test_hr_attendance_projection_reflects_approved_leave(self):
@@ -186,7 +187,7 @@ class LeaveAttendanceApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         row = next(item for item in response.data if item["employee_code"] == "STF01")
         self.assertEqual(row["public_holiday_days"], 2)
-        self.assertEqual(row["scheduled_workdays"], 20)
+        self.assertEqual(row["scheduled_workdays"], 24)
 
     def test_hr_can_adjust_attendance_and_staff_cannot(self):
         self.authenticate(self.hr)

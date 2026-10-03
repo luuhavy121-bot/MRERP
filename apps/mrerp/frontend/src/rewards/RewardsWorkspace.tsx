@@ -1,82 +1,42 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { api } from '../api'
-import { AppIcon } from '../components/AppIcon'
-import type { LeaderboardRow, Recognition, RewardAudienceMember, Session, StarBalance } from '../types'
-
-type RewardView = 'recognition' | 'leaderboard' | 'ledger'
-type Period = 'month' | 'quarter' | 'year'
-function when(value: string) { return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(value)) }
-
-export function RewardsWorkspace({ session }: { session: Session }) {
-  const capabilities = useMemo(() => new Set(session.capabilities ?? []), [session.capabilities])
-  const canRecognize = capabilities.has('rewards_domain.recognize_scoped')
-  const canGrant = capabilities.has('rewards_domain.grant_stars_scoped')
-  const [view, setView] = useState<RewardView>('recognition')
-  const [period, setPeriod] = useState<Period>('month')
-  const [recognitions, setRecognitions] = useState<Recognition[]>([])
-  const [audience, setAudience] = useState<RewardAudienceMember[]>([])
-  const [balance, setBalance] = useState<StarBalance>({ balance: 0, ledger: [] })
-  const [ranking, setRanking] = useState<LeaderboardRow[]>([])
-  const [loading, setLoading] = useState(true)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  const [recognitionForm, setRecognitionForm] = useState({ recipient_uuids: [] as string[], category: '', message: '' })
-  const [starForm, setStarForm] = useState({ employee_uuid: '', amount: 1, reason: '' })
-
-  const load = useCallback(async (selectedPeriod: Period = period) => {
-    setLoading(true); setError('')
-    try {
-      const [recognitionPage, people, myBalance, leaderboard] = await Promise.all([
-        api.recognitions(), api.rewardAudience(), api.myStarBalance(), api.leaderboard(selectedPeriod),
-      ])
-      setRecognitions(recognitionPage.results); setAudience(people); setBalance(myBalance); setRanking(leaderboard)
-      setStarForm((current) => ({ ...current, employee_uuid: current.employee_uuid || people[0]?.uuid || '' }))
-    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Không tải được Ghi nhận & Sao.') }
-    finally { setLoading(false) }
-  }, [period])
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => void load(), 0)
-    return () => window.clearTimeout(timeout)
-  }, [load])
-
-  async function createRecognition(event: React.FormEvent) {
-    event.preventDefault(); setBusy(true); setError('')
-    try { await api.createRecognition(recognitionForm); setRecognitionForm({ recipient_uuids: [], category: '', message: '' }); await load() }
-    catch (reason) { setError(reason instanceof Error ? reason.message : 'Không gửi được lời ghi nhận.') }
-    finally { setBusy(false) }
-  }
-
-  async function grantStars(event: React.FormEvent) {
-    event.preventDefault(); setBusy(true); setError('')
-    try { await api.grantStars(starForm); setStarForm({ employee_uuid: audience[0]?.uuid ?? '', amount: 1, reason: '' }); await load() }
-    catch (reason) { setError(reason instanceof Error ? reason.message : 'Không ghi được giao dịch sao.') }
-    finally { setBusy(false) }
-  }
-
-  async function changePeriod(value: Period) { setPeriod(value); await load(value) }
-
-  return <section className="rewards-workspace phase3-workspace" aria-busy={loading || busy}>
-    <header className="rewards-hero">
-      <div><span className="star-signal"><AppIcon name="rewards" size={28} /></span><div><h2>Ghi nhận điều tốt.<br />Sao vẫn minh bạch.</h2><p>Recognition và sao là hai hành động độc lập. Mỗi thay đổi số dư đều để lại ledger.</p></div></div>
-      <div className="my-star-balance"><span>Số dư của bạn</span><strong>{balance.balance}</strong><small>sao · không hết hạn trong baseline</small></div>
-    </header>
-    <div className="reward-policy-banner"><AppIcon name="lock" /><div><strong>Đổi thưởng chưa được mở</strong><span>Người duyệt catalog và policy giữ/trừ/hoàn sao vẫn Chưa quyết định.</span></div></div>
-    <div className="phase3-tabs" role="tablist" aria-label="Ghi nhận và Sao">
-      <button role="tab" aria-selected={view === 'recognition'} className={view === 'recognition' ? 'active' : ''} onClick={() => setView('recognition')}>Ghi nhận</button>
-      <button role="tab" aria-selected={view === 'leaderboard'} className={view === 'leaderboard' ? 'active' : ''} onClick={() => setView('leaderboard')}>Bảng xếp hạng</button>
-      <button role="tab" aria-selected={view === 'ledger'} className={view === 'ledger' ? 'active' : ''} onClick={() => setView('ledger')}>Ledger của tôi</button>
-    </div>
-    {error && <div className="alert alert--error" role="alert">{error}</div>}
-    {loading ? <div className="phase3-loading" role="status"><span className="visually-hidden">Đang tải Ghi nhận và Sao…</span><span /><span /><span /></div> : view === 'recognition' ? <div className="recognition-layout">
-      <div className="recognition-actions">
-        {canRecognize && <form className="phase3-form recognition-form" onSubmit={createRecognition}><header><div><h3>Gửi lời ghi nhận</h3><p>Không tự sinh sao.</p></div><AppIcon name="rewards" /></header><label>Người nhận<select multiple required value={recognitionForm.recipient_uuids} onChange={(event) => setRecognitionForm({ ...recognitionForm, recipient_uuids: Array.from(event.target.selectedOptions, (option) => option.value) })}>{audience.map((employee) => <option key={employee.uuid} value={employee.uuid}>{employee.display_name} · {employee.team_name ?? 'Chưa có Team'}</option>)}</select></label><label>Chủ đề<input required maxLength={80} placeholder="Ví dụ: Hợp tác, Chủ động" value={recognitionForm.category} onChange={(event) => setRecognitionForm({ ...recognitionForm, category: event.target.value })} /></label><label>Lời nhắn<textarea required maxLength={3000} value={recognitionForm.message} onChange={(event) => setRecognitionForm({ ...recognitionForm, message: event.target.value })} /></label><button className="primary-button" disabled={busy || recognitionForm.recipient_uuids.length === 0}>Gửi ghi nhận</button></form>}
-        {canGrant && <form className="phase3-form star-grant-form" onSubmit={grantStars}><header><div><h3>Ghi giao dịch sao</h3><p>Số âm là điều chỉnh, không xóa lịch sử.</p></div><span className="star-amount-mark">±</span></header><label>Nhân sự<select required value={starForm.employee_uuid} onChange={(event) => setStarForm({ ...starForm, employee_uuid: event.target.value })}>{audience.map((employee) => <option key={employee.uuid} value={employee.uuid}>{employee.display_name} · {employee.team_name ?? 'Chưa có Team'}</option>)}</select></label><label>Số sao<input required type="number" min="-1000000" max="1000000" value={starForm.amount} onChange={(event) => setStarForm({ ...starForm, amount: Number(event.target.value) })} /></label><label>Lý do<input required maxLength={500} value={starForm.reason} onChange={(event) => setStarForm({ ...starForm, reason: event.target.value })} /></label><button className="secondary-button" disabled={busy || !starForm.employee_uuid}>Ghi vào ledger</button></form>}
-      </div>
-      <section className="recognition-stream"><header><h3>Dòng ghi nhận</h3><span>{recognitions.length} lời ghi nhận</span></header>{recognitions.length === 0 ? <div className="empty-state"><strong>Chưa có lời ghi nhận</strong><p>Những đóng góp được ghi nhận sẽ xuất hiện tại đây.</p></div> : recognitions.map((item) => <article key={item.uuid} className="recognition-entry"><span className="recognition-avatar">{item.sender_name.slice(0, 2).toUpperCase()}</span><div><header><strong>{item.sender_name}</strong><time>{when(item.created_at)}</time></header><p>{item.message}</p><footer><span>{item.category}</span><small>Gửi tới {item.recipient_names.join(', ')}</small></footer></div></article>)}</section>
-    </div> : view === 'leaderboard' ? <section className="leaderboard-panel">
-      <header><div><h3>Bảng xếp hạng sao</h3><p>Chỉ hiển thị tổng sao trong kỳ, không lộ giao dịch chi tiết.</p></div><div className="period-switcher">{(['month', 'quarter', 'year'] as Period[]).map((item) => <button key={item} className={period === item ? 'active' : ''} onClick={() => void changePeriod(item)}>{item === 'month' ? 'Tháng' : item === 'quarter' ? 'Quý' : 'Năm'}</button>)}</div></header>
-      {ranking.length === 0 ? <div className="empty-state"><strong>Chưa có sao trong kỳ</strong><p>Giao dịch được ghi sẽ cập nhật bảng này.</p></div> : <div className="leaderboard-list">{ranking.map((row) => <article key={row.employee_uuid} className={row.employee_uuid === session.employee_uuid ? 'is-me' : ''}><span className="leaderboard-rank">{String(row.rank).padStart(2, '0')}</span><span className="avatar avatar--soft">{row.display_name.slice(0, 2).toUpperCase()}</span><div><strong>{row.display_name}</strong><small>{row.employee_code} · {row.team_name ?? 'Chưa có Team'}</small></div><strong className="leaderboard-stars">{row.stars}<small>sao</small></strong></article>)}</div>}
-    </section> : <section className="my-ledger"><header><div><h3>Ledger của tôi</h3><p>Append-only · chỉ tài khoản này xem được chi tiết.</p></div><strong>{balance.balance} sao</strong></header>{balance.ledger.length === 0 ? <div className="empty-state"><strong>Chưa có giao dịch</strong><p>Sao được cấp hoặc điều chỉnh sẽ xuất hiện tại đây.</p></div> : balance.ledger.map((entry) => <article key={entry.uuid}><time>{when(entry.created_at)}</time><div><strong>{entry.reason}</strong><small>{entry.entry_type_label} bởi {entry.actor_name}</small></div><span className={entry.amount > 0 ? 'star-positive' : 'star-negative'}>{entry.amount > 0 ? '+' : ''}{entry.amount}</span></article>)}</section>}
-  </section>
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { api, request } from '../api'
+import type { Session, StarBalance, RewardAudienceMember, LeaderboardRow } from '../types'
+import './rewards-store.css'
+type Gift={uuid:string;title:string;description:string;category:string;cost:number;stock:number;active:boolean}
+type Redemption={uuid:string;employee:string;employee_name:string;gift_title:string;cost:number;status:string;status_label:string;note:string;created_at:string}
+type Allowances={teams:{uuid:string;name:string}[];allowances:{team_uuid:string;team_name:string;month:string;limit:number;used:number}[]}
+const suggestions=['Đồ uống tự chọn','Bữa trưa yêu thích','Vé xem phim','Voucher ăn uống','Voucher thể thao','Sách tự chọn','Khóa học chuyên môn','Hỗ trợ lệ phí chứng chỉ','Chuột làm việc','Bàn phím','Tai nghe','Hỗ trợ nâng cấp thiết bị']
+async function allRedemptions() { const rows:Redemption[]=[]; let url:string|null='/api/v1/rewards/redemptions/'; while(url) { const parsed:URL=new URL(url,window.location.origin); const page:{results:Redemption[];next:string|null}=await request<{results:Redemption[];next:string|null}>(parsed.pathname+parsed.search); rows.push(...page.results); url=page.next; } return rows; }
+const blank={title:'',description:'',category:'Hằng ngày',cost:0,stock:0,active:false}
+export function RewardsWorkspace({session}:{session:Session}) {
+ const manager=!!session.capabilities?.includes('rewards_domain.grant_stars_company'),grant=!!session.capabilities?.includes('rewards_domain.grant_stars_scoped')
+ const [tab,setTab]=useState('gifts'),[gifts,setGifts]=useState<Gift[]>([]),[rows,setRows]=useState<Redemption[]>([]),[balance,setBalance]=useState<StarBalance & {held?:number}>({balance:0,ledger:[]})
+ const [limits,setLimits]=useState<Allowances>({teams:[],allowances:[]}),[people,setPeople]=useState<RewardAudienceMember[]>([]),[ranking,setRanking]=useState<LeaderboardRow[]>([])
+ const [period,setPeriod]=useState<'month'|'quarter'|'year'>('month'),[error,setError]=useState(''),[success,setSuccess]=useState(''),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true)
+ const [form,setForm]=useState(blank),[edit,setEdit]=useState(''),[selected,setSelected]=useState<Gift|null>(null),[notes,setNotes]=useState<Record<string,string>>({}),[search,setSearch]=useState('')
+ const [star,setStar]=useState({employee_uuid:'',amount:1,reason:''}),[quota,setQuota]=useState({team_uuid:'',month:new Date().toLocaleDateString('sv-SE').slice(0,7),limit:0})
+ const key=useRef(crypto.randomUUID()),starKey=useRef(crypto.randomUUID())
+ const load=useCallback(async()=>{setLoading(true);setError('');try{const [g,r,b,a,p,l]=await Promise.all([request<Gift[]>('/api/v1/rewards/gifts/'),allRedemptions(),api.myStarBalance(),request<Allowances>('/api/v1/rewards/allowances/'),grant?api.rewardAudience():Promise.resolve([]),api.leaderboard(period)]);setGifts(g);setRows(r);setBalance(b);setLimits(a);setPeople(p);setRanking(l)}catch(e){setError(e instanceof Error?e.message:'Không tải được phần thưởng.')}finally{setLoading(false)}},[grant,period])
+ useEffect(()=>{void load()},[load])
+ async function run(action:()=>Promise<unknown>,message:string){setBusy(true);setError('');setSuccess('');try{await action();setSuccess(message);await load()}catch(e){setError(e instanceof Error?e.message:'Không thực hiện được thao tác.')}finally{setBusy(false)}}
+ const post=(url:string,data:unknown)=>request('/api/v1/rewards/'+url,{method:'POST',body:JSON.stringify(data)})
+ const decide=(r:Redemption,action:string)=>run(()=>post(`redemptions/${r.uuid}/decision/`,{action,note:notes[r.uuid]??''}),'Đã cập nhật yêu cầu.')
+ const tabs=[['gifts','Quà tặng'],['balance','Sao của tôi'],['requests','Yêu cầu đổi thưởng'],['ranking','Bảng xếp hạng'],...(grant?[['grant','Cấp sao']]:[]),...(manager?[['manage','Quản lý quà'],['quota','Hạn mức Team']]:[])]
+ return <section className="rewards-store" aria-busy={busy||loading}>
+  <header className="store-heading"><div><h2>Sao & Đổi thưởng</h2><p>Tích lũy từ đóng góp, chọn phần thưởng bạn yêu thích.</p></div><div className="store-balance"><span>Sao khả dụng<strong>{balance.balance}</strong></span><span>Đang giữ đổi quà<strong>{balance.held??0}</strong></span></div></header>
+  <nav className="store-tabs" aria-label="Sao và Đổi thưởng">{tabs.map(([id,title])=><button key={id} disabled={busy} className={tab===id?'active':''} aria-current={tab===id?'page':undefined} onClick={()=>setTab(id)}>{title}</button>)}</nav>
+  {error&&<p className="alert alert--error" role="alert">{error}<button onClick={()=>void load()}>Tải lại</button></p>}{success&&<p role="status">{success}</p>}
+  {loading?<p role="status">Đang tải phần thưởng…</p>:<>
+  {tab==='gifts'&&<><label>Tìm quà<input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Tên hoặc nhóm quà"/></label>
+   {selected&&<section className="store-confirm" aria-label="Xác nhận đổi quà"><h3>Đổi {selected.title}?</h3><p>Giữ {selected.cost} sao và một phần quà chờ HR/CEO duyệt. Hoàn sao nếu hủy hoặc bị từ chối trước khi trao.</p><button className="primary-button" disabled={busy} onClick={()=>void run(async()=>{await post('redemptions/',{gift_uuid:selected.uuid,expected_cost:selected.cost,request_key:key.current});setSelected(null);key.current=crypto.randomUUID()},'Đã gửi yêu cầu đổi quà.')}>Xác nhận đổi {selected.cost} sao</button><button className="secondary-button" disabled={busy} onClick={()=>setSelected(null)}>Quay lại</button></section>}
+   <div className="gift-grid">{gifts.filter(g=>g.active&&`${g.title} ${g.category}`.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi'))).map(g=><article className="gift-item" key={g.uuid}><small>{g.category}</small><h3>{g.title}</h3><p>{g.description}</p><div><strong>{g.cost} sao</strong><span>Còn {g.stock}</span></div><button className="primary-button" disabled={busy||g.stock<1||balance.balance<g.cost} onClick={()=>{key.current=crypto.randomUUID();setSelected(g)}}>{g.stock<1?'Hết quà':balance.balance<g.cost?'Chưa đủ sao':'Đổi quà'}</button></article>)}</div>
+   {!gifts.some(g=>g.active)&&<div className="store-empty"><h3>Danh mục quà đang được chuẩn bị</h3><p>HR thiết lập mức sao và số lượng trước khi mở đổi. Bạn vẫn có thể xem sao và lịch sử của mình.</p></div>}</>}
+  {tab==='balance'&&<section><h3>Lịch sử sao của tôi</h3><p>Sao khả dụng đã trừ phần đang giữ cho yêu cầu đổi quà. Sao đã cấp không hết hạn.</p>{!balance.ledger.length&&<p>Chưa có giao dịch.</p>}{balance.ledger.map(e=><article className="store-ledger" key={e.uuid}><time>{new Date(e.created_at).toLocaleDateString('vi-VN')}</time><span><strong>{e.reason}</strong><small>{e.entry_type_label} · {e.actor_name}</small></span><b>{e.amount>0?'+':''}{e.amount}</b></article>)}</section>}
+  {tab==='requests'&&<section><h3>{manager?'Duyệt và trao phần thưởng':'Yêu cầu của tôi'}</h3>{!rows.length&&<p>Chưa có yêu cầu đổi thưởng.</p>}{rows.map(r=><article className="redemption-item" key={r.uuid}><header><h4>{r.gift_title} · {r.cost} sao</h4><span>{r.status_label}</span></header><p>{manager?`${r.employee_name} · `:''}{new Date(r.created_at).toLocaleDateString('vi-VN')}</p>{r.note&&<p>Lý do: {r.note}</p>}{['pending','approved'].includes(r.status)&&<><label>Lý do hủy / từ chối<input maxLength={500} value={notes[r.uuid]??''} onChange={e=>setNotes({...notes,[r.uuid]:e.target.value})}/></label><div className="store-actions">{manager&&r.employee!==session.employee_uuid&&r.status==='pending'&&<><button className="primary-button" disabled={busy} onClick={()=>void decide(r,'approve')}>Duyệt yêu cầu</button><button className="secondary-button" disabled={busy||!notes[r.uuid]?.trim()} onClick={()=>void decide(r,'reject')}>Từ chối & hoàn sao</button></>}{manager&&r.employee!==session.employee_uuid&&r.status==='approved'&&<button className="primary-button" disabled={busy} onClick={()=>void decide(r,'fulfill')}>Xác nhận đã trao quà</button>}<button className="secondary-button" disabled={busy||!notes[r.uuid]?.trim()} onClick={()=>void decide(r,'cancel')}>Hủy & hoàn sao</button></div></>}</article>)}</section>}
+  {tab==='ranking'&&<section><h3>Bảng xếp hạng sao</h3><label>Kỳ<select value={period} onChange={e=>setPeriod(e.target.value as typeof period)}><option value="month">Tháng</option><option value="quarter">Quý</option><option value="year">Năm</option></select></label><p>Đổi quà không làm giảm thành tích trên bảng xếp hạng.</p>{ranking.map(r=><article className="store-ledger" key={r.employee_uuid}><strong>{r.rank}</strong><span>{r.display_name}<small>{r.team_name}</small></span><b>{r.stars} sao</b></article>)}</section>}
+  {tab==='grant'&&<section><h3>Cấp sao cho nhân sự</h3><p>Leader dùng chung hạn mức Team trong tháng. Điều chỉnh giảm chỉ dành cho HR/CEO.</p><ul>{limits.allowances.filter(a=>a.month.startsWith(new Date().toLocaleDateString('sv-SE').slice(0,7))).map(a=><li key={a.team_uuid}>{a.team_name}: đã cấp {a.used}/{a.limit} sao</li>)}</ul><form className="store-form" onSubmit={e=>{e.preventDefault();void run(async()=>{await post('stars/grant/',{...star,idempotency_key:starKey.current});starKey.current=crypto.randomUUID();setStar({...star,reason:''})},'Đã ghi giao dịch sao.')}}><label>Nhân sự<select required value={star.employee_uuid} onChange={e=>setStar({...star,employee_uuid:e.target.value})}><option value="">Chọn nhân sự</option>{people.map(p=><option key={p.uuid} value={p.uuid}>{p.display_name} · {p.team_name}</option>)}</select></label><label>Số sao<input type="number" required min={manager?-1000000:1} max={1000000} value={star.amount} onChange={e=>setStar({...star,amount:Number(e.target.value)})}/></label><label>Lý do<input required maxLength={500} value={star.reason} onChange={e=>setStar({...star,reason:e.target.value})}/></label><button className="primary-button" disabled={busy||star.amount===0}>Cấp / điều chỉnh sao</button></form></section>}
+  {tab==='manage'&&<section><h3>{edit?'Chỉnh sửa quà':'Thêm quà vào danh mục'}</h3><p>Mức sao và số lượng do HR thiết lập. Quà chỉ hiển thị khi bật “Mở đổi”.</p><label>Gợi ý quà<select value="" onChange={e=>setForm({...form,title:e.target.value})}><option value="">Chọn gợi ý hoặc tự nhập</option>{suggestions.map(x=><option key={x}>{x}</option>)}</select></label><form className="store-form" onSubmit={e=>{e.preventDefault();void run(async()=>{await request(`/api/v1/rewards/gifts/${edit?`${edit}/`:''}`,{method:edit?'PATCH':'POST',body:JSON.stringify(form)});setForm(blank);setEdit('')},'Đã lưu quà.')}}><label>Tên quà<input required maxLength={180} value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/></label><label>Nhóm quà<input required maxLength={80} value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/></label><label>Mô tả / điều kiện nhận<textarea maxLength={3000} value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><label>Số sao để đổi<input required type="number" min={1} max={1000000} value={form.cost} onChange={e=>setForm({...form,cost:Number(e.target.value)})}/></label><label>Số lượng còn có thể đổi<input required type="number" min={0} max={1000000} value={form.stock} onChange={e=>setForm({...form,stock:Number(e.target.value)})}/></label><label className="store-check"><input type="checkbox" checked={form.active} onChange={e=>setForm({...form,active:e.target.checked})}/>Mở đổi</label><button className="primary-button" disabled={busy}>Lưu quà</button>{edit&&<button type="button" onClick={()=>{setEdit('');setForm(blank)}}>Hủy chỉnh sửa</button>}</form><h3>Danh mục quản lý</h3>{gifts.map(g=><article className="store-ledger" key={g.uuid}><span><strong>{g.title}</strong><small>{g.cost} sao · Còn {g.stock} · {g.active?'Đang mở':'Đang ẩn'}</small></span><button className="secondary-button" disabled={busy} onClick={()=>{setEdit(g.uuid);setForm(g)}}>Sửa quà</button></article>)}</section>}
+  {tab==='quota'&&<section><h3>Hạn mức cấp sao theo Team</h3><p>Chưa đặt hạn mức thì Leader chưa cấp được sao. Hạn mức tính theo tháng và dùng chung cho các Leader của Team.</p><form className="store-form" onSubmit={e=>{e.preventDefault();void run(()=>post('allowances/',{...quota,month:quota.month+'-01'}),'Đã lưu hạn mức.')}}><label>Team<select required value={quota.team_uuid} onChange={e=>setQuota({...quota,team_uuid:e.target.value})}><option value="">Chọn Team</option>{limits.teams.map(t=><option key={t.uuid} value={t.uuid}>{t.name}</option>)}</select></label><label>Tháng<input required type="month" value={quota.month} onChange={e=>setQuota({...quota,month:e.target.value})}/></label><label>Hạn mức sao<input required type="number" min={0} max={1000000} value={quota.limit} onChange={e=>setQuota({...quota,limit:Number(e.target.value)})}/></label><button className="primary-button" disabled={busy}>Lưu hạn mức</button></form>{limits.allowances.map(a=><p key={a.team_uuid+a.month}>{a.team_name} · {a.month.slice(0,7)} · {a.used}/{a.limit} sao đã cấp</p>)}</section>}
+  </>}
+ </section>
 }

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MRECRM · Bản mẫu đơn hàng</title><link rel="stylesheet" href="styles.css"><script defer src="app.js"></script></head>
+<body>
+<!-- THESIS: One order, several source records. A working ledger makes duplicate counting visible.
+OWN-WORLD: Independent MRECRM carbon header, signal yellow selection, white ledger, fine rules, workhorse UI type.
+STORY: Leader scans 60 synthetic orders, opens evidence, and checks consistent reporting before defining workflow.
+FIRST VIEWPORT: MRECRM header with return-to-ERP link, persistent source notice, CRM-only left navigation, search and filters, wide ledger; selected order opens a right panel.
+FORM: Approved table and side-panel brief; code-led interactive prototype, no backend.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance -->
+<header class="product-bar"><a class="brand" href="#orders" aria-label="MRECRM — Quản lý đơn hàng"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="20" fill="#ffc400"/><path d="M11 27V13l9 10 9-10v14M15 30h10" fill="none" stroke="#111" stroke-width="3"/></svg><strong>MRECRM</strong></a><span class="prototype-label">Bản mẫu để duyệt</span><a class="erp-return" href="http://localhost:4173/">Về MRERP <span aria-hidden="true">↗</span></a></header>
+<div class="demo-notice"><strong>Dữ liệu minh họa</strong><span>60 đơn giả · 72 bản ghi nguồn · Chưa kết nối Webcake, POS hoặc Google Sheet.</span></div>
+<div class="shell"><aside class="sidebar"><nav aria-label="Chức năng CRM"><a href="#orders" data-page="orders">Quản lý đơn hàng</a><a href="#ads" data-page="ads">Quảng cáo</a><a href="#reports" data-page="reports">Thống kê</a><a href="#accounting" data-page="accounting">Kế toán</a><a href="#review" data-page="review">Nội dung cần duyệt</a></nav><p>Trạng thái, trường dữ liệu và cách đối chiếu trong bản mẫu đều là đề xuất.</p></aside>
+<main id="main" tabindex="-1"><header class="page-heading"><div><h1 id="page-title">Quản lý đơn hàng</h1><p id="page-description"></p></div><a class="review-link" href="#review">Góp ý với Leader <span aria-hidden="true">→</span></a></header>
+<section id="filters" class="filters" aria-label="Lọc đơn minh họa"><label class="search">Tìm đơn<input id="search" type="search" placeholder="Mã đơn, tên khách, sản phẩm…"></label><label>Từ ngày<input id="from" type="date" value="2026-10-01"></label><label>Đến ngày<input id="to" type="date" value="2026-10-30"></label><label>Nguồn dữ liệu<select id="source"><option value="">Tất cả nguồn</option><option>Webcake</option><option>POS</option><option>Google Sheet</option></select></label><label>Giao hàng<select id="status"><option value="">Tất cả trạng thái</option><option>Chưa bàn giao</option><option>Đang giao</option><option>Giao thành công</option><option>Hoàn hàng</option><option>Đã hủy</option></select></label><button id="reset" class="quiet">Đặt lại</button></section>
+<div id="content"></div></main></div>
+<aside id="detail" class="detail" hidden aria-labelledby="detail-title"><div id="detail-content"></div></aside>
+<div id="announcer" class="sr-only" aria-live="polite"></div>
+</body></html>

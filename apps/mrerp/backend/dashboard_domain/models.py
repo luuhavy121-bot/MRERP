@@ -13,6 +13,7 @@ class Notification(models.Model):
         LEAVE = "leave", "Nghỉ phép"
         ACCOUNT = "account", "Tài khoản"
         RECRUITMENT = "recruitment", "Tuyển dụng"
+        PERFORMANCE = "performance", "Đánh giá nhân sự"
         DOCUMENT = "document", "Tài liệu"
         RECOGNITION = "recognition", "Ghi nhận"
 

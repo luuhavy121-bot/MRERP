@@ -96,7 +96,7 @@ MREKANBAN hiện tại chỉ tham chiếu Task và có thể sở hữu bố c�
 
 **Đã chốt cục bộ qua ADR-0013.** Recognition không tự cộng sao; Leader cấp sao trong Team lãnh đạo, HR/CEO có company scope; ledger append-only, sao không hết hạn trong baseline và leaderboard tháng/quý/năm không lộ giao dịch người khác.
 
-**Chưa quyết định.** Người quản trị reward catalog/duyệt đổi thưởng và policy hold/trừ/hoàn sao khi redemption.
+**Đã chốt qua [ADR-0020](../decisions/0020-stars-redemption-and-recognition.md):** HR/CEO quản trị catalog/duyệt đổi, hạn mức sao Team/tháng và giữ/hoàn sao. Ghi nhận chuyển vào Đánh giá nhân sự. Chi tiết tại [Yêu cầu Phase 3](phase-3-requirements.md); ngân sách tiền mặt CEO còn hoãn.
 
 ## 7. Yêu cầu authorization cho nghiệp vụ
 
@@ -125,7 +125,7 @@ Liên kết phải có định danh ổn định, trạng thái kiểm chứng �
 - Công thức lương.
 - Chính sách chấm công và phép ngoài baseline tạm thời tại [Yêu cầu Leave/Attendance](leave-attendance-requirements.md).
 - Quy trình/phạm vi phê duyệt chi tiết.
-- Chính sách đổi thưởng.
+- Policy đổi thưởng ngoài ADR-0020, gồm ngân sách tiền mặt tổng của CEO.
 - Field matrix CRM.
 - Ranh giới Captain/Leader/Manager ngoài policy Task Phase 1.
 - Danh sách phòng ban, team, cấp bậc và capability chính thức.

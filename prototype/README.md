@@ -37,6 +37,10 @@ Phần trăm toàn project dùng cách tính quản trị tạm: sáu phase có 
 
 Màn hình Tiến độ hiện đã được chuyển vào React app thật. Bản trong prototype chỉ còn là tham chiếu lịch sử; trạng thái vận hành hiện hành nằm trong `apps/mrerp/frontend/src/projectStatus.ts` và phải được đối chiếu `docs/06-ke-hoach-trien-khai.md` cùng roadmap trước khi cập nhật.
 
+## Mockup MRECRM để duyệt
+
+[Bản mẫu CRM độc lập](crm/README.md) có 60 đơn giả, bộ lọc, chi tiết đơn và thống kê dùng chung dữ liệu minh họa. Mở `crm/index.html` hoặc chạy static server cổng 4175 theo hướng dẫn. Webcake, POS và Google Sheet là nguồn dữ liệu minh họa; chưa có kết nối, nhập dữ liệu hoặc nghiệp vụ CRM thật. Khung CRM ở cổng 4173 giữ nguyên.
+
 ## Khi chuyển thành production
 
 Mỗi màn hình phải được nối với API contract đã duyệt, thay dữ liệu mock bằng backend thật và bổ sung kiểm thử authorization tương ứng. Không được chuyển logic quyền trong prototype thành hàng rào bảo mật production.

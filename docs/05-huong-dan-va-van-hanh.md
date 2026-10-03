@@ -1,5 +1,7 @@
 # 05 — Hướng dẫn và vận hành
 
+Tuyển dụng theo [ADR-0022](decisions/0022-short-recruitment-pipeline.md): điền kế hoạch sử dụng nhân sự trong phần nội bộ của bản nháp. Pipeline Mới → Sàng lọc → Phỏng vấn; sau phỏng vấn chọn Đã tuyển hoặc Từ chối. HR/CEO vẫn duyệt tin và chuyển hồ sơ đã tuyển thành Employee.
+
 Repository đã có bản chạy local của People/HR Foundation trong Phase 1. Chưa có môi trường hoặc tài khoản production. Tài liệu này ghi phần có thể vận hành ở local và khung production cần hoàn thiện; chi tiết hạ tầng thuộc [Deployment và vận hành](operations/deployment.md).
 
 ## Dành cho người sử dụng
@@ -79,3 +81,38 @@ Không được tạo runbook break-glass có thể thực thi trước khi OD-0
 - [Open decisions](decisions/open-decisions.md)
 
 Tiếp theo: [06 — Kế hoạch triển khai](06-ke-hoach-trien-khai.md).
+
+## Tuyển dụng công khai và đánh giá KPI
+
+- Leader: Tuyển dụng → Yêu cầu tuyển → Tạo yêu cầu → Lưu nháp/Gửi duyệt. HR/CEO xem đầy đủ nội dung trước Duyệt; duyệt công khai ngay. Tin đang tuyển cung cấp link /careers/{slug}; Đóng tin ngừng nhận hồ sơ.
+- Ứng viên: /careers → vị trí → thông tin, CV và consent → Gửi hồ sơ. Leader quản lý pipeline Team; chỉ HR/CEO chuyển thành Employee.
+- Leader: Đánh giá nhân sự → tháng/nhân sự → tạo phiếu → KPI/trọng số/mức hoàn thành/nhận xét → chốt. Nhân sự xem Đánh giá của tôi và xác nhận. HR mở lại cần lý do; chốt lại sinh revision mới.
+- Trước cập nhật local Docker: backup database/media, build backend/frontend, chạy migrate, rồi recreate backend/frontend. Migration cập nhật quyền group chuẩn hiện có, không cần seed lại và không đổi mật khẩu.
+- Public careers chỉ truy cập được từ ngoài khi deployment được cấu hình public routing/HTTPS. Mock Identity hiện tại không dùng production. Proxy phải chuyển địa chỉ client tin cậy; Redis cache dùng chung để giới hạn 5 hồ sơ/IP/giờ. Public file tối đa 10 MB và không có download ẩn danh.
+- Rollback: quay về image trước, giữ schema bổ sung; không reverse migration khi đã có dữ liệu mới. Database và media phải phục hồi cùng mốc nếu cần restore.
+
+## Nhập bảng chấm công Excel
+
+HR mở Nghỉ & Công → Chấm công → Chọn file Excel. Kiểm tra tháng/dữ liệu, ghép mỗi mã chấm công với một Employee, xác nhận nhập. Lần sau nhớ mapping. Nếu có ngày đã nhập, chọn xác nhận thay thế; khi báo dữ liệu thay đổi cần tải file để xem trước lại. Ô trống khác số 0. Công dự kiến vẫn có tab riêng và không điều chỉnh kết quả nhập.
+
+Leader xem Team, nhân sự xem bản thân. Chọn tháng và bấm ngày để xem chi tiết; HR xem 100 đợt nhập gần nhất. Bản xuất không mặc định đã chốt công. Không tự nhập file thật để demo.
+
+Trước migration ADR-0019, backup DB; build backend/worker/beat với dependency Excel, migrate rồi restart. Không seed lại DB có dữ liệu. Rollback app giữ schema bổ sung; phục hồi DB từ backup khi cần, không reverse migration làm mất công đã nhập. Snapshot đã phân tích nằm trong DB và đi cùng backup; không lưu Excel gốc.
+
+## Sao & Đổi thưởng
+
+HR/CEO tạo quà và đặt hạn mức sao Team/tháng tại Sao & Đổi thưởng. Mẫu gợi ý chỉ điền form; cần kiểm tra chi phí sao, tồn khả dụng và trạng thái hoạt động trước khi lưu. Leader cấp sao trong hạn mức; ghi nhận đóng góp thực hiện trong pane Đánh giá nhân sự theo Employee/tháng.
+
+Nhân sự chọn quà, xác nhận chi phí và gửi yêu cầu: sao được giữ ngay. HR/CEO khác duyệt rồi xác nhận đã trao; hủy trước khi trao hoặc từ chối cần lý do, hoàn sao/tồn một lần. Sao khả dụng khác sao đang giữ; đổi thưởng không làm giảm điểm xếp hạng.
+
+Trước migration ADR-0020, backup DB; migrate rồi cập nhật app. Không seed lại DB có dữ liệu hoặc tự kích hoạt catalog. Khi rollback, giữ schema bổ sung; không reverse migration xóa quà/yêu cầu/ledger đã phát sinh. Khi cần khôi phục dữ liệu, dùng backup cùng mốc và đối chiếu các quà đã trao thực tế. Ngân sách tiền mặt CEO chưa triển khai.
+
+## Demo HR ngày 06/10
+
+Theo [ADR-0021](decisions/0021-hr-demo-half-day-and-workflow.md): Leader tự nhập KPI, có thể chọn Sao chép KPI tháng trước rồi nhập mức hoàn thành mới. Khung có lịch sử các tháng và điều kiện chốt còn thiếu.
+
+Tuyển dụng: nhập tin → Xem trước tin tuyển → gửi duyệt. Pipeline có tìm/lọc và khung Lịch phỏng vấn & ghi chú; Lưu trước khi chuyển stage. Thời gian nhập theo múi giờ thiết bị. Tên người phụ trách là thông tin lịch, không cấp quyền; chưa gửi email/SMS.
+
+Xin nghỉ: chọn ngày và Từ buổi/Đến buổi; cùng ngày/cùng buổi là nửa ngày. Leader chọn duyệt/từ chối, nhập ghi chú rồi Xác nhận xử lý. Lịch nghỉ chỉ hiển thị đơn đã duyệt và giữ riêng lý do. Công chuẩn thứ Hai–thứ Bảy cả ngày; công thực tế Excel giữ nguyên.
+
+Backup DB/media trước migrate và restart backend/worker/Beat/frontend; không seed lại hoặc đổi mật khẩu. Rollback giữ schema bổ sung; app cũ không được xử lý đơn nửa ngày. Mốc này demo local, không triển khai production.

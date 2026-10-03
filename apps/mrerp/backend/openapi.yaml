@@ -928,6 +928,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: ''
+  /api/v1/leave/actual-attendance/:
+    get:
+      operationId: api_v1_leave_actual_attendance_list
+      parameters:
+      - in: query
+        name: month
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceResult'
+          description: ''
   /api/v1/leave/attendance/:
     get:
       operationId: api_v1_leave_attendance_list
@@ -962,6 +984,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/attendance-imports/:
+    get:
+      operationId: api_v1_leave_attendance_imports_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceImportResult'
+          description: ''
+  /api/v1/leave/attendance-imports/{id}/commit/:
+    post:
+      operationId: api_v1_leave_attendance_imports_commit_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Commit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Commit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Commit'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceImportResult'
+          description: ''
+  /api/v1/leave/attendance-imports/preview/:
+    post:
+      operationId: api_v1_leave_attendance_imports_preview_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Upload'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Upload'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceImportResult'
           description: ''
   /api/v1/leave/attendance/adjust/:
     post:
@@ -1182,6 +1276,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/leave/requests/calendar/:
+    get:
+      operationId: api_v1_leave_requests_calendar_list
+      parameters:
+      - in: query
+        name: month
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLeaveCalendarList'
           description: ''
   /api/v1/people/access/:
     get:
@@ -2163,6 +2283,350 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/performance/context/:
+    get:
+      operationId: api_v1_performance_context_list
+      parameters:
+      - in: query
+        name: employee_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: month
+        schema:
+          type: string
+          minLength: 1
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskContext'
+          description: ''
+  /api/v1/performance/options/:
+    get:
+      operationId: api_v1_performance_options_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewEmployee'
+          description: ''
+  /api/v1/performance/reviews/:
+    get:
+      operationId: api_v1_performance_reviews_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReviewList'
+          description: ''
+    post:
+      operationId: api_v1_performance_reviews_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateReview'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+  /api/v1/performance/reviews/{uuid}/:
+    get:
+      operationId: api_v1_performance_reviews_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this performance review.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+    patch:
+      operationId: api_v1_performance_reviews_partial_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this performance review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateReview'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+  /api/v1/performance/reviews/{uuid}/acknowledge/:
+    post:
+      operationId: api_v1_performance_reviews_acknowledge_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this performance review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Command'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Command'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Command'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+  /api/v1/performance/reviews/{uuid}/finalize/:
+    post:
+      operationId: api_v1_performance_reviews_finalize_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this performance review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Command'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Command'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Command'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+  /api/v1/performance/reviews/{uuid}/reopen/:
+    post:
+      operationId: api_v1_performance_reviews_reopen_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this performance review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Command'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Command'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Command'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+  /api/v1/performance/reviews/kpi-source/:
+    get:
+      operationId: api_v1_performance_reviews_kpi_source_retrieve
+      parameters:
+      - in: query
+        name: employee_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: month
+        schema:
+          type: string
+          minLength: 1
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KPISource'
+          description: ''
+  /api/v1/public/recruitment/openings/:
+    get:
+      operationId: api_v1_public_recruitment_openings_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicOpeningList'
+          description: ''
+  /api/v1/public/recruitment/openings/{slug}/:
+    get:
+      operationId: api_v1_public_recruitment_openings_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicOpening'
+          description: ''
+  /api/v1/public/recruitment/openings/{slug}/applications/:
+    post:
+      operationId: api_v1_public_recruitment_openings_applications_create
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicApplication'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationReceipt'
+          description: ''
   /api/v1/recruitment/applications/:
     get:
       operationId: api_v1_recruitment_applications_list
@@ -2341,6 +2805,40 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: ''
+  /api/v1/recruitment/applications/{uuid}/interview/:
+    post:
+      operationId: api_v1_recruitment_applications_interview_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this application.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Interview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Interview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Interview'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
   /api/v1/recruitment/applications/{uuid}/transition/:
     post:
       operationId: api_v1_recruitment_applications_transition_create
@@ -2441,6 +2939,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedOpeningList'
+          description: ''
+  /api/v1/recruitment/openings/{uuid}/close/:
+    post:
+      operationId: api_v1_recruitment_openings_close_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this job opening.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opening'
           description: ''
   /api/v1/recruitment/options/:
     get:
@@ -2543,6 +3063,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/HiringRequest'
           description: ''
+    patch:
+      operationId: api_v1_recruitment_requests_partial_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this hiring request.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHiringRequestContent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHiringRequestContent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHiringRequestContent'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HiringRequest'
+          description: ''
   /api/v1/recruitment/requests/{uuid}/review/:
     post:
       operationId: api_v1_recruitment_requests_review_create
@@ -2589,6 +3141,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: ''
+  /api/v1/recruitment/requests/{uuid}/submit/:
+    post:
+      operationId: api_v1_recruitment_requests_submit_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this hiring request.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HiringRequest'
+          description: ''
+  /api/v1/rewards/allowances/:
+    get:
+      operationId: api_v1_rewards_allowances_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+    post:
+      operationId: api_v1_rewards_allowances_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllowanceInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowanceInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AllowanceInput'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
   /api/v1/rewards/audience-options/:
     get:
       operationId: api_v1_rewards_audience_options_list
@@ -2610,6 +3225,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/gifts/:
+    get:
+      operationId: api_v1_rewards_gifts_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gift'
+          description: ''
+    post:
+      operationId: api_v1_rewards_gifts_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Gift'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Gift'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Gift'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gift'
+          description: ''
+  /api/v1/rewards/gifts/{uuid}/:
+    patch:
+      operationId: api_v1_rewards_gifts_partial_update
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGiftPatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGiftPatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGiftPatch'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gift'
           description: ''
   /api/v1/rewards/leaderboard/:
     get:
@@ -2706,6 +3394,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+          description: ''
+  /api/v1/rewards/redemptions/:
+    get:
+      operationId: api_v1_rewards_redemptions_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RedemptionPage'
+          description: ''
+    post:
+      operationId: api_v1_rewards_redemptions_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RedeemInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RedeemInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RedeemInput'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Redemption'
+          description: ''
+  /api/v1/rewards/redemptions/{uuid}/decision/:
+    post:
+      operationId: api_v1_rewards_redemptions_decision_create
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DecisionInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DecisionInput'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Redemption'
           description: ''
   /api/v1/rewards/stars/grant/:
     post:
@@ -3469,16 +4229,23 @@ components:
           maxLength: 150
       required:
       - username
-    ActionEnum:
-      enum:
-      - submit
-      - accept
-      - rework
-      type: string
-      description: |-
-        * `submit` - submit
-        * `accept` - accept
-        * `rework` - rework
+    AllowanceInput:
+      type: object
+      properties:
+        team_uuid:
+          type: string
+          format: uuid
+        month:
+          type: string
+          format: date
+        limit:
+          type: integer
+          maximum: 1000000
+          minimum: 0
+      required:
+      - limit
+      - month
+      - team_uuid
     ApiError:
       type: object
       properties:
@@ -3568,6 +4335,25 @@ components:
           type: string
           format: date-time
           readOnly: true
+        introduction:
+          type: string
+          readOnly: true
+        consent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        interview_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        interviewer_name:
+          type: string
+          readOnly: true
+        recruiter_note:
+          type: string
+          readOnly: true
       required:
       - attachments
       - can_convert
@@ -3576,10 +4362,15 @@ components:
       - candidate_name
       - candidate_phone
       - candidate_source
+      - consent_at
       - converted_employee_uuid
       - created_at
+      - interview_at
+      - interviewer_name
+      - introduction
       - opening
       - opening_title
+      - recruiter_note
       - stage
       - stage_label
       - team_name
@@ -3610,6 +4401,13 @@ components:
       required:
       - full_name
       - opening_uuid
+    ApplicationReceipt:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
     ApplicationTransition:
       type: object
       properties:
@@ -3673,6 +4471,63 @@ components:
       - employee_uuid
       - month
       - reason
+    AttendanceImportResult:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        month:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        committed_at:
+          type: string
+          format: date-time
+          nullable: true
+        row_count:
+          type: integer
+        replaced_count:
+          type: integer
+        imported_by:
+          type: string
+        source: {}
+        mappings:
+          type: object
+          additionalProperties: {}
+        employee_options:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        existing_days:
+          type: object
+          additionalProperties: {}
+      required:
+      - committed_at
+      - created_at
+      - filename
+      - imported_by
+      - month
+      - replaced_count
+      - row_count
+      - uuid
+    AttendanceResult:
+      type: object
+      properties:
+        month:
+          type: string
+        employees:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - employees
+      - month
     AttendanceRow:
       type: object
       properties:
@@ -3689,17 +4544,21 @@ components:
         month:
           type: string
         scheduled_workdays:
-          type: integer
+          type: number
+          format: double
         public_holiday_days:
-          type: integer
+          type: number
+          format: double
         approved_leave_days:
-          type: integer
+          type: number
+          format: double
         adjustment_days:
           type: integer
         adjustment_reason:
           type: string
         projected_workdays:
-          type: integer
+          type: number
+          format: double
       required:
       - adjustment_days
       - adjustment_reason
@@ -3751,6 +4610,8 @@ components:
     Balance:
       type: object
       properties:
+        held:
+          type: integer
         balance:
           type: integer
         ledger:
@@ -3759,6 +4620,7 @@ components:
             $ref: '#/components/schemas/StarEntry'
       required:
       - balance
+      - held
       - ledger
     BundleEnum:
       enum:
@@ -3851,6 +4713,20 @@ components:
       required:
       - current_password
       - new_password
+    Command:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 1000
+        employee_feedback:
+          type: string
+          maxLength: 5000
+      required:
+      - version
     CommandEnum:
       enum:
       - pause
@@ -3927,6 +4803,30 @@ components:
           nullable: true
       required:
       - content
+    Commit:
+      type: object
+      properties:
+        mappings:
+          type: object
+          additionalProperties:
+            type: string
+            format: uuid
+        replace_existing:
+          type: boolean
+          default: false
+      required:
+      - mappings
+    CreateReview:
+      type: object
+      properties:
+        employee_uuid:
+          type: string
+          format: uuid
+        month:
+          type: string
+      required:
+      - employee_uuid
+      - month
     Dashboard:
       type: object
       properties:
@@ -3964,6 +4864,28 @@ components:
       description: |-
         * `approved` - approved
         * `rejected` - rejected
+    DecisionInput:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/DecisionInputActionEnum'
+        note:
+          type: string
+          maxLength: 500
+      required:
+      - action
+    DecisionInputActionEnum:
+      enum:
+      - approve
+      - reject
+      - cancel
+      - fulfill
+      type: string
+      description: |-
+        * `approve` - approve
+        * `reject` - reject
+        * `cancel` - cancel
+        * `fulfill` - fulfill
     Document:
       type: object
       properties:
@@ -4693,14 +5615,34 @@ components:
         * `official` - Chính thức
         * `paused` - Tạm nghỉ
         * `terminated` - Nghỉ việc
+    EndPeriod457Enum:
+      enum:
+      - am
+      - pm
+      type: string
+      description: |-
+        * `am` - Sáng
+        * `pm` - Chiều
+    EndPeriod4efEnum:
+      enum:
+      - am
+      - pm
+      type: string
+      description: |-
+        * `am` - am
+        * `pm` - pm
     EntryTypeEnum:
       enum:
       - grant
       - adjustment
+      - hold
+      - refund
       type: string
       description: |-
         * `grant` - Cấp sao
         * `adjustment` - Điều chỉnh
+        * `hold` - Giữ sao đổi quà
+        * `refund` - Hoàn sao đổi quà
     FeedReactionKindEnum:
       enum:
       - like
@@ -4725,6 +5667,43 @@ components:
         * `daily` - Hằng ngày
         * `weekly` - Hằng tuần
         * `monthly` - Hằng tháng
+    Gift:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+          maxLength: 3000
+        category:
+          type: string
+          maxLength: 80
+        cost:
+          type: integer
+          maximum: 1000000
+          minimum: 1
+        stock:
+          type: integer
+          maximum: 1000000
+          minimum: 0
+        active:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - cost
+      - stock
+      - title
+      - updated_at
+      - uuid
     Goal:
       type: object
       properties:
@@ -4848,6 +5827,9 @@ components:
         justification:
           type: string
           readOnly: true
+        utilization_plan:
+          type: string
+          readOnly: true
         requester_name:
           type: string
           readOnly: true
@@ -4879,12 +5861,38 @@ components:
           type: string
           format: date-time
           readOnly: true
+        location:
+          type: string
+          readOnly: true
+        employment_type:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        requirements:
+          type: string
+          readOnly: true
+        benefits:
+          type: string
+          readOnly: true
+        deadline:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
       required:
+      - benefits
       - created_at
+      - deadline
+      - description
+      - employment_type
       - headcount
       - justification
+      - location
       - opening_uuid
       - requester_name
+      - requirements
       - review_note
       - reviewed_at
       - status
@@ -4893,6 +5901,7 @@ components:
       - team_name
       - title
       - updated_at
+      - utilization_plan
       - uuid
     HiringRequestCreate:
       type: object
@@ -4912,6 +5921,9 @@ components:
           type: string
           maxLength: 3000
           minLength: 1
+        utilization_plan:
+          type: string
+          maxLength: 3000
       required:
       - headcount
       - justification
@@ -4929,12 +5941,14 @@ components:
       - decision
     HiringRequestStatusEnum:
       enum:
+      - draft
       - pending
       - approved
       - rejected
       - closed
       type: string
       description: |-
+        * `draft` - Bản nháp
         * `pending` - Chờ duyệt
         * `approved` - Đã duyệt
         * `rejected` - Từ chối
@@ -4946,6 +5960,61 @@ components:
           type: integer
       required:
       - created
+    Interview:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        interview_at:
+          type: string
+          format: date-time
+          nullable: true
+        interviewer_name:
+          type: string
+          maxLength: 160
+        recruiter_note:
+          type: string
+          maxLength: 2000
+      required:
+      - interview_at
+      - interviewer_name
+      - recruiter_note
+      - version
+    KPI:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        completion:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        comment:
+          type: string
+      required:
+      - title
+      - weight
+    KPISource:
+      type: object
+      properties:
+        month:
+          type: string
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/KPI'
+      required:
+      - kpis
+      - month
     LeaderboardRow:
       type: object
       properties:
@@ -4970,6 +6039,38 @@ components:
       - rank
       - stars
       - team_name
+    LeaveCalendar:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        employee_code:
+          type: string
+        team_name:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        start_period:
+          type: string
+        end_period:
+          type: string
+      required:
+      - employee_code
+      - end_date
+      - end_period
+      - name
+      - start_date
+      - start_period
+      - team_name
+      - uuid
     LeaveRequest:
       type: object
       properties:
@@ -4994,6 +6095,14 @@ components:
         end_date:
           type: string
           format: date
+          readOnly: true
+        start_period:
+          allOf:
+          - $ref: '#/components/schemas/StartPeriod457Enum'
+          readOnly: true
+        end_period:
+          allOf:
+          - $ref: '#/components/schemas/EndPeriod457Enum'
           readOnly: true
         reason:
           type: string
@@ -5039,6 +6148,7 @@ components:
       - can_review
       - created_at
       - end_date
+      - end_period
       - reason
       - requester_code
       - requester_name
@@ -5046,6 +6156,7 @@ components:
       - reviewed_at
       - reviewer_name
       - start_date
+      - start_period
       - status
       - status_label
       - team_name
@@ -5061,6 +6172,14 @@ components:
         end_date:
           type: string
           format: date
+        start_period:
+          allOf:
+          - $ref: '#/components/schemas/StartPeriod4efEnum'
+          default: am
+        end_period:
+          allOf:
+          - $ref: '#/components/schemas/EndPeriod4efEnum'
+          default: pm
         reason:
           type: string
           maxLength: 2000
@@ -5176,9 +6295,33 @@ components:
           type: string
           format: date-time
           readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          nullable: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        closed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        hiring_request_deadline:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
       required:
+      - closed_at
       - created_at
       - hiring_request
+      - hiring_request_deadline
+      - published_at
+      - slug
       - status
       - status_label
       - team
@@ -5354,6 +6497,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HiringRequest'
+    PaginatedLeaveCalendarList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveCalendar'
     PaginatedLeaveRequestList:
       type: object
       required:
@@ -5423,6 +6589,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Post'
+    PaginatedPublicOpeningList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicOpening'
     PaginatedRecognitionList:
       type: object
       required:
@@ -5469,6 +6658,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Recurrence'
+    PaginatedReviewList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
     PaginatedTaskAttachmentList:
       type: object
       required:
@@ -5577,6 +6789,34 @@ components:
           type: integer
           minimum: 1
           writeOnly: true
+    PatchedGiftPatch:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+          maxLength: 3000
+        category:
+          type: string
+          maxLength: 80
+        cost:
+          type: integer
+          maximum: 1000000
+          minimum: 1
+        stock:
+          type: integer
+          maximum: 1000000
+          minimum: 0
+        active:
+          type: boolean
+        updated_at:
+          type: string
     PatchedGoalUpdate:
       type: object
       properties:
@@ -5595,6 +6835,41 @@ components:
         ends_on:
           type: string
           format: date
+    PatchedHiringRequestContent:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 160
+        headcount:
+          type: integer
+          maximum: 100
+          minimum: 1
+        justification:
+          type: string
+          maxLength: 3000
+        utilization_plan:
+          type: string
+          maxLength: 3000
+        location:
+          type: string
+          maxLength: 240
+        employment_type:
+          type: string
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 10000
+        requirements:
+          type: string
+          maxLength: 10000
+        benefits:
+          type: string
+          maxLength: 10000
+        deadline:
+          type: string
+          format: date
+          nullable: true
     PatchedLeaveRequestUpdate:
       type: object
       properties:
@@ -5604,6 +6879,14 @@ components:
         end_date:
           type: string
           format: date
+        start_period:
+          allOf:
+          - $ref: '#/components/schemas/StartPeriod4efEnum'
+          default: am
+        end_period:
+          allOf:
+          - $ref: '#/components/schemas/EndPeriod4efEnum'
+          default: pm
         reason:
           type: string
           maxLength: 2000
@@ -5664,6 +6947,19 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PatchedUpdateReview:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        leader_comment:
+          type: string
+          maxLength: 5000
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/KPI'
     PeriodEnum:
       enum:
       - day
@@ -5822,6 +7118,75 @@ components:
           minLength: 1
       required:
       - note
+    PublicApplication:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 160
+        email:
+          type: string
+          format: email
+          default: ''
+        phone:
+          type: string
+          default: ''
+          maxLength: 32
+        introduction:
+          type: string
+          default: ''
+          maxLength: 3000
+        consent:
+          type: boolean
+        cv:
+          type: string
+          format: uri
+      required:
+      - consent
+      - cv
+      - full_name
+    PublicOpening:
+      type: object
+      properties:
+        slug:
+          type: string
+          nullable: true
+          maxLength: 220
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          maxLength: 160
+        team_name:
+          type: string
+        location:
+          type: string
+        employment_type:
+          type: string
+        description:
+          type: string
+        requirements:
+          type: string
+        benefits:
+          type: string
+        headcount:
+          type: integer
+        deadline:
+          type: string
+          format: date
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - benefits
+      - deadline
+      - description
+      - employment_type
+      - headcount
+      - location
+      - requirements
+      - team_name
+      - title
     RankEnum:
       enum:
       - staff
@@ -6066,6 +7431,265 @@ components:
         * `active` - Đang chạy
         * `paused` - Tạm dừng
         * `stopped` - Đã dừng
+    RedeemInput:
+      type: object
+      properties:
+        gift_uuid:
+          type: string
+          format: uuid
+        request_key:
+          type: string
+          format: uuid
+        expected_cost:
+          type: integer
+          minimum: 1
+      required:
+      - expected_cost
+      - gift_uuid
+      - request_key
+    Redemption:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_name:
+          type: string
+          readOnly: true
+        gift:
+          type: string
+          format: uuid
+          readOnly: true
+        gift_title:
+          type: string
+          readOnly: true
+        cost:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RedemptionStatusEnum'
+          readOnly: true
+        status_label:
+          type: string
+          readOnly: true
+        note:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - cost
+      - created_at
+      - employee
+      - employee_name
+      - gift
+      - gift_title
+      - note
+      - status
+      - status_label
+      - updated_at
+      - uuid
+    RedemptionPage:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Redemption'
+      required:
+      - count
+      - next
+      - previous
+      - results
+    RedemptionStatusEnum:
+      enum:
+      - pending
+      - approved
+      - fulfilled
+      - rejected
+      - cancelled
+      type: string
+      description: |-
+        * `pending` - Chờ duyệt
+        * `approved` - Đã duyệt
+        * `fulfilled` - Đã trao quà
+        * `rejected` - Từ chối
+        * `cancelled` - Đã hủy
+    Review:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        employee:
+          type: string
+          format: uuid
+          readOnly: true
+        employee_name:
+          type: string
+          readOnly: true
+        employee_code:
+          type: string
+          readOnly: true
+        team:
+          type: string
+          format: uuid
+          readOnly: true
+        team_name:
+          type: string
+          readOnly: true
+        leader_name:
+          type: string
+          readOnly: true
+        month:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ReviewStatusEnum'
+          readOnly: true
+        status_label:
+          type: string
+          readOnly: true
+        total_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        leader_comment:
+          type: string
+          readOnly: true
+        employee_feedback:
+          type: string
+          readOnly: true
+        finalized_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        acknowledged_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        version:
+          type: integer
+          readOnly: true
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/KPI'
+          readOnly: true
+        revisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Revision'
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+        can_reopen:
+          type: boolean
+          readOnly: true
+        can_acknowledge:
+          type: boolean
+          readOnly: true
+      required:
+      - acknowledged_at
+      - can_acknowledge
+      - can_edit
+      - can_reopen
+      - employee
+      - employee_code
+      - employee_feedback
+      - employee_name
+      - finalized_at
+      - kpis
+      - leader_comment
+      - leader_name
+      - month
+      - revisions
+      - status
+      - status_label
+      - team
+      - team_name
+      - total_score
+      - uuid
+      - version
+    ReviewEmployee:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        employee_code:
+          type: string
+        team_name:
+          type: string
+      required:
+      - display_name
+      - employee_code
+      - team_name
+      - uuid
+    ReviewStatusEnum:
+      enum:
+      - draft
+      - finalized
+      - acknowledged
+      type: string
+      description: |-
+        * `draft` - Bản nháp
+        * `finalized` - Đã chốt
+        * `acknowledged` - Đã xác nhận
+    Revision:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        event:
+          type: string
+          readOnly: true
+        reason:
+          type: string
+          readOnly: true
+        snapshot:
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - event
+      - reason
+      - snapshot
+      - uuid
     RewardAudienceMember:
       type: object
       properties:
@@ -6145,7 +7769,6 @@ components:
       - new
       - screening
       - interview
-      - offer
       - hired
       - rejected
       type: string
@@ -6153,7 +7776,6 @@ components:
         * `new` - Mới
         * `screening` - Sàng lọc
         * `interview` - Phỏng vấn
-        * `offer` - Đề nghị
         * `hired` - Đã tuyển
         * `rejected` - Từ chối
     StarEntry:
@@ -6221,6 +7843,22 @@ components:
       - amount
       - employee_uuid
       - reason
+    StartPeriod457Enum:
+      enum:
+      - am
+      - pm
+      type: string
+      description: |-
+        * `am` - Sáng
+        * `pm` - Chiều
+    StartPeriod4efEnum:
+      enum:
+      - am
+      - pm
+      type: string
+      description: |-
+        * `am` - am
+        * `pm` - pm
     Task:
       type: object
       properties:
@@ -6379,6 +8017,27 @@ components:
       description: |-
         * `brief` - Yêu cầu
         * `evidence` - Kết quả
+    TaskContext:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        title:
+          type: string
+        due_at:
+          type: string
+          format: date-time
+        progress:
+          type: integer
+        status:
+          type: string
+      required:
+      - due_at
+      - progress
+      - status
+      - title
+      - uuid
     TaskCreate:
       type: object
       properties:
@@ -6454,12 +8113,30 @@ components:
       type: object
       properties:
         action:
-          $ref: '#/components/schemas/ActionEnum'
+          $ref: '#/components/schemas/TransitionActionEnum'
         note:
           type: string
           maxLength: 4000
       required:
       - action
+    TransitionActionEnum:
+      enum:
+      - submit
+      - accept
+      - rework
+      type: string
+      description: |-
+        * `submit` - submit
+        * `accept` - accept
+        * `rework` - rework
+    Upload:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+      required:
+      - file
   securitySchemes:
     cookieAuth:
       type: apiKey

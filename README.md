@@ -1,5 +1,7 @@
 # MRERP Platform
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](docs/product/hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 MRERP là repository mới cho nền tảng làm việc chung của MRE. Repository dự kiến chứa MRERP Core và MRECRM dưới dạng các deployable có ranh giới riêng, đồng thời cung cấp contract và design system dùng chung. ASSETCONTROL và repository MREKANBAN hiện tại tiếp tục nằm ngoài repository này trong giai đoạn đầu.
 
 Repository GitHub: [luuhavy121-bot/MRERP](https://github.com/luuhavy121-bot/MRERP)
@@ -116,6 +118,16 @@ Prototype chỉ minh họa giao diện và UX. Không được coi prototype là
 
 ## Chạy local
 
+Gói chuẩn bị pilot và công cụ kiểm tra/backup/restore local: [runbook local pilot](docs/operations/local-pilot.md). Từ root chạy `python scripts/local_ops.py check`; công cụ không tạo, xóa hoặc đổi mật khẩu tài khoản. Snapshot/restore drill có hướng dẫn riêng và dùng database khôi phục cô lập.
+
 Xem [hướng dẫn backend](apps/mrerp/backend/README.md) và [hướng dẫn frontend](apps/mrerp/frontend/README.md). Chế độ nhanh dùng SQLite; Docker Compose dùng PostgreSQL 16. Không dùng mock Identity hoặc credential demo ở production.
 
 Trên Windows, chuẩn bị `.env` từ `.env.example` một lần rồi nhấp đúp `start-mrerp.bat`. Launcher sẽ mở Docker Desktop khi cần, chạy Docker Compose, chờ frontend sẵn sàng và mở `http://localhost:4173/` trong trình duyệt mặc định. `.env` chỉ nằm trên máy local và không được commit.
+
+Nhập chấm công Excel HR được triển khai theo [ADR-0019](docs/decisions/0019-attendance-excel-import.md), tách công thực tế nhập từ file và công dự kiến. Không kết nối máy hoặc tính lương.
+
+## MRECRM local — 02/10/2026
+
+CRM tại `/crm` dùng frontend và phiên đăng nhập MRERP hiện tại. Nút MRECRM mở tab mới tại http://localhost:4173/crm. **Cập nhật được duyệt 03/10/2026:** giao diện riêng có header/menu MRECRM và liên kết Về MRERP; không dùng khung ERP. Đơn hàng (`/crm/orders`) và Thống kê (`/crm/reports`) có demo tương tác với 60 đơn giả / 72 bản ghi nguồn; cùng bộ lọc, mỗi đơn minh họa đếm một lần. Quảng cáo (`/crm/ads`) và Kế toán (`/crm/accounting`) trình bày dữ liệu cần chuẩn bị; `/crm/review` có câu hỏi duyệt nghiệp vụ. Cả bốn nghiệp vụ thật **chưa triển khai**; không có API/database/connector CRM. Demo không chốt nguồn chuẩn, quyền dữ liệu, deployment, Identity hoặc SSO production. Reload giữ trang, không giữ bộ lọc.
+
+Sao & Đổi thưởng và ghi nhận trong Đánh giá nhân sự được mở rộng theo [ADR-0020](docs/decisions/0020-stars-redemption-and-recognition.md), `Implementation hoàn tất / Chờ nghiệm thu sản phẩm`; ngân sách tiền mặt CEO còn hoãn.

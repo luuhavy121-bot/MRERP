@@ -1,5 +1,7 @@
 # 03 — Thiết kế kỹ thuật
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](architecture/hr-expansion-contract.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Tài liệu này mô tả kiến trúc bằng ngôn ngữ ngắn gọn. Mỗi chủ đề kỹ thuật có một tài liệu chuyên sâu chịu trách nhiệm chính và được dẫn bên dưới.
 
 ## Bức tranh tổng thể
@@ -82,3 +84,7 @@ Identity Provider, database/schema topology, service authentication, monitoring 
 Danh sách đầy đủ: [Open decisions](decisions/open-decisions.md).
 
 Tiếp theo: [04 — Tiêu chí nghiệm thu](04-tieu-chi-nghiem-thu.md).
+
+[ADR-0019](decisions/0019-attendance-excel-import.md) bổ sung nhập Excel trong leave_domain; [contract](architecture/leave-attendance-contract.md#7-contract-nhập-excel-theo-adr-0019) tách kết quả nguồn khỏi công dự kiến.
+
+[ADR-0020](decisions/0020-stars-redemption-and-recognition.md) mở rộng rewards_domain với catalog, redemption và hạn mức Team; contract transaction/hold/refund tại [contract Phase 3](architecture/phase-3-contract.md).

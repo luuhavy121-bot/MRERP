@@ -17,7 +17,7 @@ test('Staff gửi đơn, Leader duyệt và HR thấy công bị ảnh hưởng'
   const daysInMonth = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate()
   for (let day = 1; day <= daysInMonth; day += 1) {
     const weekday = new Date(Date.UTC(year, monthIndex, day)).getUTCDay()
-    if (weekday > 0 && weekday < 6) scheduledWorkdays += 1
+    if (weekday > 0) scheduledWorkdays += 1
   }
 
   await page.goto('/')
@@ -46,12 +46,13 @@ test('Staff gửi đơn, Leader duyệt và HR thấy công bị ảnh hưởng'
   const reviewTicket = page.locator('.leave-ticket').filter({ hasText: updatedReason })
   await expect(reviewTicket).toBeVisible()
   await reviewTicket.getByRole('button', { name: 'Duyệt' }).click()
+  await page.getByRole('button', { name: 'Xác nhận xử lý' }).click()
   await expect(page.locator('.leave-ticket').filter({ hasText: updatedReason })).toHaveCount(0)
 
   await page.getByLabel('Xem theo vai trò debug').selectOption('hr.demo')
   await expect(page.getByRole('button', { name: 'Mở hồ sơ của HR Demo' })).toBeVisible()
   await page.getByRole('button', { name: 'Nghỉ & Công', exact: true }).click()
-  await page.getByRole('button', { name: 'Bảng công' }).click()
+  await page.getByRole('button', { name: 'Công dự kiến' }).click()
   await page.getByLabel('Tháng bảng công').fill(month)
   const staffRow = page.locator('.attendance-row').filter({ hasText: 'STF01' })
   await expect(staffRow).toContainText('2')

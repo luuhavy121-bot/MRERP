@@ -11,7 +11,8 @@ def visible_leave_queryset(user):
     queryset = LeaveRequest.objects.select_related("requester", "requester_team", "reviewer")
     scope = Q(requester=actor)
     if user.has_perm(REVIEW_TEAM_LEAVE):
-        scope |= Q(requester_team__leaderships__leader=actor)
+        from django.db.models import F
+        scope |= Q(requester_team__leaderships__leader=actor, requester__team_id=F("requester_team_id"))
     return queryset.filter(scope).distinct()
 
 
@@ -21,6 +22,7 @@ def can_review_request(user, leave_request: LeaveRequest) -> bool:
         user.has_perm(REVIEW_TEAM_LEAVE)
         and leave_request.requester_id != actor.pk
         and leave_request.requester_team_id
+        and leave_request.requester.team_id == leave_request.requester_team_id
         and leave_request.requester_team.leaderships.filter(leader=actor).exists()
     )
 

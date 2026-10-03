@@ -1,5 +1,7 @@
 # Open decisions
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](../product/hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết định**. AI và developer không được tự lựa chọn. Mỗi quyết định ảnh hưởng production phải đi qua ADR và cập nhật source of truth liên quan.
 
 ## Đang mở
@@ -10,7 +12,7 @@ Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết địn
 | OD-02 | Hành vi của phiên đang hoạt động khi IdP ngừng | Identity, operations |
 | OD-03 | Break-glass ASSETCONTROL và thời gian giữ login cũ | Identity, integration, operations |
 | OD-04 | Ranh giới Captain, Leader và Manager | Product requirements, authorization |
-| OD-05 | Ai quản trị Rewards và quyền Admin Panel ngoài phạm vi People | Product requirements, authorization |
+| OD-05 | Quyền Admin Panel ngoài phạm vi đã duyệt; quản trị Rewards đã chốt cục bộ qua ADR-0020 | Product requirements, authorization |
 | OD-06 | CRM field-level matrix cho Sales, Marketing/Ads, Kế toán và nhóm liên quan | CRM requirements, authorization |
 | OD-07 | Mapping Ads với Marketing trong cơ cấu MRE | Organization configuration |
 | OD-08 | Retire MREKANBAN hay giữ làm client/view chuyên sâu dài hạn | Product boundary, integration, roadmap |
@@ -18,7 +20,7 @@ Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết địn
 | OD-10 | Stale threshold, timeout, retry và SLA cho Dashboard snapshot | Integration, operations |
 | OD-11 | Service-to-service authentication và rotation | Identity, integration, operations |
 | OD-12 | Ngưỡng tải, SLA và ngân sách để tách CRM sang VPS riêng | Deployment |
-| OD-13 | Công thức lương, chấm công, phép và reward policy | Business requirements |
+| OD-13 | Công thức lương, chấm công, phép và reward policy còn lại, gồm ngân sách tiền mặt CEO; catalog/hold/refund/hạn mức sao đã chốt qua ADR-0020 | Business requirements |
 | OD-14 | Object storage production dài hạn cho attachment/Documents; local-media Feed/Task hiện chỉ là baseline VPS | Data ownership, deployment |
 | OD-15 | Reverse proxy, error tracking và monitoring product cụ thể | Deployment |
 | OD-16 | Danh sách Team, cấp bậc và capability chính thức; MRE hiện không dùng Phòng ban | Company configuration, authorization |
@@ -35,6 +37,8 @@ Mọi mục trong phần **Đang mở** có trạng thái **Chưa quyết địn
 
 OD-01, OD-02 và OD-03 cần được giải quyết trước khi migration login thật hoặc tắt cơ chế đăng nhập cũ. Không tự thiết kế backdoor.
 
+**Xác nhận trực tiếp ngày 03/10/2026:** người dùng chọn hoàn thiện/kiểm tra local trước và tài khoản do công ty cấp riêng. Điều này chốt trải nghiệm cấp tài khoản, chưa chọn IdP hoặc contract provisioning/reset/revoke; OD-01/02/19 vẫn mở. Hướng hosting sau là dùng chung VPS ASSETCONTROL, cần kiểm kê tải và ADR topology trước triển khai; không tự đóng OD-09/12/15/21. [Runbook pilot local](../operations/local-pilot.md) chỉ hiện thực kiểm tra và backup/restore thử trên development.
+
 ### Permission và dữ liệu nhạy cảm
 
 OD-04 đến OD-07, OD-16, OD-18 và OD-19 cần được chốt đủ cho vertical slice bị ảnh hưởng trước khi hiện thực endpoint nghiệp vụ. Không hard-code giả định vào lõi platform.
@@ -49,7 +53,7 @@ OD-09 đến OD-12, OD-14, OD-15 và OD-21 cần ADR trước khi lựa chọn p
 
 **Đã chốt cục bộ qua [ADR-0012](0012-phase-2-leave-attendance-foundation.md):** Leave nguyên ngày, Leader duyệt một cấp, holiday calendar Việt Nam và HR adjustment được phép trong foundation Phase 2. OD-13 vẫn mở cho loại phép, entitlement, nửa ngày/theo giờ, máy chấm công và công thức lương.
 
-**Đã chốt cục bộ qua [ADR-0013](0013-phase-3-culture-operations-baseline.md):** Recruitment scope/pipeline, Documents local-media/version/retention, Recognition scope, Star ledger không hết hạn, leaderboard và notification preference. OD-05 vẫn mở cho người quản trị catalog/duyệt đổi thưởng; OD-13 vẫn mở cho redemption hold/refund và policy reward còn lại; OD-14 vẫn mở cho object storage production.
+**Đã chốt cục bộ qua [ADR-0013](0013-phase-3-culture-operations-baseline.md):** Recruitment scope/pipeline, Documents local-media/version/retention, Recognition scope, Star ledger không hết hạn, leaderboard và notification preference. **Bổ sung [ADR-0020](0020-stars-redemption-and-recognition.md):** HR/CEO quản trị catalog/duyệt đổi, hạn mức sao Team/tháng, hold/refund/tồn/snapshot và Recognition trong Đánh giá nhân sự. OD-05 chỉ còn phần Admin chưa duyệt; OD-13 giữ các policy còn lại và ngân sách tiền mặt tổng CEO được hoãn. OD-14 vẫn mở cho object storage production.
 
 ### Phase 1 People/HR readiness
 
@@ -93,7 +97,8 @@ OD-20 đã được giải quyết bằng ADR-0001. Baseline này không lựa c
 | OD-26 | Stack Phase 1 được chấp nhận | [ADR-0003](0003-phase-1-application-stack.md) |
 | People account/lifecycle | Policy account, self-service, employment lifecycle và Admin access bundle cục bộ được chấp nhận | [ADR-0010](0010-people-account-and-employment-lifecycle.md) |
 | Dashboard/Feed/Task baseline | Audience, moderation, Task read scope, Goal, recurrence, local-media và retention cục bộ được chấp nhận; OD-14 không đóng | [ADR-0011](0011-dashboard-feed-task-operational-baseline.md) |
-| Phase 3 baseline | Recruitment, Documents, Recognition/Stars và Personal Settings baseline được chấp nhận; redemption/catalog approval và object storage production vẫn mở | [ADR-0013](0013-phase-3-culture-operations-baseline.md) |
+| Phase 3 baseline | Recruitment, Documents, Recognition/Stars và Personal Settings baseline được chấp nhận; object storage production vẫn mở, catalog/redemption được mở rộng qua ADR-0020 | [ADR-0013](0013-phase-3-culture-operations-baseline.md) |
+| Rewards mở rộng (OD-05/OD-13 một phần) | HR/CEO quản trị/duyệt, hạn mức Team/tháng, giữ/hoàn sao và tồn được chốt; ngân sách tiền mặt CEO hoãn | [ADR-0020](0020-stars-redemption-and-recognition.md) |
 | MKTLogin integration goal | Chỉ tích hợp MKTLogin; không clone; ASSETCONTROL resource phải liên kết resource thật qua API. Contract chi tiết vẫn mở ở OD-27 | [ADR-0014](0014-mktlogin-assetcontrol-integration-goal.md) |
 
 ## Những nội dung không còn mở
@@ -109,3 +114,11 @@ Các ràng buộc sau là **Đã chốt**, không được biến thành open de
 - Dashboard không gọi CRM trực tiếp trong request tải trang.
 - MRERP không được phát triển trong repo/permanent worktree ASSETCONTROL.
 - MKT City không thuộc phạm vi dự án hiện tại và không clone đầy đủ MKTLogin.
+
+## Phần OD-13 chốt thêm ngày 01/10/2026
+
+Nhập kết quả Excel HR được chốt theo [ADR-0019](0019-attendance-excel-import.md). OD-13 tiếp tục mở cho công thức ca/công/lương, khóa kỳ, sửa mapping mã chấm công và retention/xóa lịch sử nhập. Không mặc định bảng xuất là công đã duyệt.
+
+## Bổ sung OD-13 ngày 03/10/2026
+
+[ADR-0021](0021-hr-demo-half-day-and-workflow.md) giải quyết nghỉ nửa ngày và công chuẩn thứ Hai–thứ Bảy cả ngày cho demo local. Loại phép/hạn mức/lương/theo giờ/hủy đơn/duyệt thay/khóa kỳ và máy chấm công vẫn Chưa quyết định. Không mở production từ xác nhận demo.

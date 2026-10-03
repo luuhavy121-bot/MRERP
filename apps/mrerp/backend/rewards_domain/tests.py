@@ -4,7 +4,8 @@ from rest_framework.test import APIClient
 
 from people_domain.models import Employee
 
-from .models import StarLedgerEntry
+from .models import StarLedgerEntry, TeamStarAllowance
+from django.utils import timezone
 
 
 class RewardsApiTests(TestCase):
@@ -14,6 +15,7 @@ class RewardsApiTests(TestCase):
         cls.staff = Employee.objects.get(employee_code="STF01")
         cls.other = Employee.objects.get(employee_code="OTH01")
         cls.leader = Employee.objects.get(employee_code="LDR01")
+        TeamStarAllowance.objects.create(team=cls.staff.team, month=timezone.localdate().replace(day=1), limit=100)
 
     def setUp(self):
         self.client = APIClient()
@@ -50,7 +52,7 @@ class RewardsApiTests(TestCase):
         negative = self.client.post("/api/v1/rewards/stars/grant/", {
             "employee_uuid": str(self.staff.pk), "amount": -13, "reason": "Điều chỉnh",
         }, format="json")
-        self.assertEqual(negative.status_code, 400)
+        self.assertEqual(negative.status_code, 403)
 
         self.client.logout()
         self.login("staff.demo")

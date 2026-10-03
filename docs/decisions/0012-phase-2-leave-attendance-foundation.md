@@ -6,7 +6,7 @@
 - Related source of truth: `docs/product/leave-attendance-requirements.md`
 - Related open decision: `OD-13 (chỉ giải quyết một phần; payroll và policy phép chi tiết vẫn mở)`
 - Supersedes: `Không có`
-- Superseded by: `Không có`
+- Superseded by: `ADR-0021 chỉ ở giới hạn nguyên ngày và lịch thứ Hai–thứ Sáu; các policy khác giữ nguyên`
 - Status rationale: `Người sở hữu sản phẩm xác nhận trực tiếp phạm vi nền trong task ngày 29/08/2026.`
 
 ## Context

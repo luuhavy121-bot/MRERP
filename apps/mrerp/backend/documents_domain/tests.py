@@ -53,7 +53,9 @@ class DocumentApiTests(TestCase):
         self.assertEqual(self.client.get("/api/v1/documents/documents/").data["count"], 1)
         download = self.client.get(f"/api/v1/documents/files/{file_uuid}/download/")
         self.assertEqual(download.status_code, 200)
-        download.close()
+        # Consume the test client's streaming iterator: its wrapper closes the file
+        # while protecting TestCase's outer transaction from request_finished hooks.
+        self.assertEqual(b"".join(download.streaming_content), b"hello team")
         self.client.logout()
         self.login("other.demo")
         self.assertEqual(self.client.get("/api/v1/documents/documents/").data["count"], 0)

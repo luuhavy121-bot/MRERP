@@ -1,10 +1,12 @@
 # 06 — Kế hoạch triển khai
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](product/hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Roadmap chi tiết được quản lý tại [Roadmap chuyên sâu](product/roadmap.md). Tài liệu này cho biết đang ở đâu, cổng chuyển phase và bước tiếp theo.
 
 ## Trạng thái hiện tại
 
-**Hiện tại: Phase 3 đã được hiện thực và đang chờ nghiệm thu; mục tiêu tiếp theo được xác nhận là refinement/tích hợp MKTLogin với ASSETCONTROL trong Phase 4 theo ADR-0014. People/HR Foundation đã được nghiệm thu; các gói Phase 1–2 khác vẫn giữ trạng thái riêng.**
+**Hiện tại: Phase 3 đã được hiện thực và đang chờ nghiệm thu; ưu tiên triển khai hiện tại là Tuyển dụng công khai và đánh giá KPI theo ADR-0017/0018; MKTLogin–ASSETCONTROL giữ trạng thái thiết kế. People/HR Foundation đã được nghiệm thu; các gói Phase 1–2 khác vẫn giữ trạng thái riêng.**
 
 Đã có:
 
@@ -63,12 +65,14 @@ Chỉ chuyển phase khi:
 - Data ownership trong slice không còn mơ hồ.
 - Definition of Done và test strategy được duyệt.
 
-## Bước tiếp theo đề xuất
+## Bước tiếp theo
+
+Nghiệm thu [HR mở rộng](testing/hr-expansion-acceptance.md) trước khi trở lại workstream tích hợp bên dưới.
 
 1. Duyệt [bản vẽ và kiến trúc MKTLogin trên máy công ty, bản 02](architecture/mktlogin-company-device-proposal.md), ADR-0016 **Proposed**. Workflow MRERP → MKTLogin và mất quyền dùng khi nghỉ việc là phương án nội bộ, chưa được MKT xác nhận; tài khoản/profile/tài nguyên công ty giữ nguyên. Khảo sát nơi thực thi chặn tại MKTLogin hoặc máy công ty; API đọc/khóa MRERP chưa đủ. Vẫn chỉ thiết kế, chưa code; các Team có workspace riêng theo ADR-0015.
 2. Xác định ASSETCONTROL MRE và refinement contract (OD-17/OD-27): thử một Team/Gmail Resource/profile, kiểm chứng ID, scope API, điểm đọc cục bộ, dữ liệu tối thiểu, lỗi và audit theo [danh sách kiểm kê](architecture/ecosystem-integration.md#51-thông-tin-api-cần-người-sở-hữu-sản-phẩm-cung-cấp). Chốt xác thực của slice trước production; bổ sung policy bàn giao máy/thu hồi ở OD-28. Không ghi credential vào tài liệu hoặc Git.
 3. Nghiệm thu Phase 3 baseline đã triển khai độc lập: Settings → Recruitment → Documents → Recognition/Stars.
-4. Giữ MKT City, reward catalog/redemption, Payroll, máy chấm công và CRM ngoài phạm vi hiện tại.
+4. Giữ MKT City, ngân sách tiền mặt Rewards, Payroll, máy chấm công và nghiệp vụ CRM ngoài phạm vi hiện tại.
 
 ## Đọc sâu hơn
 
@@ -76,3 +80,13 @@ Chỉ chuyển phase khi:
 - [Open decisions](decisions/open-decisions.md)
 - [ADR process](decisions/README.md)
 - [Tiêu chí nghiệm thu](04-tieu-chi-nghiem-thu.md)
+
+## Bổ sung chấm công bằng file
+
+**Đã chốt 01/10/2026:** triển khai [nhập bảng công HR](product/leave-attendance-requirements.md#6-nhập-bảng-công-hr-từ-excel), chưa kết nối máy. Trạng thái triển khai và bằng chứng nằm trong [nghiệm thu Leave/Attendance](testing/leave-attendance-acceptance.md).
+
+**Đã chốt 02/10/2026:** mở rộng [Sao & Đổi thưởng](product/phase-3-requirements.md) theo ADR-0020; `Implementation hoàn tất / Chờ nghiệm thu sản phẩm`. Ngân sách tiền mặt CEO hoãn; các phase khác giữ trạng thái riêng.
+
+## Gói demo 06/10/2026
+
+[ADR-0021](decisions/0021-hr-demo-half-day-and-workflow.md) chốt KPI do Leader đặt, sao chép cấu trúc/lịch sử/thông báo; tuyển dụng xem trước/lọc/lịch phỏng vấn; nghỉ nửa ngày và thứ Bảy cả ngày. Hoàn thiện và kiểm tra local trước demo; không nâng trạng thái nghiệm thu hoặc tự triển khai VPS.

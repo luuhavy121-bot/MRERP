@@ -1,5 +1,7 @@
 # AGENTS.md — MRERP Platform
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](docs/product/hr-expansion-requirements.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 ## 1. Phạm vi repository
 
 Repository này dành cho hệ sinh thái MRERP mới. MRERP Core và MRECRM dự kiến nằm trong cùng monorepo nhưng là các deployable có ranh giới riêng. ASSETCONTROL và repository MREKANBAN hiện tại không được sao chép vào repository này ở Phase 0.
@@ -85,3 +87,7 @@ Chỉ viện dẫn “xác nhận trực tiếp mới nhất” khi xác nhận 
 ## 8. Definition of Done chung
 
 Source of truth cho điều kiện đạt/không đạt là [docs/04-tieu-chi-nghiem-thu.md](docs/04-tieu-chi-nghiem-thu.md). Chiến lược test kỹ thuật nằm tại [docs/testing/test-strategy.md](docs/testing/test-strategy.md). Agent phải áp dụng hai tài liệu này thay vì tạo một Definition of Done cạnh tranh trong task hoặc code.
+
+**Cập nhật được duyệt 01/10/2026:** [ADR-0019](docs/decisions/0019-attendance-excel-import.md) cho phép nhập kết quả chấm công Excel HR. Kết nối máy và payroll vẫn ngoài phạm vi.
+
+**Cập nhật được duyệt 02/10/2026:** [ADR-0020](docs/decisions/0020-stars-redemption-and-recognition.md) mở catalog/đổi thưởng, hạn mức sao Team và ghi nhận trong Đánh giá nhân sự; thay giới hạn reward chưa chốt ở baseline trên. Ngân sách tiền mặt tổng CEO còn hoãn.

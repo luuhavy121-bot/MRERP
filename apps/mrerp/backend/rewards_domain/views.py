@@ -36,7 +36,25 @@ class RecognitionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         get_actor_employee(self.request.user)
         require_capability(self.request.user, VIEW_REWARDS)
-        return Recognition.objects.filter(moderated_at__isnull=True).select_related("sender").prefetch_related("recipients")
+        rows = Recognition.objects.filter(moderated_at__isnull=True).select_related("sender").prefetch_related("recipients")
+        if self.request.query_params.get('employee_uuid'):
+            from rest_framework import serializers
+            from .access import can_recognize
+            from rest_framework.exceptions import PermissionDenied
+            value = serializers.UUIDField().run_validation(self.request.query_params['employee_uuid'])
+            employee = get_object_or_404(Employee, pk=value)
+            if employee.pk != get_actor_employee(self.request.user).pk and not can_recognize(self.request.user, employee):
+                raise PermissionDenied('Ngoài phạm vi nhân sự.')
+            rows = rows.filter(recipients=employee)
+        if self.request.query_params.get('month'):
+            from datetime import datetime
+            from rest_framework.exceptions import ValidationError
+            try:
+                month = datetime.strptime(self.request.query_params['month'], '%Y-%m')
+            except ValueError:
+                raise ValidationError('Tháng không hợp lệ.')
+            rows = rows.filter(created_at__year=month.year, created_at__month=month.month)
+        return rows
 
     @extend_schema(request=RecognitionCreateSerializer, responses={201: RecognitionSerializer, 400: ApiErrorSerializer, 403: ApiErrorSerializer})
     def create(self, request):
@@ -88,7 +106,10 @@ class MyStarBalanceView(APIView):
         actor = get_actor_employee(request.user)
         require_capability(request.user, VIEW_REWARDS)
         ledger = actor.star_ledger.select_related("actor__employee_profile")[:100]
-        return Response({"balance": star_balance(actor), "ledger": StarEntrySerializer(ledger, many=True).data})
+        from django.db.models import Sum
+        from .models import RewardRedemption
+        held = RewardRedemption.objects.filter(employee=actor, status__in=['pending','approved']).aggregate(total=Sum('cost'))['total'] or 0
+        return Response({"balance": star_balance(actor), "held": held, "ledger": StarEntrySerializer(ledger, many=True).data})
 
 
 class LeaderboardView(APIView):

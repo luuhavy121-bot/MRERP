@@ -24,6 +24,8 @@ class LeaveRequest(TimeStampedModel):
     )
     start_date = models.DateField()
     end_date = models.DateField()
+    start_period = models.CharField(max_length=2, choices=[("am", "Sáng"), ("pm", "Chiều")], default="am")
+    end_period = models.CharField(max_length=2, choices=[("am", "Sáng"), ("pm", "Chiều")], default="pm")
     reason = models.TextField()
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
     reviewer = models.ForeignKey(
@@ -41,6 +43,7 @@ class LeaveRequest(TimeStampedModel):
         ordering = ["-created_at"]
         constraints = [
             models.CheckConstraint(condition=Q(end_date__gte=F("start_date")), name="leave_end_on_or_after_start"),
+            models.CheckConstraint(condition=Q(end_date__gt=F("start_date")) | Q(start_period="am") | Q(end_period="pm"), name="leave_period_order"),
         ]
         permissions = [
             ("submit_leave_request", "Can submit own leave request"),
@@ -91,3 +94,42 @@ class AttendanceAdjustment(TimeStampedModel):
 
     def __str__(self):
         return f"{self.employee.employee_code} {self.month:%Y-%m}: {self.days:+d}"
+
+
+class AttendanceImport(TimeStampedModel):
+    uuid = models.UUIDField(primary_key=True, default=uuid_lib.uuid4, editable=False)
+    filename = models.CharField(max_length=255)
+    sha256 = models.CharField(max_length=64)
+    month = models.DateField()
+    source = models.JSONField()
+    baseline = models.JSONField(default=dict)
+    mappings = models.JSONField(default=dict)
+    imported_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    committed_at = models.DateTimeField(null=True)
+    replaced_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class AttendanceEmployeeMapping(TimeStampedModel):
+    source_code = models.CharField(max_length=64, unique=True)
+    employee = models.OneToOneField(Employee, on_delete=models.PROTECT)
+
+
+class AttendanceRecord(TimeStampedModel):
+    uuid = models.UUIDField(primary_key=True, default=uuid_lib.uuid4, editable=False)
+    employee = models.ForeignKey(Employee, on_delete=models.PROTECT)
+    date = models.DateField()
+    data = models.JSONField()
+    batch = models.ForeignKey(AttendanceImport, on_delete=models.PROTECT)
+    version = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ["employee__employee_code", "date"]
+        constraints = [models.UniqueConstraint(fields=["employee", "date"], name="unique_actual_attendance_day")]
+        permissions = [
+            ("import_attendance", "Can import HR attendance exports"),
+            ("view_own_actual_attendance", "Can view own imported attendance"),
+            ("view_team_actual_attendance", "Can view imported attendance in led teams"),
+        ]

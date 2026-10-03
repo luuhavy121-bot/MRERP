@@ -1,0 +1,11 @@
+.hr-demo-filters {display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.hr-demo-filters label {display:flex;flex-direction:column;gap:6px;min-width:160px;flex:1}
+.hr-demo-filters label:first-child {flex:2}
+.hr-demo-filters input,.hr-demo-filters select {width:100%;min-height:44px}
+.hiring-preview {padding:20px;border:1px solid var(--border,#deded7);margin:16px 0}
+.hiring-preview h4 {margin-top:20px}
+.inspector-action label {display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.performance-note ul {margin:8px 0;padding-left:20px}
+.leave-workspace .performance-table {width:100%}
+.leave-date-grid select {width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--ink);font:inherit}
+@media(max-width:640px) {.hr-demo-filters label {min-width:100%;width:100%}.leave-workspace .panel {overflow-x:auto}.leave-date-grid {grid-template-columns:1fr}.attendance-adjustment {flex-wrap:wrap}}

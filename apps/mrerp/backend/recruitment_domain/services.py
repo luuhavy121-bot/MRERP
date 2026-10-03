@@ -11,6 +11,8 @@ from people_domain.models import Employee, Team, TeamLeadership
 from people_domain.services import audit, create_probation_employee
 
 from .capabilities import APPROVE_REQUEST, CONVERT_CANDIDATE, MANAGE_CANDIDATES, VIEW_COMPANY_RECRUITMENT
+from .access import require_team_access
+from .interviews import notify_recruitment_owners
 from .models import (
     Application,
     ApplicationTransition,
@@ -24,8 +26,7 @@ from .models import (
 ALLOWED_TRANSITIONS = {
     Application.Stage.NEW: {Application.Stage.SCREENING, Application.Stage.REJECTED},
     Application.Stage.SCREENING: {Application.Stage.INTERVIEW, Application.Stage.REJECTED},
-    Application.Stage.INTERVIEW: {Application.Stage.OFFER, Application.Stage.REJECTED},
-    Application.Stage.OFFER: {Application.Stage.HIRED, Application.Stage.REJECTED},
+    Application.Stage.INTERVIEW: {Application.Stage.HIRED, Application.Stage.REJECTED},
     Application.Stage.HIRED: set(),
     Application.Stage.REJECTED: set(),
 }
@@ -39,25 +40,18 @@ def _create_opening(hiring_request):
     return opening
 
 
-def create_hiring_request(*, actor_user, team: Team, title: str, headcount: int, justification: str):
+def create_hiring_request(*, actor_user, team: Team, title: str, headcount: int, justification: str, utilization_plan: str = ""):
     actor = actor_user.employee_profile
+    require_team_access(actor_user, team.pk)
     company_scope = actor_user.has_perm(VIEW_COMPANY_RECRUITMENT)
     if not company_scope and not TeamLeadership.objects.filter(team=team, leader=actor).exists():
         raise PermissionDenied("Leader chỉ được tạo yêu cầu tuyển cho Team mình lãnh đạo.")
     with transaction.atomic():
-        auto_approved = actor_user.has_perm(APPROVE_REQUEST)
+        auto_approved = False
         hiring_request = HiringRequest.objects.create(
-            team=team,
-            title=title,
-            headcount=headcount,
-            justification=justification,
-            requester=actor,
-            status=HiringRequest.Status.APPROVED if auto_approved else HiringRequest.Status.PENDING,
-            reviewer=actor_user if auto_approved else None,
-            reviewed_at=timezone.now() if auto_approved else None,
+            team=team, title=title, headcount=headcount, justification=justification, utilization_plan=utilization_plan,
+            requester=actor, status=HiringRequest.Status.DRAFT,
         )
-        if auto_approved:
-            _create_opening(hiring_request)
         audit(
             actor=actor_user,
             action="recruitment.request.created",
@@ -68,6 +62,7 @@ def create_hiring_request(*, actor_user, team: Team, title: str, headcount: int,
 
 
 def review_hiring_request(*, actor_user, hiring_request, decision: str, note: str):
+    require_team_access(actor_user, hiring_request.team_id)
     if not actor_user.has_perm(APPROVE_REQUEST):
         raise PermissionDenied("Bạn không có quyền duyệt yêu cầu tuyển dụng.")
     if hiring_request.status != HiringRequest.Status.PENDING:
@@ -84,7 +79,12 @@ def review_hiring_request(*, actor_user, hiring_request, decision: str, note: st
         locked.reviewed_at = timezone.now()
         locked.save(update_fields=["status", "reviewer", "review_note", "reviewed_at", "updated_at"])
         if decision == HiringRequest.Status.APPROVED:
-            _create_opening(locked)
+            validate_publishable(locked)
+            opening = _create_opening(locked)
+            from django.utils.text import slugify
+            opening.slug = f"{slugify(locked.title) or 'job'}-{opening.pk.hex[:12]}"
+            opening.published_at = timezone.now()
+            opening.save(update_fields=["slug", "published_at", "updated_at"])
         notify(
             recipient=locked.requester,
             kind=Notification.Kind.RECRUITMENT,
@@ -102,7 +102,8 @@ def review_hiring_request(*, actor_user, hiring_request, decision: str, note: st
         return locked
 
 
-def create_application(*, actor_user, opening, full_name: str, email: str, phone: str, source: str):
+def create_application(*, actor_user, opening, full_name: str, email: str = "", phone: str = "", source: str = ""):
+    require_team_access(actor_user, opening.team_id)
     if not actor_user.has_perm(MANAGE_CANDIDATES):
         raise PermissionDenied("Bạn không có quyền quản lý ứng viên.")
     if opening.status != JobOpening.Status.OPEN:
@@ -116,10 +117,12 @@ def create_application(*, actor_user, opening, full_name: str, email: str, phone
             target=application,
             changes={"opening_uuid": str(opening.pk), "candidate_pii": "stored_not_logged"},
         )
+        notify_recruitment_owners(opening.team_id, "Hồ sơ ứng tuyển mới", application.pk)
         return application
 
 
 def transition_application(*, actor_user, application, to_stage: str, note: str):
+    require_team_access(actor_user, application.opening.team_id)
     if not actor_user.has_perm(MANAGE_CANDIDATES):
         raise PermissionDenied("Bạn không có quyền thay đổi pipeline.")
     if to_stage not in ALLOWED_TRANSITIONS.get(application.stage, set()):
@@ -149,7 +152,8 @@ def transition_application(*, actor_user, application, to_stage: str, note: str)
         return locked
 
 
-def convert_application(*, actor_user, application, employee_code: str, create_account: bool, username: str):
+def convert_application(*, actor_user, application, employee_code: str, create_account: bool, username: str = ""):
+    require_team_access(actor_user, application.opening.team_id)
     if not actor_user.has_perm(CONVERT_CANDIDATE):
         raise PermissionDenied("Bạn không có quyền chuyển ứng viên thành nhân sự.")
     if application.stage != Application.Stage.HIRED:
@@ -183,6 +187,7 @@ def convert_application(*, actor_user, application, employee_code: str, create_a
 
 
 def add_application_attachments(*, actor_user, application, uploaded_files):
+    require_team_access(actor_user, application.opening.team_id)
     if not actor_user.has_perm(MANAGE_CANDIDATES):
         raise PermissionDenied("Bạn không có quyền tải CV.")
     if application.attachments.count() + len(uploaded_files) > 5:
@@ -192,7 +197,8 @@ def add_application_attachments(*, actor_user, application, uploaded_files):
     try:
         with transaction.atomic():
             for uploaded_file in uploaded_files:
-                metadata = save_upload(uploaded_file, "recruitment")
+                from .uploads import save_cv
+                metadata = save_cv(uploaded_file)
                 stored_keys.append(metadata["storage_key"])
                 created.append(CandidateAttachment.objects.create(
                     application=application,
@@ -231,6 +237,55 @@ def anonymize_expired_candidates():
             candidate.email = ""
             candidate.phone = ""
             candidate.anonymized_at = timezone.now()
+            application.introduction = ""
+            application.interview_at = None
+            application.interviewer_name = ""
+            application.recruiter_note = ""
+            application.save(update_fields=["introduction", "interview_at", "interviewer_name", "recruiter_note"])
+            application.transitions.update(note="")
             candidate.save(update_fields=["full_name", "email", "phone", "anonymized_at", "updated_at"])
             count += 1
     return count
+
+
+def validate_publishable(item):
+    required = ["title", "location", "employment_type", "description", "requirements", "benefits", "deadline"]
+    missing = {field: "Bắt buộc trước khi gửi duyệt." for field in required if not getattr(item, field)}
+    if item.deadline and item.deadline < timezone.localdate():
+        missing["deadline"] = "Hạn nhận hồ sơ phải từ hôm nay trở đi."
+    if missing:
+        raise ValidationError(missing)
+
+
+@transaction.atomic
+def edit_request(user, item, data=None, submit=False):
+    from .capabilities import CREATE_REQUEST
+    require_team_access(user, item.team_id)
+    if not user.has_perm(CREATE_REQUEST):
+        raise PermissionDenied("Bạn không có quyền tạo yêu cầu tuyển.")
+    locked = HiringRequest.objects.select_for_update().get(pk=item.pk)
+    if locked.status != HiringRequest.Status.DRAFT:
+        raise ValidationError({"status": "Chỉ bản nháp được sửa hoặc gửi duyệt."})
+    for key, value in (data or {}).items():
+        setattr(locked, key, value)
+    if submit:
+        validate_publishable(locked)
+        locked.status = HiringRequest.Status.PENDING
+    locked.save()
+    if submit:
+        notify_recruitment_owners(locked.team_id, "Yêu cầu tuyển cần duyệt", locked.pk, approval=True)
+    audit(actor=user, action="recruitment.request.submitted" if submit else "recruitment.request.updated", target=locked, changes={"fields": list(data or {})})
+    return locked
+
+
+@transaction.atomic
+def close_opening(user, item):
+    require_team_access(user, item.team_id)
+    if not user.has_perm(MANAGE_CANDIDATES):
+        raise PermissionDenied("Bạn không có quyền đóng tin.")
+    locked = JobOpening.objects.select_for_update().get(pk=item.pk)
+    locked.status = JobOpening.Status.CLOSED
+    locked.closed_at = timezone.now()
+    locked.save(update_fields=["status", "closed_at", "updated_at"])
+    audit(actor=user, action="recruitment.opening.closed", target=locked, changes={})
+    return locked

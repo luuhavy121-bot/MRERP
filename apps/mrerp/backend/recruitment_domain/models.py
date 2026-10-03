@@ -8,6 +8,7 @@ from people_domain.models import Employee, Team, TimeStampedModel
 
 class HiringRequest(TimeStampedModel):
     class Status(models.TextChoices):
+        DRAFT = "draft", "Bản nháp"
         PENDING = "pending", "Chờ duyệt"
         APPROVED = "approved", "Đã duyệt"
         REJECTED = "rejected", "Từ chối"
@@ -18,8 +19,15 @@ class HiringRequest(TimeStampedModel):
     title = models.CharField(max_length=160)
     headcount = models.PositiveSmallIntegerField(default=1)
     justification = models.TextField()
+    utilization_plan = models.TextField(blank=True)
     requester = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name="hiring_requests")
-    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
+    location = models.CharField(max_length=240, blank=True)
+    employment_type = models.CharField(max_length=120, blank=True)
+    description = models.TextField(blank=True)
+    requirements = models.TextField(blank=True)
+    benefits = models.TextField(blank=True)
+    deadline = models.DateField(null=True, blank=True)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -53,6 +61,9 @@ class JobOpening(TimeStampedModel):
     )
     team = models.ForeignKey(Team, on_delete=models.PROTECT, related_name="job_openings")
     title = models.CharField(max_length=160)
+    slug = models.SlugField(max_length=220, unique=True, null=True, blank=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    closed_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.OPEN)
 
     class Meta:
@@ -76,7 +87,6 @@ class Application(TimeStampedModel):
         NEW = "new", "Mới"
         SCREENING = "screening", "Sàng lọc"
         INTERVIEW = "interview", "Phỏng vấn"
-        OFFER = "offer", "Đề nghị"
         HIRED = "hired", "Đã tuyển"
         REJECTED = "rejected", "Từ chối"
 
@@ -88,6 +98,8 @@ class Application(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="created_applications",
+        null=True,
+        blank=True,
     )
     converted_employee = models.OneToOneField(
         Employee,
@@ -98,6 +110,11 @@ class Application(TimeStampedModel):
     )
     retention_until = models.DateTimeField(null=True, blank=True)
     version = models.PositiveIntegerField(default=1)
+    introduction = models.TextField(blank=True)
+    interview_at = models.DateTimeField(null=True, blank=True)
+    interviewer_name = models.CharField(max_length=160, blank=True)
+    recruiter_note = models.TextField(blank=True)
+    consent_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -113,8 +130,9 @@ class Application(TimeStampedModel):
 class ApplicationTransition(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name="transitions")
-    from_stage = models.CharField(max_length=16, choices=Application.Stage.choices)
-    to_stage = models.CharField(max_length=16, choices=Application.Stage.choices)
+    # Historical transitions keep the removed offer stage readable.
+    from_stage = models.CharField(max_length=16, choices=[*Application.Stage.choices, ("offer", "Đề nghị (trước đây)")])
+    to_stage = models.CharField(max_length=16, choices=[*Application.Stage.choices, ("offer", "Đề nghị (trước đây)")])
     note = models.CharField(max_length=500, blank=True)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -130,7 +148,7 @@ class CandidateAttachment(TimeStampedModel):
     storage_key = models.CharField(max_length=300, unique=True)
     content_type = models.CharField(max_length=160)
     size = models.PositiveBigIntegerField()
-    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True)
 
     class Meta:
         ordering = ["created_at"]

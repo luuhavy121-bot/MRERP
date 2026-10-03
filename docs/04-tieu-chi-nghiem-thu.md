@@ -1,5 +1,7 @@
 # 04 — Tiêu chí nghiệm thu
 
+**Cập nhật được duyệt 01/10/2026:** ưu tiên [Tuyển dụng công khai và đánh giá KPI](testing/hr-expansion-acceptance.md) trước MKTLogin theo ADR-0017/0018. Quyền Leader với CV/pipeline và quy trình draft → gửi duyệt thay thế baseline tuyển dụng cũ ở phần bên dưới. Các phần khác giữ trạng thái riêng.
+
 Tài liệu này là cổng đạt/không đạt cấp sản phẩm và phase. Test case, test pyramid và bằng chứng kỹ thuật được quản lý tại [Test strategy](testing/test-strategy.md).
 
 ## Điều kiện đạt chung
@@ -73,3 +75,7 @@ Mỗi phase sau phải cung cấp bằng chứng phù hợp: test result, contra
 - [ADR process](decisions/README.md)
 
 Tiếp theo: [05 — Hướng dẫn và vận hành](05-huong-dan-va-van-hanh.md).
+
+Phần nhập công Excel phải đạt [acceptance Leave/Attendance](testing/leave-attendance-acceptance.md), gồm mapping, preview/commit, chống ghi đè và scope own/Team/company.
+
+Phần Sao & Đổi thưởng ADR-0020 phải đạt [acceptance Phase 3](testing/phase-3-acceptance.md), gồm quyền quản trị, hạn mức, chống chi/giữ/hoàn trùng, tồn kho và snapshot; chưa nghiệm thu chỉ vì đã duyệt ADR.

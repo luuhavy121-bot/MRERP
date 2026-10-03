@@ -16,9 +16,9 @@ class HiringRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = HiringRequest
         fields = [
-            "uuid", "team", "team_name", "title", "headcount", "justification",
+            "uuid", "team", "team_name", "title", "headcount", "justification", "utilization_plan",
             "requester_name", "status", "status_label", "review_note", "reviewed_at",
-            "opening_uuid", "created_at", "updated_at",
+            "opening_uuid", "created_at", "updated_at", "location", "employment_type", "description", "requirements", "benefits", "deadline",
         ]
         read_only_fields = fields
 
@@ -28,6 +28,20 @@ class HiringRequestCreateSerializer(serializers.Serializer):
     title = serializers.CharField(min_length=1, max_length=160, trim_whitespace=True)
     headcount = serializers.IntegerField(min_value=1, max_value=100)
     justification = serializers.CharField(min_length=1, max_length=3000, trim_whitespace=True)
+    utilization_plan = serializers.CharField(required=False, allow_blank=True, max_length=3000)
+
+
+class HiringRequestContentSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=160)
+    headcount = serializers.IntegerField(min_value=1, max_value=100)
+    justification = serializers.CharField(max_length=3000)
+    utilization_plan = serializers.CharField(required=False, allow_blank=True, max_length=3000)
+    location = serializers.CharField(max_length=240, allow_blank=True)
+    employment_type = serializers.CharField(max_length=120, allow_blank=True)
+    description = serializers.CharField(max_length=10000, allow_blank=True)
+    requirements = serializers.CharField(max_length=10000, allow_blank=True)
+    benefits = serializers.CharField(max_length=10000, allow_blank=True)
+    deadline = serializers.DateField(allow_null=True)
 
 
 class HiringRequestReviewSerializer(serializers.Serializer):
@@ -36,12 +50,13 @@ class HiringRequestReviewSerializer(serializers.Serializer):
 
 
 class OpeningSerializer(serializers.ModelSerializer):
+    hiring_request_deadline = serializers.DateField(source="hiring_request.deadline", read_only=True, allow_null=True)
     team_name = serializers.CharField(source="team.name", read_only=True)
     status_label = serializers.CharField(source="get_status_display", read_only=True)
 
     class Meta:
         model = JobOpening
-        fields = ["uuid", "hiring_request", "team", "team_name", "title", "status", "status_label", "created_at"]
+        fields = ["uuid", "hiring_request", "team", "team_name", "title", "status", "status_label", "created_at", "slug", "published_at", "closed_at", "hiring_request_deadline"]
         read_only_fields = fields
 
 
@@ -121,7 +136,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if not self._full_projection():
-            for field in ("candidate_email", "candidate_phone", "attachments"):
+            for field in ("candidate_email", "candidate_phone", "attachments", "introduction", "consent_at", "interview_at", "interviewer_name", "recruiter_note"):
                 data.pop(field, None)
         return data
 
@@ -131,7 +146,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "uuid", "candidate_name", "candidate_email", "candidate_phone", "candidate_source",
             "opening", "opening_title", "team_uuid", "team_name", "stage", "stage_label",
             "converted_employee_uuid", "version", "attachments", "transitions", "can_manage",
-            "can_convert", "created_at", "updated_at",
+            "can_convert", "created_at", "updated_at", "introduction", "consent_at", "interview_at", "interviewer_name", "recruiter_note",
         ]
         read_only_fields = fields
 

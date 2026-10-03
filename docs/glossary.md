@@ -26,3 +26,11 @@ Tài liệu này chuẩn hóa cách dùng từ trong repository. Nó không thay
 | MKTLogin resource link | Mapping có định danh giữa một Resource trong ASSETCONTROL và đối tượng thật tương ứng trong MKTLogin; không đồng nghĩa sao chép cookie, session hoặc secret sang MRERP |
 
 Tên product chuẩn trong tài liệu là **MRERP Core**, **MRECRM**, **ASSETCONTROL** và **MREKANBAN**. Tên thư mục/domain triển khai chỉ được chốt qua source of truth hoặc ADR tương ứng.
+
+## Đánh giá nhân sự
+
+**PerformanceReview:** phiếu đánh giá một Employee trong một tháng; thuộc performance_domain. **PerformanceKPI:** chỉ tiêu có trọng số và mức hoàn thành do Leader nhập. **PerformanceReviewRevision:** snapshot bất biến khi chốt hoặc mở lại, không phải nguồn Employee/Task mới.
+
+**AttendanceImport:** đợt xem trước/xác nhận bảng công Excel do HR xuất; snapshot kết quả nguồn, không phải kỳ công đã chốt. **AttendanceRecord:** kết quả hiện hành theo Employee/ngày, độc lập công dự kiến.
+
+**RewardGift:** quà cấu hình trong Rewards, có chi phí sao và tồn khả dụng. **RewardRedemption:** yêu cầu đổi quà giữ snapshot tên/chi phí. **TeamStarAllowance:** hạn mức sao Leader được cấp cho Team trong tháng. **Hold/refund:** bút toán giữ/hoàn sao khi đổi quà; không phải điểm thành tích hoặc ngân sách tiền mặt.

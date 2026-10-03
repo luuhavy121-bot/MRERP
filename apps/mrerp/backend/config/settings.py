@@ -6,6 +6,8 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
 APP_ENV = os.getenv("MRERP_ENV", "development")
 DEBUG = APP_ENV != "production"
+# Company-confirmed workweek, 03/10/2026; imported HR attendance is never recalculated.
+MRERP_WORK_WEEKDAYS = (0, 1, 2, 3, 4, 5)
 MOCK_IDENTITY_ENABLED = os.getenv("MRERP_MOCK_IDENTITY", "true").lower() == "true"
 
 if APP_ENV == "production" and MOCK_IDENTITY_ENABLED:
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     "task_domain.apps.TaskDomainConfig",
     "preferences_domain.apps.PreferencesDomainConfig",
     "recruitment_domain.apps.RecruitmentDomainConfig",
+    "performance_domain.apps.PerformanceDomainConfig",
     "documents_domain.apps.DocumentsDomainConfig",
     "rewards_domain.apps.RewardsDomainConfig",
     "mock_identity.apps.MockIdentityConfig",
@@ -154,3 +157,7 @@ SPECTACULAR_SETTINGS = {
         "DocumentScopeEnum": "documents_domain.models.DOCUMENT_SCOPE_CHOICES",
     },
 }
+
+# Shared public-form throttling across workers when Redis is configured.
+if os.getenv("MRERP_REDIS_URL"):
+    CACHES = {"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": os.environ["MRERP_REDIS_URL"], "KEY_PREFIX": "mrerp-throttle"}}

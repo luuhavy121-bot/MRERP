@@ -10,62 +10,69 @@ from people_domain.services import audit
 
 from .access import can_edit_request, can_review_request
 from .models import AttendanceAdjustment, LeaveRequest, PublicHoliday
+from .periods import overlaps, workdays
 
 
-def create_leave_request(*, actor, start_date: date, end_date: date, reason: str) -> LeaveRequest:
+def create_leave_request(*, actor, start_date: date, end_date: date, reason: str, start_period="am", end_period="pm") -> LeaveRequest:
     actor_employee = actor.employee_profile
     with transaction.atomic():
         Employee.objects.select_for_update().get(pk=actor_employee.pk)
-        overlaps = LeaveRequest.objects.filter(
+        candidates = LeaveRequest.objects.filter(
             requester=actor_employee,
             status__in=[LeaveRequest.Status.PENDING, LeaveRequest.Status.APPROVED],
             start_date__lte=end_date,
             end_date__gte=start_date,
-        ).exists()
-        if overlaps:
+        )
+        if overlaps(candidates, start_date, end_date, start_period, end_period):
             raise ValidationError({"dates": "Khoảng nghỉ bị trùng với một đơn đang chờ hoặc đã duyệt."})
         leave_request = LeaveRequest.objects.create(
             requester=actor_employee,
             requester_team=actor_employee.team,
             start_date=start_date,
             end_date=end_date,
-            reason=reason,
+            reason=reason, start_period=start_period, end_period=end_period,
         )
         audit(
             actor=actor,
             action="leave.request.created",
             target=leave_request,
-            changes={"start_date": str(start_date), "end_date": str(end_date), "status": LeaveRequest.Status.PENDING},
+            changes={"start_date": str(start_date), "end_date": str(end_date), "start_period": start_period, "end_period": end_period, "status": LeaveRequest.Status.PENDING},
         )
+        from people_domain.models import TeamLeadership
+        from dashboard_domain.services import notify_many
+        notify_many(recipients=Employee.objects.filter(pk__in=TeamLeadership.objects.filter(team=actor_employee.team).values("leader_id")).exclude(pk=actor_employee.pk), kind="leave", title="Đơn xin nghỉ cần duyệt", body=f"{start_date} – {end_date}", target_type="leave", target_uuid=leave_request.pk, key_prefix=f"leave-created:{leave_request.pk}")
         return leave_request
 
 
 def update_leave_request(
-    *, actor, leave_request: LeaveRequest, start_date: date, end_date: date, reason: str, expected_version: int
+    *, actor, leave_request: LeaveRequest, start_date: date, end_date: date, reason: str, expected_version: int, start_period="am", end_period="pm"
 ) -> LeaveRequest:
     if not can_edit_request(actor, leave_request):
         raise PermissionDenied("Chỉ đơn của bạn đang Chờ duyệt mới có thể sửa.")
     with transaction.atomic():
+        Employee.objects.select_for_update().get(pk=leave_request.requester_id)
         locked = LeaveRequest.objects.select_for_update().get(pk=leave_request.pk)
         if locked.status != LeaveRequest.Status.PENDING:
             raise ValidationError({"status": "Đơn đã được xử lý nên không thể sửa."})
         if locked.version != expected_version:
             raise ValidationError({"expected_version": "Đơn đã thay đổi. Hãy tải lại trước khi sửa."})
-        overlaps = LeaveRequest.objects.filter(
+        candidates = LeaveRequest.objects.filter(
             requester=locked.requester,
             status__in=[LeaveRequest.Status.PENDING, LeaveRequest.Status.APPROVED],
             start_date__lte=end_date,
             end_date__gte=start_date,
-        ).exclude(pk=locked.pk).exists()
-        if overlaps:
+        ).exclude(pk=locked.pk)
+        if overlaps(candidates, start_date, end_date, start_period, end_period):
             raise ValidationError({"dates": "Khoảng nghỉ bị trùng với một đơn đang chờ hoặc đã duyệt."})
         previous_dates = {"start_date": str(locked.start_date), "end_date": str(locked.end_date)}
         reason_changed = locked.reason != reason
         locked.start_date = start_date
         locked.end_date = end_date
         locked.reason = reason
+        locked.start_period = start_period
+        locked.end_period = end_period
         locked.version += 1
-        locked.save(update_fields=["start_date", "end_date", "reason", "version", "updated_at"])
+        locked.save(update_fields=["start_date", "end_date", "start_period", "end_period", "reason", "version", "updated_at"])
         audit(
             actor=actor,
             action="leave.request.updated",
@@ -138,18 +145,18 @@ def attendance_projection(month_value: str):
     month_start, month_end = month_bounds(month_value)
     holidays = set(PublicHoliday.objects.filter(is_active=True, date__range=(month_start, month_end)).values_list("date", flat=True))
     weekday_holidays = {holiday for holiday in holidays if holiday.weekday() < 5}
-    scheduled = weekdays_between(month_start, month_end, weekday_holidays)
+    scheduled = workdays(month_start, month_end, holidays)
     employees = Employee.objects.select_related("team").order_by("employee_code")
     approved = LeaveRequest.objects.filter(
         status=LeaveRequest.Status.APPROVED,
         start_date__lte=month_end,
         end_date__gte=month_start,
-    ).values("requester_id", "start_date", "end_date")
+    ).values("requester_id", "start_date", "end_date", "start_period", "end_period")
     leave_days = {}
     for item in approved:
         overlap_start = max(item["start_date"], month_start)
         overlap_end = min(item["end_date"], month_end)
-        leave_days[item["requester_id"]] = leave_days.get(item["requester_id"], 0) + weekdays_between(overlap_start, overlap_end, weekday_holidays)
+        leave_days[item["requester_id"]] = leave_days.get(item["requester_id"], 0) + workdays(overlap_start, overlap_end, holidays, item["start_period"] if overlap_start == item["start_date"] else "am", item["end_period"] if overlap_end == item["end_date"] else "pm")
     adjustments = {
         item.employee_id: item
         for item in AttendanceAdjustment.objects.filter(month=month_start).select_related("employee")
@@ -159,7 +166,7 @@ def attendance_projection(month_value: str):
             employee=employee,
             month_value=month_value,
             scheduled=scheduled,
-            public_holiday_days=len(weekday_holidays),
+            public_holiday_days=sum(workdays(day, day, set()) for day in holidays),
             approved_leave_days=leave_days.get(employee.pk, 0),
             adjustment=adjustments.get(employee.pk),
         )

@@ -30,6 +30,7 @@ class LeaveRequestSerializer(serializers.ModelSerializer):
             "team_name",
             "start_date",
             "end_date",
+            "start_period", "end_period",
             "reason",
             "status",
             "status_label",
@@ -48,11 +49,17 @@ class LeaveRequestSerializer(serializers.ModelSerializer):
 class LeaveRequestCreateSerializer(serializers.Serializer):
     start_date = serializers.DateField()
     end_date = serializers.DateField()
+    start_period = serializers.ChoiceField(choices=["am", "pm"], default="am")
+    end_period = serializers.ChoiceField(choices=["am", "pm"], default="pm")
     reason = serializers.CharField(min_length=1, max_length=2000, trim_whitespace=True)
 
     def validate(self, attrs):
         if attrs["end_date"] < attrs["start_date"]:
             raise serializers.ValidationError({"end_date": "Ngày kết thúc phải từ ngày bắt đầu trở đi."})
+        if (attrs["end_date"] - attrs["start_date"]).days > 365:
+            raise serializers.ValidationError({"end_date": "Mỗi đơn tối đa 366 ngày."})
+        if attrs["end_date"] == attrs["start_date"] and attrs["start_period"] == "pm" and attrs["end_period"] == "am":
+            raise serializers.ValidationError({"end_period": "Buổi kết thúc phải sau hoặc cùng buổi bắt đầu."})
         return attrs
 
 
@@ -64,6 +71,22 @@ class LeaveReviewSerializer(serializers.Serializer):
     decision = serializers.ChoiceField(choices=[LeaveRequest.Status.APPROVED, LeaveRequest.Status.REJECTED])
     note = serializers.CharField(required=False, allow_blank=True, max_length=2000, trim_whitespace=True)
 
+    def validate(self, data):
+        if data["decision"] == LeaveRequest.Status.REJECTED and not data.get("note", "").strip():
+            raise serializers.ValidationError({"note": "Nhập lý do từ chối đơn nghỉ."})
+        return data
+
+
+class LeaveCalendarSerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()
+    name = serializers.CharField()
+    employee_code = serializers.CharField()
+    team_name = serializers.CharField(allow_null=True)
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()
+    start_period = serializers.CharField()
+    end_period = serializers.CharField()
+
 
 class AttendanceRowSerializer(serializers.Serializer):
     employee_uuid = serializers.UUIDField()
@@ -71,12 +94,12 @@ class AttendanceRowSerializer(serializers.Serializer):
     display_name = serializers.CharField()
     team_name = serializers.CharField(allow_null=True)
     month = serializers.CharField()
-    scheduled_workdays = serializers.IntegerField()
-    public_holiday_days = serializers.IntegerField()
-    approved_leave_days = serializers.IntegerField()
+    scheduled_workdays = serializers.FloatField()
+    public_holiday_days = serializers.FloatField()
+    approved_leave_days = serializers.FloatField()
     adjustment_days = serializers.IntegerField()
     adjustment_reason = serializers.CharField(allow_blank=True)
-    projected_workdays = serializers.IntegerField()
+    projected_workdays = serializers.FloatField()
 
 
 class AttendanceAdjustmentSerializer(serializers.Serializer):
